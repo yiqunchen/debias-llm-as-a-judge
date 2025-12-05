@@ -1,0 +1,19 @@
+Package: debiasLLMReporting
+Type: Package
+Title: Simulation Utilities for LLM-as-a-judge vs PPI
+Version: 0.0.1
+Authors@R: person(given = "Chen", family = "Lab", email = "chenlab@example.com",
+    role = c("aut", "cre"))
+Description: Reusable helpers to study LLM-as-a-judge estimators against PPI variants.
+License: MIT
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+Imports:
+    stats,
+    tibble,
+    dplyr,
+    ggplot2,
+    furrr,
+    future,
+    purrr,
+    quadprog
