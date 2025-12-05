@@ -1,0 +1,46 @@
+# R package build artifacts
+*.tar.gz
+*.Rcheck/
+*.Rproj.user/
+.Rproj.user/
+
+# R history and environment
+.Rhistory
+.Rdata
+.RData
+.httr-oauth
+.Renviron
+
+# Compiled code
+*.o
+*.so
+*.dll
+
+# Documentation
+docs/
+inst/doc/
+
+# macOS system files
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# Results and output (can be regenerated)
+results/
+
+# LaTeX auxiliary files
+*.aux
+*.log
+*.out
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+*.bbl
+*.blg
+
+# IDE
+.vscode/
+.idea/
