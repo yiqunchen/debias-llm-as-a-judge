@@ -24,7 +24,7 @@ SIM_CONFIG <- list(
 format_label_ratio <- function(x) paste0(scales::percent(x, accuracy = 1), " labeled")
 
 g_specs <- list(
-  list(label = "ppi", transform = function(scores, context) scores)
+  list(label = "PPI", transform = function(scores, context) scores)
 )
 
 derive_label_counts <- function(label_ratio, sample_size, m0_prop) {
@@ -88,7 +88,7 @@ sim_one_condition <- function(theta, q0, q1, label_ratio, sample_size,
   })
   ppi_pp_est <- ppi_pp_point_and_ci_general(Y_L = Y_L, f_L = f_L, f_U = f_U)
   ppi_pp_tbl <- tibble(
-    method = "ppi_pp",
+    method = "PPI++",
     theta_hat = ppi_pp_est$theta,
     var_hat = ppi_pp_est$var,
     ci_lower = ppi_pp_est$ci_lower,
@@ -105,14 +105,30 @@ sim_one_condition <- function(theta, q0, q1, label_ratio, sample_size,
     alpha = 1 - nominal
   )
   llm_tbl <- tibble(
-    method = "llm",
+    method = "Rogan-Gladen",
     theta_hat = llm_est$theta,
     var_hat = llm_est$var,
     ci_lower = llm_est$ci_lower,
     ci_upper = llm_est$ci_upper,
     lambda = NA_real_
   )
-  bind_rows(ppi_results, ppi_pp_tbl, llm_tbl) %>%
+  # Naive estimator: just use raw LLM predictions with standard Wald CI
+  n_naive <- counts$n_llm_test
+  naive_theta <- p_hat
+  naive_var <- p_hat * (1 - p_hat) / n_naive
+  z_alpha <- qnorm(1 - (1 - nominal) / 2)
+  naive_se <- sqrt(naive_var)
+  naive_ci_lower <- pmax(naive_theta - z_alpha * naive_se, 0)
+  naive_ci_upper <- pmin(naive_theta + z_alpha * naive_se, 1)
+  naive_tbl <- tibble(
+    method = "Naive",
+    theta_hat = naive_theta,
+    var_hat = naive_var,
+    ci_lower = naive_ci_lower,
+    ci_upper = naive_ci_upper,
+    lambda = NA_real_
+  )
+  bind_rows(ppi_results, ppi_pp_tbl, llm_tbl, naive_tbl) %>%
     mutate(
       theta_true = theta,
       q0 = q0,
@@ -240,10 +256,6 @@ plot_base_theme <- function() {
 
 ci_summary_plot <- ci_summary %>%
   mutate(
-    method = recode(method,
-                    "llm" = "measurement_error",
-                    "ppi" = "PPI",
-                    "ppi_pp" = "PPI++"),
     bias_pct = dplyr::if_else(theta_true != 0,
                               100 * bias / theta_true,
                               NA_real_),
