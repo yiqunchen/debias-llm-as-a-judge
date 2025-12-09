@@ -16,7 +16,7 @@ SIM_CONFIG <- list(
   signal = 1,
   nominal_coverage = 0.95,
   calibration_balances = tibble(
-    split_label = c("q0_20", "q0_50", "q0_80"),
+    split_label = c("20:80", "50:50", "80:20"),
     m0_prop = c(0.2, 0.5, 0.8)
   )
 )
@@ -281,28 +281,29 @@ for (split in unique(ci_summary_plot$split_label)) {
     lr_pct <- scales::percent(lr, accuracy = 1)
     lr_str <- gsub("%", "", lr_pct)
     filename_suffix <- paste0("_", split, "_labeled_", sprintf("%02d", as.integer(lr * 100)), ".png")
-    subtitle_text <- paste0("m0:m1 = ", split, " | ", lr_pct, " labeled")
+    subtitle_text <- paste0("neg:pos = ", split, " | ", lr_pct, " labeled")
 
     df_sub <- ci_summary_plot %>%
       filter(split_label == split, label_ratio == lr)
 
-    # Coverage gap plot
+    # Coverage plot (capped at 70%)
     p_cov <- ggplot(df_sub,
-                    aes(x = theta_true, y = coverage_gap, color = method, group = method)) +
-      geom_hline(yintercept = 0, linetype = "dashed", color = "grey40") +
+                    aes(x = theta_true, y = coverage, color = method, group = method)) +
+      geom_hline(yintercept = 0.95, linetype = "dashed", color = "grey40") +
       geom_line(linewidth = 1) +
       geom_point(size = 1.5) +
       facet_grid(q0_lab ~ q1_lab) +
       labs(
-        title = "Coverage - Nominal",
+        title = "Coverage",
         subtitle = subtitle_text,
         x = expression(theta[true]),
-        y = "Coverage gap",
+        y = "Coverage",
         color = "Method"
       ) +
       scale_x_continuous(breaks = SIM_CONFIG$thetas) +
+      scale_y_continuous(limits = c(0.70, 1.0)) +
       plot_base_theme()
-    save_plot(p_cov, paste0("coverage_gap", filename_suffix))
+    save_plot(p_cov, paste0("coverage", filename_suffix))
 
     # CI width plot
     p_width <- ggplot(df_sub,
@@ -407,28 +408,29 @@ q_bias_diag <- q_bias_long %>%
 for (split in unique(ci_summary_diag$split_label)) {
 
   filename_suffix <- paste0("_diag_", split, ".png")
-  subtitle_text <- paste0("m0:m1 = ", split, " | q0 = q1 (diagonal)")
+  subtitle_text <- paste0("neg:pos = ", split, " | q0 = q1 (diagonal)")
 
   df_sub <- ci_summary_diag %>%
     filter(split_label == split)
 
-  # Coverage gap plot (diagonal)
+  # Coverage plot (diagonal, capped at 70%)
   p_cov_diag <- ggplot(df_sub,
-                       aes(x = theta_true, y = coverage_gap, color = method, group = method)) +
-    geom_hline(yintercept = 0, linetype = "dashed", color = "grey40") +
+                       aes(x = theta_true, y = coverage, color = method, group = method)) +
+    geom_hline(yintercept = 0.95, linetype = "dashed", color = "grey40") +
     geom_line(linewidth = 1) +
     geom_point(size = 2) +
     facet_grid(q_val_lab ~ label_ratio_lab) +
     labs(
-      title = "Coverage - Nominal (q0 = q1)",
+      title = "Coverage (q0 = q1)",
       subtitle = subtitle_text,
       x = expression(theta[true]),
-      y = "Coverage gap",
+      y = "Coverage",
       color = "Method"
     ) +
     scale_x_continuous(breaks = SIM_CONFIG$thetas) +
+    scale_y_continuous(limits = c(0.70, 1.0)) +
     plot_base_theme()
-  save_plot(p_cov_diag, paste0("coverage_gap", filename_suffix), width = 16, height = 10)
+  save_plot(p_cov_diag, paste0("coverage", filename_suffix), width = 16, height = 10)
 
   # CI width plot (diagonal)
   p_width_diag <- ggplot(df_sub,
@@ -506,29 +508,30 @@ for (split in unique(ci_summary_diag$split_label)) {
 }
 
 # =============================================================================
-# AGGREGATE DIAGONAL PLOTS: q0 == q1, all m0:m1 splits with linetype
+# AGGREGATE DIAGONAL PLOTS: q0 == q1, all neg:pos splits with linetype
 # =============================================================================
 
-# Coverage gap plot (diagonal, aggregate)
+# Coverage plot (diagonal, aggregate, capped at 70%)
 p_cov_diag_agg <- ggplot(ci_summary_diag,
-                         aes(x = theta_true, y = coverage_gap,
+                         aes(x = theta_true, y = coverage,
                              color = method, linetype = split_label,
                              group = interaction(method, split_label))) +
-  geom_hline(yintercept = 0, linetype = "dashed", color = "grey40") +
+  geom_hline(yintercept = 0.95, linetype = "dashed", color = "grey40") +
   geom_line(linewidth = 1) +
   geom_point(size = 2) +
   facet_grid(q_val_lab ~ label_ratio_lab) +
   labs(
-    title = "Coverage - Nominal (q0 = q1)",
-    subtitle = "All m0:m1 ratios",
+    title = "Coverage (q0 = q1)",
+    subtitle = "All neg:pos ratios",
     x = expression(theta[true]),
-    y = "Coverage gap",
+    y = "Coverage",
     color = "Method",
-    linetype = "m0:m1"
+    linetype = "neg:pos"
   ) +
   scale_x_continuous(breaks = SIM_CONFIG$thetas) +
+  scale_y_continuous(limits = c(0.70, 1.0)) +
   plot_base_theme()
-save_plot(p_cov_diag_agg, "coverage_gap_diag_aggregate.png", width = 16, height = 10)
+save_plot(p_cov_diag_agg, "coverage_diag_aggregate.png", width = 16, height = 10)
 
 # CI width plot (diagonal, aggregate)
 p_width_diag_agg <- ggplot(ci_summary_diag,
@@ -540,11 +543,11 @@ p_width_diag_agg <- ggplot(ci_summary_diag,
   facet_grid(q_val_lab ~ label_ratio_lab) +
   labs(
     title = "CI Width (q0 = q1)",
-    subtitle = "All m0:m1 ratios",
+    subtitle = "All neg:pos ratios",
     x = expression(theta[true]),
     y = "Mean CI width",
     color = "Method",
-    linetype = "m0:m1"
+    linetype = "neg:pos"
   ) +
   scale_x_continuous(breaks = SIM_CONFIG$thetas) +
   plot_base_theme()
@@ -561,11 +564,11 @@ p_bias_diag_agg <- ggplot(ci_summary_diag,
   facet_grid(q_val_lab ~ label_ratio_lab) +
   labs(
     title = "Estimator Bias (q0 = q1)",
-    subtitle = "All m0:m1 ratios",
+    subtitle = "All neg:pos ratios",
     x = expression(theta[true]),
     y = "Bias",
     color = "Method",
-    linetype = "m0:m1"
+    linetype = "neg:pos"
   ) +
   scale_x_continuous(breaks = SIM_CONFIG$thetas) +
   plot_base_theme()
@@ -582,11 +585,11 @@ p_bias_pct_diag_agg <- ggplot(ci_summary_diag,
   facet_grid(q_val_lab ~ label_ratio_lab) +
   labs(
     title = "Percent Bias (q0 = q1)",
-    subtitle = "All m0:m1 ratios",
+    subtitle = "All neg:pos ratios",
     x = expression(theta[true]),
     y = "Bias (%)",
     color = "Method",
-    linetype = "m0:m1"
+    linetype = "neg:pos"
   ) +
   scale_x_continuous(breaks = SIM_CONFIG$thetas) +
   plot_base_theme()
@@ -603,11 +606,11 @@ p_q_bias_diag_agg <- ggplot(q_bias_diag,
   facet_grid(q_val_lab ~ label_ratio_lab) +
   labs(
     title = "Calibration Estimate Bias (q0 = q1)",
-    subtitle = "All m0:m1 ratios",
+    subtitle = "All neg:pos ratios",
     x = expression(theta[true]),
     y = "Bias",
     color = "Parameter",
-    linetype = "m0:m1"
+    linetype = "neg:pos"
   ) +
   scale_x_continuous(breaks = SIM_CONFIG$thetas) +
   plot_base_theme()
@@ -643,28 +646,29 @@ for (case in off_diag_cases) {
     )
 
   filename_suffix <- paste0("_offdiag_", case$label, ".png")
-  subtitle_text <- paste0("q0 = ", case$q0, ", q1 = ", case$q1, " | All m0:m1 ratios")
+  subtitle_text <- paste0("q0 = ", case$q0, ", q1 = ", case$q1, " | All neg:pos ratios")
 
-  # Coverage gap plot (off-diagonal)
+  # Coverage plot (off-diagonal, capped at 70%)
   p_cov_offdiag <- ggplot(ci_summary_offdiag,
-                          aes(x = theta_true, y = coverage_gap,
+                          aes(x = theta_true, y = coverage,
                               color = method, linetype = split_label,
                               group = interaction(method, split_label))) +
-    geom_hline(yintercept = 0, linetype = "dashed", color = "grey40") +
+    geom_hline(yintercept = 0.95, linetype = "dashed", color = "grey40") +
     geom_line(linewidth = 1) +
     geom_point(size = 2) +
     facet_wrap(~ label_ratio_lab, nrow = 1) +
     labs(
-      title = paste0("Coverage - Nominal (q0 = ", case$q0, ", q1 = ", case$q1, ")"),
+      title = paste0("Coverage (q0 = ", case$q0, ", q1 = ", case$q1, ")"),
       subtitle = subtitle_text,
       x = expression(theta[true]),
-      y = "Coverage gap",
+      y = "Coverage",
       color = "Method",
-      linetype = "m0:m1"
+      linetype = "neg:pos"
     ) +
     scale_x_continuous(breaks = SIM_CONFIG$thetas) +
+    scale_y_continuous(limits = c(0.70, 1.0)) +
     plot_base_theme()
-  save_plot(p_cov_offdiag, paste0("coverage_gap", filename_suffix), width = 18, height = 5)
+  save_plot(p_cov_offdiag, paste0("coverage", filename_suffix), width = 18, height = 5)
 
   # CI width plot (off-diagonal)
   p_width_offdiag <- ggplot(ci_summary_offdiag,
@@ -680,7 +684,7 @@ for (case in off_diag_cases) {
       x = expression(theta[true]),
       y = "Mean CI width",
       color = "Method",
-      linetype = "m0:m1"
+      linetype = "neg:pos"
     ) +
     scale_x_continuous(breaks = SIM_CONFIG$thetas) +
     plot_base_theme()
@@ -701,7 +705,7 @@ for (case in off_diag_cases) {
       x = expression(theta[true]),
       y = "Bias",
       color = "Method",
-      linetype = "m0:m1"
+      linetype = "neg:pos"
     ) +
     scale_x_continuous(breaks = SIM_CONFIG$thetas) +
     plot_base_theme()
@@ -722,7 +726,7 @@ for (case in off_diag_cases) {
       x = expression(theta[true]),
       y = "Bias (%)",
       color = "Method",
-      linetype = "m0:m1"
+      linetype = "neg:pos"
     ) +
     scale_x_continuous(breaks = SIM_CONFIG$thetas) +
     plot_base_theme()
@@ -743,7 +747,7 @@ for (case in off_diag_cases) {
       x = expression(theta[true]),
       y = "Bias",
       color = "Parameter",
-      linetype = "m0:m1"
+      linetype = "neg:pos"
     ) +
     scale_x_continuous(breaks = SIM_CONFIG$thetas) +
     plot_base_theme()
