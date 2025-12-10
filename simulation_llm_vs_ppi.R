@@ -3,6 +3,8 @@ library(future)
 library(furrr)
 library(debiasLLMReporting)
 
+source("R/plot_utils.R")
+
 plan(multisession, workers = max(1, parallel::detectCores() - 1))
 set.seed(123)
 
@@ -231,527 +233,123 @@ q_est_summary <- res_all %>%
 
 readr::write_csv(q_est_summary, file.path(results_dir, "q_est_summary.csv"))
 
+# Save plot helper (wraps ggsave with plots_dir)
 save_plot <- function(plot_obj, filename, width = 14, height = 12) {
-  ggsave(
-    filename = file.path(plots_dir, filename),
-    plot = plot_obj,
-    width = width,
-    height = height,
-    dpi = 320
-  )
+  ggsave(file.path(plots_dir, filename), plot_obj, width = width, height = height, dpi = 400)
 }
 
-plot_base_theme <- function() {
-  theme_bw(base_size = 13) +
-    theme(
-      plot.title = element_text(hjust = 0.5, face = "bold"),
-      plot.subtitle = element_text(hjust = 0.5),
-      strip.background = element_rect(fill = "white"),
-      panel.grid.minor = element_blank(),
-      axis.title = element_text(face = "bold"),
-      axis.text.x = element_text(size = 10, angle = 45, hjust = 1),
-      legend.position = "bottom"
-    )
-}
+# =============================================================================
+# PLOTTING SECTION
+# =============================================================================
 
+# Prepare data for plotting
 ci_summary_plot <- ci_summary %>%
   mutate(
-    bias_pct = dplyr::if_else(theta_true != 0,
-                              100 * bias / theta_true,
-                              NA_real_),
+    split_label = recode(split_label, "q0_20" = "20:80", "q0_50" = "50:50", "q0_80" = "80:20"),
+    bias_pct = dplyr::if_else(theta_true != 0, 100 * bias / theta_true, NA_real_),
     q0_lab = paste0("q0 = ", q0),
     q1_lab = paste0("q1 = ", q1)
   )
 
 q_bias_long <- q_est_summary %>%
-  pivot_longer(
-    cols = c(q0_bias, q1_bias),
-    names_to = "metric",
-    values_to = "bias"
-  ) %>%
+  mutate(split_label = recode(split_label, "q0_20" = "20:80", "q0_50" = "50:50", "q0_80" = "80:20")) %>%
+  pivot_longer(cols = c(q0_bias, q1_bias), names_to = "metric", values_to = "bias") %>%
   mutate(
     metric = recode(metric, q0_bias = "q0", q1_bias = "q1"),
     q0_lab = paste0("q0 = ", q0),
     q1_lab = paste0("q1 = ", q1)
   )
 
+# -----------------------------------------------------------------------------
+# GRID PLOTS: One plot per (split, label_ratio), faceted by q0 x q1
+# -----------------------------------------------------------------------------
 for (split in unique(ci_summary_plot$split_label)) {
   for (lr in unique(ci_summary_plot$label_ratio)) {
+    suffix <- paste0("_", split, "_labeled_", sprintf("%02d", as.integer(lr * 100)), ".png")
+    subtitle <- paste0("neg:pos = ", split, " | ", scales::percent(lr, accuracy = 1), " labeled")
 
-    lr_pct <- scales::percent(lr, accuracy = 1)
-    lr_str <- gsub("%", "", lr_pct)
-    filename_suffix <- paste0("_", split, "_labeled_", sprintf("%02d", as.integer(lr * 100)), ".png")
-    subtitle_text <- paste0("neg:pos = ", split, " | ", lr_pct, " labeled")
+    ci_sub <- filter(ci_summary_plot, split_label == split, label_ratio == lr)
+    q_sub <- filter(q_bias_long, split_label == split, label_ratio == lr)
 
-    df_sub <- ci_summary_plot %>%
-      filter(split_label == split, label_ratio == lr)
-
-    # Coverage plot (capped at 70%)
-    p_cov <- ggplot(df_sub,
-                    aes(x = theta_true, y = coverage, color = method, group = method)) +
-      geom_hline(yintercept = 0.95, linetype = "dashed", color = "grey40") +
-      geom_line(linewidth = 1) +
-      geom_point(size = 1.5) +
-      facet_grid(q0_lab ~ q1_lab) +
-      labs(
-        title = "Coverage",
-        subtitle = subtitle_text,
-        x = expression(theta[true]),
-        y = "Coverage",
-        color = "Method"
-      ) +
-      scale_x_continuous(breaks = SIM_CONFIG$thetas) +
-      scale_y_continuous(limits = c(0.70, 1.0)) +
-      plot_base_theme()
-    save_plot(p_cov, paste0("coverage", filename_suffix))
-
-    # CI width plot
-    p_width <- ggplot(df_sub,
-                      aes(x = theta_true, y = ci_width, color = method, group = method)) +
-      geom_line(linewidth = 1) +
-      geom_point(size = 1.5) +
-      facet_grid(q0_lab ~ q1_lab) +
-      labs(
-        title = "CI Width Across Theta",
-        subtitle = subtitle_text,
-        x = expression(theta[true]),
-        y = "Mean CI width",
-        color = "Method"
-      ) +
-      scale_x_continuous(breaks = SIM_CONFIG$thetas) +
-      plot_base_theme()
-    save_plot(p_width, paste0("ci_width", filename_suffix))
-
-    # Bias plot
-    p_bias <- ggplot(df_sub,
-                     aes(x = theta_true, y = bias, color = method, group = method)) +
-      geom_hline(yintercept = 0, linetype = "dotted") +
-      geom_line(linewidth = 1) +
-      geom_point(size = 1.5) +
-      facet_grid(q0_lab ~ q1_lab) +
-      labs(
-        title = "Estimator Bias vs Theta",
-        subtitle = subtitle_text,
-        x = expression(theta[true]),
-        y = "Bias",
-        color = "Method"
-      ) +
-      scale_x_continuous(breaks = SIM_CONFIG$thetas) +
-      plot_base_theme()
-    save_plot(p_bias, paste0("bias", filename_suffix))
-
-    # Bias percent plot
-    p_bias_pct <- ggplot(df_sub,
-                         aes(x = theta_true, y = bias_pct, color = method, group = method)) +
-      geom_hline(yintercept = 0, linetype = "dotted") +
-      geom_line(linewidth = 1) +
-      geom_point(size = 1.5) +
-      facet_grid(q0_lab ~ q1_lab) +
-      labs(
-        title = "Percent Bias vs Theta",
-        subtitle = subtitle_text,
-        x = expression(theta[true]),
-        y = "Bias (%)",
-        color = "Method"
-      ) +
-      scale_x_continuous(breaks = SIM_CONFIG$thetas) +
-      plot_base_theme()
-    save_plot(p_bias_pct, paste0("bias_pct", filename_suffix))
-
-    # Q bias plot
-    df_q_sub <- q_bias_long %>%
-      filter(split_label == split, label_ratio == lr)
-
-    p_q_bias <- ggplot(df_q_sub,
-                       aes(x = theta_true, y = bias, color = metric, group = metric)) +
-      geom_hline(yintercept = 0, linetype = "dotted", color = "grey50") +
-      geom_line(linewidth = 1) +
-      geom_point(size = 1.5) +
-      facet_grid(q0_lab ~ q1_lab) +
-      labs(
-        title = "Calibration Estimate Bias (q0/q1)",
-        subtitle = subtitle_text,
-        x = expression(theta[true]),
-        y = "Bias",
-        color = "Parameter"
-      ) +
-      scale_x_continuous(breaks = SIM_CONFIG$thetas) +
-      plot_base_theme()
-    save_plot(p_q_bias, paste0("q_bias", filename_suffix))
+    save_plot(plot_coverage(ci_sub, q0_lab ~ q1_lab, "Coverage", subtitle, x_breaks = SIM_CONFIG$thetas), paste0("coverage", suffix))
+    save_plot(plot_ci_width(ci_sub, q0_lab ~ q1_lab, "CI Width", subtitle, x_breaks = SIM_CONFIG$thetas), paste0("ci_width", suffix))
+    save_plot(plot_bias(ci_sub, q0_lab ~ q1_lab, "Estimator Bias", subtitle, x_breaks = SIM_CONFIG$thetas), paste0("bias", suffix))
+    save_plot(plot_bias_pct(ci_sub, q0_lab ~ q1_lab, "Percent Bias", subtitle, x_breaks = SIM_CONFIG$thetas), paste0("bias_pct", suffix))
+    save_plot(plot_q_bias(q_sub, q0_lab ~ q1_lab, "Calibration Estimate Bias", subtitle, x_breaks = SIM_CONFIG$thetas), paste0("q_bias", suffix))
   }
 }
 
-# =============================================================================
-# ADDITIONAL PLOTS: q0 == q1 case (diagonal), faceted by q0/q1 and label_ratio
-# =============================================================================
-
+# -----------------------------------------------------------------------------
+# DIAGONAL PLOTS: q0 == q1, faceted by q_val x label_ratio
+# -----------------------------------------------------------------------------
 ci_summary_diag <- ci_summary_plot %>%
   filter(q0 == q1) %>%
   mutate(
     q_val_lab = paste0("q0 = q1 = ", q0),
-    label_ratio_lab = factor(
-      format_label_ratio(label_ratio),
-      levels = format_label_ratio(sort(unique(label_ratio)))
-    )
+    label_ratio_lab = factor(format_label_ratio(label_ratio),
+                             levels = format_label_ratio(sort(unique(label_ratio))))
   )
 
 q_bias_diag <- q_bias_long %>%
   filter(q0 == q1) %>%
   mutate(
     q_val_lab = paste0("q0 = q1 = ", q0),
-    label_ratio_lab = factor(
-      format_label_ratio(label_ratio),
-      levels = format_label_ratio(sort(unique(label_ratio)))
-    )
+    label_ratio_lab = factor(format_label_ratio(label_ratio),
+                             levels = format_label_ratio(sort(unique(label_ratio))))
   )
 
+# Per-split diagonal plots
 for (split in unique(ci_summary_diag$split_label)) {
+  suffix <- paste0("_diag_", split, ".png")
+  subtitle <- paste0("neg:pos = ", split, " | q0 = q1 (diagonal)")
 
-  filename_suffix <- paste0("_diag_", split, ".png")
-  subtitle_text <- paste0("neg:pos = ", split, " | q0 = q1 (diagonal)")
+  ci_sub <- filter(ci_summary_diag, split_label == split)
+  q_sub <- filter(q_bias_diag, split_label == split)
 
-  df_sub <- ci_summary_diag %>%
-    filter(split_label == split)
-
-  # Coverage plot (diagonal, capped at 70%)
-  p_cov_diag <- ggplot(df_sub,
-                       aes(x = theta_true, y = coverage, color = method, group = method)) +
-    geom_hline(yintercept = 0.95, linetype = "dashed", color = "grey40") +
-    geom_line(linewidth = 1) +
-    geom_point(size = 2) +
-    facet_grid(q_val_lab ~ label_ratio_lab) +
-    labs(
-      title = "Coverage (q0 = q1)",
-      subtitle = subtitle_text,
-      x = expression(theta[true]),
-      y = "Coverage",
-      color = "Method"
-    ) +
-    scale_x_continuous(breaks = SIM_CONFIG$thetas) +
-    scale_y_continuous(limits = c(0.70, 1.0)) +
-    plot_base_theme()
-  save_plot(p_cov_diag, paste0("coverage", filename_suffix), width = 16, height = 10)
-
-  # CI width plot (diagonal)
-  p_width_diag <- ggplot(df_sub,
-                         aes(x = theta_true, y = ci_width, color = method, group = method)) +
-    geom_line(linewidth = 1) +
-    geom_point(size = 2) +
-    facet_grid(q_val_lab ~ label_ratio_lab) +
-    labs(
-      title = "CI Width (q0 = q1)",
-      subtitle = subtitle_text,
-      x = expression(theta[true]),
-      y = "Mean CI width",
-      color = "Method"
-    ) +
-    scale_x_continuous(breaks = SIM_CONFIG$thetas) +
-    plot_base_theme()
-  save_plot(p_width_diag, paste0("ci_width", filename_suffix), width = 16, height = 10)
-
-  # Bias plot (diagonal)
-  p_bias_diag <- ggplot(df_sub,
-                        aes(x = theta_true, y = bias, color = method, group = method)) +
-    geom_hline(yintercept = 0, linetype = "dotted") +
-    geom_line(linewidth = 1) +
-    geom_point(size = 2) +
-    facet_grid(q_val_lab ~ label_ratio_lab) +
-    labs(
-      title = "Estimator Bias (q0 = q1)",
-      subtitle = subtitle_text,
-      x = expression(theta[true]),
-      y = "Bias",
-      color = "Method"
-    ) +
-    scale_x_continuous(breaks = SIM_CONFIG$thetas) +
-    plot_base_theme()
-  save_plot(p_bias_diag, paste0("bias", filename_suffix), width = 16, height = 10)
-
-  # Bias percent plot (diagonal)
-  p_bias_pct_diag <- ggplot(df_sub,
-                            aes(x = theta_true, y = bias_pct, color = method, group = method)) +
-    geom_hline(yintercept = 0, linetype = "dotted") +
-    geom_line(linewidth = 1) +
-    geom_point(size = 2) +
-    facet_grid(q_val_lab ~ label_ratio_lab) +
-    labs(
-      title = "Percent Bias (q0 = q1)",
-      subtitle = subtitle_text,
-      x = expression(theta[true]),
-      y = "Bias (%)",
-      color = "Method"
-    ) +
-    scale_x_continuous(breaks = SIM_CONFIG$thetas) +
-    plot_base_theme()
-  save_plot(p_bias_pct_diag, paste0("bias_pct", filename_suffix), width = 16, height = 10)
-
-  # Q bias plot (diagonal)
-  df_q_sub <- q_bias_diag %>%
-    filter(split_label == split)
-
-  p_q_bias_diag <- ggplot(df_q_sub,
-                          aes(x = theta_true, y = bias, color = metric, group = metric)) +
-    geom_hline(yintercept = 0, linetype = "dotted", color = "grey50") +
-    geom_line(linewidth = 1) +
-    geom_point(size = 2) +
-    facet_grid(q_val_lab ~ label_ratio_lab) +
-    labs(
-      title = "Calibration Estimate Bias (q0 = q1)",
-      subtitle = subtitle_text,
-      x = expression(theta[true]),
-      y = "Bias",
-      color = "Parameter"
-    ) +
-    scale_x_continuous(breaks = SIM_CONFIG$thetas) +
-    plot_base_theme()
-  save_plot(p_q_bias_diag, paste0("q_bias", filename_suffix), width = 16, height = 10)
+  save_plot(plot_coverage(ci_sub, q_val_lab ~ label_ratio_lab, "Coverage (q0 = q1)", subtitle, x_breaks = SIM_CONFIG$thetas, point_size = 2), paste0("coverage", suffix), 16, 10)
+  save_plot(plot_ci_width(ci_sub, q_val_lab ~ label_ratio_lab, "CI Width (q0 = q1)", subtitle, x_breaks = SIM_CONFIG$thetas, point_size = 2), paste0("ci_width", suffix), 16, 10)
+  save_plot(plot_bias(ci_sub, q_val_lab ~ label_ratio_lab, "Estimator Bias (q0 = q1)", subtitle, x_breaks = SIM_CONFIG$thetas, point_size = 2), paste0("bias", suffix), 16, 10)
+  save_plot(plot_bias_pct(ci_sub, q_val_lab ~ label_ratio_lab, "Percent Bias (q0 = q1)", subtitle, x_breaks = SIM_CONFIG$thetas, point_size = 2), paste0("bias_pct", suffix), 16, 10)
+  save_plot(plot_q_bias(q_sub, q_val_lab ~ label_ratio_lab, "Calibration Estimate Bias (q0 = q1)", subtitle, x_breaks = SIM_CONFIG$thetas, point_size = 2), paste0("q_bias", suffix), 16, 10)
 }
 
-# =============================================================================
-# AGGREGATE DIAGONAL PLOTS: q0 == q1, all neg:pos splits with linetype
-# =============================================================================
+# -----------------------------------------------------------------------------
+# AGGREGATE DIAGONAL PLOTS: All neg:pos splits with linetype
+# -----------------------------------------------------------------------------
+save_plot(plot_coverage(ci_summary_diag, q_val_lab ~ label_ratio_lab, "Coverage (q0 = q1)", linetype_var = split_label, use_aggregate = TRUE, x_breaks = SIM_CONFIG$thetas, point_size = 2), "coverage_diag_aggregate.png", 16, 10)
+save_plot(plot_ci_width(ci_summary_diag, q_val_lab ~ label_ratio_lab, "CI Width (q0 = q1)", linetype_var = split_label, use_aggregate = TRUE, x_breaks = SIM_CONFIG$thetas, point_size = 2), "ci_width_diag_aggregate.png", 16, 10)
+save_plot(plot_bias(ci_summary_diag, q_val_lab ~ label_ratio_lab, "Estimator Bias (q0 = q1)", linetype_var = split_label, use_aggregate = TRUE, x_breaks = SIM_CONFIG$thetas, point_size = 2), "bias_diag_aggregate.png", 16, 10)
+save_plot(plot_bias_pct(ci_summary_diag, q_val_lab ~ label_ratio_lab, "Percent Bias (q0 = q1)", linetype_var = split_label, use_aggregate = TRUE, x_breaks = SIM_CONFIG$thetas, point_size = 2), "bias_pct_diag_aggregate.png", 16, 10)
+save_plot(plot_q_bias(q_bias_diag, q_val_lab ~ label_ratio_lab, "Calibration Estimate Bias (q0 = q1)", linetype_var = split_label, use_aggregate = TRUE, x_breaks = SIM_CONFIG$thetas, point_size = 2), "q_bias_diag_aggregate.png", 16, 10)
 
-# Coverage plot (diagonal, aggregate, capped at 70%)
-p_cov_diag_agg <- ggplot(ci_summary_diag,
-                         aes(x = theta_true, y = coverage,
-                             color = method, linetype = split_label,
-                             group = interaction(method, split_label))) +
-  geom_hline(yintercept = 0.95, linetype = "dashed", color = "grey40") +
-  geom_line(linewidth = 1) +
-  geom_point(size = 2) +
-  facet_grid(q_val_lab ~ label_ratio_lab) +
-  labs(
-    title = "Coverage (q0 = q1)",
-    subtitle = "All neg:pos ratios",
-    x = expression(theta[true]),
-    y = "Coverage",
-    color = "Method",
-    linetype = "neg:pos"
-  ) +
-  scale_x_continuous(breaks = SIM_CONFIG$thetas) +
-  scale_y_continuous(limits = c(0.70, 1.0)) +
-  plot_base_theme()
-save_plot(p_cov_diag_agg, "coverage_diag_aggregate.png", width = 16, height = 10)
-
-# CI width plot (diagonal, aggregate)
-p_width_diag_agg <- ggplot(ci_summary_diag,
-                           aes(x = theta_true, y = ci_width,
-                               color = method, linetype = split_label,
-                               group = interaction(method, split_label))) +
-  geom_line(linewidth = 1) +
-  geom_point(size = 2) +
-  facet_grid(q_val_lab ~ label_ratio_lab) +
-  labs(
-    title = "CI Width (q0 = q1)",
-    subtitle = "All neg:pos ratios",
-    x = expression(theta[true]),
-    y = "Mean CI width",
-    color = "Method",
-    linetype = "neg:pos"
-  ) +
-  scale_x_continuous(breaks = SIM_CONFIG$thetas) +
-  plot_base_theme()
-save_plot(p_width_diag_agg, "ci_width_diag_aggregate.png", width = 16, height = 10)
-
-# Bias plot (diagonal, aggregate)
-p_bias_diag_agg <- ggplot(ci_summary_diag,
-                          aes(x = theta_true, y = bias,
-                              color = method, linetype = split_label,
-                              group = interaction(method, split_label))) +
-  geom_hline(yintercept = 0, linetype = "dotted") +
-  geom_line(linewidth = 1) +
-  geom_point(size = 2) +
-  facet_grid(q_val_lab ~ label_ratio_lab) +
-  labs(
-    title = "Estimator Bias (q0 = q1)",
-    subtitle = "All neg:pos ratios",
-    x = expression(theta[true]),
-    y = "Bias",
-    color = "Method",
-    linetype = "neg:pos"
-  ) +
-  scale_x_continuous(breaks = SIM_CONFIG$thetas) +
-  plot_base_theme()
-save_plot(p_bias_diag_agg, "bias_diag_aggregate.png", width = 16, height = 10)
-
-# Bias percent plot (diagonal, aggregate)
-p_bias_pct_diag_agg <- ggplot(ci_summary_diag,
-                              aes(x = theta_true, y = bias_pct,
-                                  color = method, linetype = split_label,
-                                  group = interaction(method, split_label))) +
-  geom_hline(yintercept = 0, linetype = "dotted") +
-  geom_line(linewidth = 1) +
-  geom_point(size = 2) +
-  facet_grid(q_val_lab ~ label_ratio_lab) +
-  labs(
-    title = "Percent Bias (q0 = q1)",
-    subtitle = "All neg:pos ratios",
-    x = expression(theta[true]),
-    y = "Bias (%)",
-    color = "Method",
-    linetype = "neg:pos"
-  ) +
-  scale_x_continuous(breaks = SIM_CONFIG$thetas) +
-  plot_base_theme()
-save_plot(p_bias_pct_diag_agg, "bias_pct_diag_aggregate.png", width = 16, height = 10)
-
-# Q bias plot (diagonal, aggregate)
-p_q_bias_diag_agg <- ggplot(q_bias_diag,
-                            aes(x = theta_true, y = bias,
-                                color = metric, linetype = split_label,
-                                group = interaction(metric, split_label))) +
-  geom_hline(yintercept = 0, linetype = "dotted", color = "grey50") +
-  geom_line(linewidth = 1) +
-  geom_point(size = 2) +
-  facet_grid(q_val_lab ~ label_ratio_lab) +
-  labs(
-    title = "Calibration Estimate Bias (q0 = q1)",
-    subtitle = "All neg:pos ratios",
-    x = expression(theta[true]),
-    y = "Bias",
-    color = "Parameter",
-    linetype = "neg:pos"
-  ) +
-  scale_x_continuous(breaks = SIM_CONFIG$thetas) +
-  plot_base_theme()
-save_plot(p_q_bias_diag_agg, "q_bias_diag_aggregate.png", width = 16, height = 10)
-
-# =============================================================================
+# -----------------------------------------------------------------------------
 # OFF-DIAGONAL PLOTS: (q0=0.6, q1=0.9) and (q0=0.9, q1=0.6)
-# =============================================================================
-
+# -----------------------------------------------------------------------------
 off_diag_cases <- list(
   list(q0 = 0.6, q1 = 0.9, label = "q0=0.6_q1=0.9"),
   list(q0 = 0.9, q1 = 0.6, label = "q0=0.9_q1=0.6")
 )
 
 for (case in off_diag_cases) {
-
-  ci_summary_offdiag <- ci_summary_plot %>%
+  ci_sub <- ci_summary_plot %>%
     filter(q0 == case$q0, q1 == case$q1) %>%
-    mutate(
-      label_ratio_lab = factor(
-        format_label_ratio(label_ratio),
-        levels = format_label_ratio(sort(unique(label_ratio)))
-      )
-    )
+    mutate(label_ratio_lab = factor(format_label_ratio(label_ratio),
+                                    levels = format_label_ratio(sort(unique(label_ratio)))))
 
-  q_bias_offdiag <- q_bias_long %>%
+  q_sub <- q_bias_long %>%
     filter(q0 == case$q0, q1 == case$q1) %>%
-    mutate(
-      label_ratio_lab = factor(
-        format_label_ratio(label_ratio),
-        levels = format_label_ratio(sort(unique(label_ratio)))
-      )
-    )
+    mutate(label_ratio_lab = factor(format_label_ratio(label_ratio),
+                                    levels = format_label_ratio(sort(unique(label_ratio)))))
 
-  filename_suffix <- paste0("_offdiag_", case$label, ".png")
-  subtitle_text <- paste0("q0 = ", case$q0, ", q1 = ", case$q1, " | All neg:pos ratios")
+  suffix <- paste0("_offdiag_", case$label, ".png")
+  subtitle <- paste0("q0 = ", case$q0, ", q1 = ", case$q1, " | All neg:pos ratios")
+  title_prefix <- paste0(" (q0 = ", case$q0, ", q1 = ", case$q1, ")")
 
-  # Coverage plot (off-diagonal, capped at 70%)
-  p_cov_offdiag <- ggplot(ci_summary_offdiag,
-                          aes(x = theta_true, y = coverage,
-                              color = method, linetype = split_label,
-                              group = interaction(method, split_label))) +
-    geom_hline(yintercept = 0.95, linetype = "dashed", color = "grey40") +
-    geom_line(linewidth = 1) +
-    geom_point(size = 2) +
-    facet_wrap(~ label_ratio_lab, nrow = 1) +
-    labs(
-      title = paste0("Coverage (q0 = ", case$q0, ", q1 = ", case$q1, ")"),
-      subtitle = subtitle_text,
-      x = expression(theta[true]),
-      y = "Coverage",
-      color = "Method",
-      linetype = "neg:pos"
-    ) +
-    scale_x_continuous(breaks = SIM_CONFIG$thetas) +
-    scale_y_continuous(limits = c(0.70, 1.0)) +
-    plot_base_theme()
-  save_plot(p_cov_offdiag, paste0("coverage", filename_suffix), width = 18, height = 5)
-
-  # CI width plot (off-diagonal)
-  p_width_offdiag <- ggplot(ci_summary_offdiag,
-                            aes(x = theta_true, y = ci_width,
-                                color = method, linetype = split_label,
-                                group = interaction(method, split_label))) +
-    geom_line(linewidth = 1) +
-    geom_point(size = 2) +
-    facet_wrap(~ label_ratio_lab, nrow = 1) +
-    labs(
-      title = paste0("CI Width (q0 = ", case$q0, ", q1 = ", case$q1, ")"),
-      subtitle = subtitle_text,
-      x = expression(theta[true]),
-      y = "Mean CI width",
-      color = "Method",
-      linetype = "neg:pos"
-    ) +
-    scale_x_continuous(breaks = SIM_CONFIG$thetas) +
-    plot_base_theme()
-  save_plot(p_width_offdiag, paste0("ci_width", filename_suffix), width = 18, height = 5)
-
-  # Bias plot (off-diagonal)
-  p_bias_offdiag <- ggplot(ci_summary_offdiag,
-                           aes(x = theta_true, y = bias,
-                               color = method, linetype = split_label,
-                               group = interaction(method, split_label))) +
-    geom_hline(yintercept = 0, linetype = "dotted") +
-    geom_line(linewidth = 1) +
-    geom_point(size = 2) +
-    facet_wrap(~ label_ratio_lab, nrow = 1) +
-    labs(
-      title = paste0("Estimator Bias (q0 = ", case$q0, ", q1 = ", case$q1, ")"),
-      subtitle = subtitle_text,
-      x = expression(theta[true]),
-      y = "Bias",
-      color = "Method",
-      linetype = "neg:pos"
-    ) +
-    scale_x_continuous(breaks = SIM_CONFIG$thetas) +
-    plot_base_theme()
-  save_plot(p_bias_offdiag, paste0("bias", filename_suffix), width = 18, height = 5)
-
-  # Bias percent plot (off-diagonal)
-  p_bias_pct_offdiag <- ggplot(ci_summary_offdiag,
-                               aes(x = theta_true, y = bias_pct,
-                                   color = method, linetype = split_label,
-                                   group = interaction(method, split_label))) +
-    geom_hline(yintercept = 0, linetype = "dotted") +
-    geom_line(linewidth = 1) +
-    geom_point(size = 2) +
-    facet_wrap(~ label_ratio_lab, nrow = 1) +
-    labs(
-      title = paste0("Percent Bias (q0 = ", case$q0, ", q1 = ", case$q1, ")"),
-      subtitle = subtitle_text,
-      x = expression(theta[true]),
-      y = "Bias (%)",
-      color = "Method",
-      linetype = "neg:pos"
-    ) +
-    scale_x_continuous(breaks = SIM_CONFIG$thetas) +
-    plot_base_theme()
-  save_plot(p_bias_pct_offdiag, paste0("bias_pct", filename_suffix), width = 18, height = 5)
-
-  # Q bias plot (off-diagonal)
-  p_q_bias_offdiag <- ggplot(q_bias_offdiag,
-                             aes(x = theta_true, y = bias,
-                                 color = metric, linetype = split_label,
-                                 group = interaction(metric, split_label))) +
-    geom_hline(yintercept = 0, linetype = "dotted", color = "grey50") +
-    geom_line(linewidth = 1) +
-    geom_point(size = 2) +
-    facet_wrap(~ label_ratio_lab, nrow = 1) +
-    labs(
-      title = paste0("Calibration Estimate Bias (q0 = ", case$q0, ", q1 = ", case$q1, ")"),
-      subtitle = subtitle_text,
-      x = expression(theta[true]),
-      y = "Bias",
-      color = "Parameter",
-      linetype = "neg:pos"
-    ) +
-    scale_x_continuous(breaks = SIM_CONFIG$thetas) +
-    plot_base_theme()
-  save_plot(p_q_bias_offdiag, paste0("q_bias", filename_suffix), width = 18, height = 5)
+  save_plot(plot_coverage(ci_sub, ~ label_ratio_lab, paste0("Coverage", title_prefix), subtitle, linetype_var = split_label, use_aggregate = TRUE, x_breaks = SIM_CONFIG$thetas, point_size = 2), paste0("coverage", suffix), 18, 6)
+  save_plot(plot_ci_width(ci_sub, ~ label_ratio_lab, paste0("CI Width", title_prefix), subtitle, linetype_var = split_label, use_aggregate = TRUE, x_breaks = SIM_CONFIG$thetas, point_size = 2), paste0("ci_width", suffix), 18, 6)
+  save_plot(plot_bias(ci_sub, ~ label_ratio_lab, paste0("Estimator Bias", title_prefix), subtitle, linetype_var = split_label, use_aggregate = TRUE, x_breaks = SIM_CONFIG$thetas, point_size = 2), paste0("bias", suffix), 18, 6)
+  save_plot(plot_bias_pct(ci_sub, ~ label_ratio_lab, paste0("Percent Bias", title_prefix), subtitle, linetype_var = split_label, use_aggregate = TRUE, x_breaks = SIM_CONFIG$thetas, point_size = 2), paste0("bias_pct", suffix), 18, 6)
+  save_plot(plot_q_bias(q_sub, ~ label_ratio_lab, paste0("Calibration Estimate Bias", title_prefix), subtitle, linetype_var = split_label, use_aggregate = TRUE, x_breaks = SIM_CONFIG$thetas, point_size = 2), paste0("q_bias", suffix), 18, 6)
 }
 
 message("Results saved to ", results_dir)
