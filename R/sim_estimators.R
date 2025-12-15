@@ -230,14 +230,14 @@ g_rogan_gladen <- function(z, q0_pilot, q1_pilot, eps = 1e-3) {
   ifelse(abs(J) < eps, z, pmin(pmax((z + q0_pilot - 1) / J, 0), 1))
 }
 
-#' Posterior P(Y=1 | \\hat Z=z) under plug-in confusion matrix.
+#' Posterior \eqn{P(Y = 1 \mid \hat Z = z)} under plug-in confusion matrix.
 #'
 #' This transform corresponds to the Bayes correction described in the
 #' general PPI-with-g framework: use pilot prevalence and judge sensitivity/
 #' specificity to predict the posterior probability that the underlying
 #' human label is positive.
 #'
-#' @param z Binary surrogate outputs (0/1) or probabilities in [0,1].
+#' @param z Binary surrogate outputs (0/1) or probabilities in \eqn{[0,1]}.
 #' @param q0_pilot,q1_pilot Pilot specificity/sensitivity.
 #' @param theta_pilot Pilot prevalence (e.g., mean of labeled outcomes).
 #' @param eps Small positive value preventing division by zero.
@@ -256,7 +256,10 @@ g_posterior_prob <- function(z, q0_pilot, q1_pilot, theta_pilot, eps = 1e-6) {
 
 #' Constrained least-squares Rogan–Gladen estimator.
 #'
-#' Solves \\min_{\\pi \\in \\Delta_{K-1}} ||\\hat p - \\hat M \\pi||_2^2 to enforce
+#' Solves the quadratic program
+#' \deqn{
+#'   \min_{\pi \in \Delta_{K-1}} \left\| \hat p - \hat M \pi \right\|_2^2
+#' } to enforce
 #' simplex structure on the prevalence vector.
 #'
 #' @param M_hat Estimated confusion matrix (K x K).
@@ -277,7 +280,7 @@ rg_least_squares_simplex <- function(M_hat, p_hat, jitter = 1e-6) {
 
 #' Identity g-transform for multiclass surrogates.
 #'
-#' @param S Integer vector of surrogate class labels in {1,...,K}.
+#' @param S Integer vector of surrogate class labels in \eqn{\{1,...,K\}}.
 #' @param context List containing at least `K`.
 #'
 #' @return Matrix with one-hot rows representing S.
@@ -314,8 +317,8 @@ g_confusion_inverse <- function(S, context) {
 #' @param K Number of classes.
 #' @param laplace Small positive smoothing constant added to each cell.
 #'
-#' @return K x K column-stochastic matrix \hat M with entries
-#'   P(S=a | Y=b).
+#' @return K x K column-stochastic matrix \eqn{\hat{M}} with entries
+#'   \eqn{P(S=a \mid Y=b)}.
 #' @export
 estimate_confusion_matrix <- function(S, Y, K, laplace = 1e-3) {
   M <- matrix(laplace, nrow = K, ncol = K)
@@ -339,6 +342,9 @@ estimate_confusion_matrix <- function(S, Y, K, laplace = 1e-3) {
 #' @param g_transform Function mapping (S, context) to an n x K matrix.
 #' @param context List passed into `g_transform` (must include `K`).
 #' @param alpha Miscoverage level for per-class Wald intervals.
+#' @param project Logical; if TRUE (default), the raw class-prevalence
+#'   estimates are projected onto the probability simplex so that they
+#'   are nonnegative and sum to one.
 #'
 #' @return A list containing per-class prevalence estimates, variance
 #'   estimates, and Wald confidence limits.
@@ -443,15 +449,15 @@ covariate_formula <- function(response, covariates) {
 
 #' Fit covariate-dependent misclassification models.
 #'
-#' Estimates P(S=1 | Y=1, X) and P(S=1 | Y=0, X) via logistic regression on the
+#' Estimates \eqn{P(S=1 \mid Y=1, X)} and \eqn{P(S=1 \mid Y=0, X)} via logistic regression on the
 #' calibration data.
 #'
 #' @param covariates Data frame of covariates observed on the calibration set.
 #' @param Y Calibration human labels.
 #' @param S Calibration surrogate outputs (0/1).
 #'
-#' @return A list with two glm objects: one for the positive class (tp_model)
-#'   and one for the negative class (fp_model).
+#' @return A list with two glm objects: one for the positive class (`tp_model`)
+#'   and one for the negative class (`fp_model`).
 #' @export
 fit_misclassification_models <- function(covariates, Y, S) {
   covariates <- as.data.frame(covariates)
@@ -473,7 +479,7 @@ fit_misclassification_models <- function(covariates, Y, S) {
 
 #' Covariate-adjusted Rogan--Gladen transform.
 #'
-#' Uses covariate-specific estimates of q0(X) and q1(X) to form an adjusted
+#' Uses covariate-specific estimates of \eqn{q_0(X)} and \eqn{q_1(X)} to form an adjusted
 #' surrogate via the RG formula.
 #'
 #' @param S Surrogate outputs (0/1) on either labeled or unlabeled data.
@@ -494,7 +500,7 @@ g_covariate_rg <- function(S, covariates, models, eps = 1e-4) {
   clamp01(g_val, eps = eps)
 }
 
-#' Fit a RePPI-style logistic regression for g(S,X).
+#' Fit a RePPI-style logistic regression for \eqn{g(S,X)}.
 #'
 #' @param covariates Data frame of covariates on the calibration set.
 #' @param S Calibration surrogate outputs (0/1).
@@ -520,7 +526,7 @@ fit_reppi_model <- function(covariates, S, Y) {
 #' @param covariates Data frame of covariates.
 #' @param model Fitted glm from `fit_reppi_model`.
 #'
-#' @return Predicted probabilities of Y=1 given (S,X).
+#' @return Predicted probabilities, \eqn{P(Y = 1 \mid S, X)}.
 #' @export
 g_reppi_predict <- function(S, covariates, model) {
   covariates <- as.data.frame(covariates)
