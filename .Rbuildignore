@@ -1,2 +1,5 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^results$
+^simulation_llm_vs_ppi\.R$
+^LICENSE\.md$

@@ -33,11 +33,12 @@ We compare three main approaches:
 ## Installation
 
 ```r
-# Install dependencies
-install.packages(c("tidyverse", "future", "furrr", "quadprog"))
-
-# Install package
-devtools::install_local(".")
+# Install devtools if needed
+if (!requireNamespace("devtools", quietly = TRUE)) {
+  install.packages("devtools")
+}
+# Install the package and its dependencies
+devtools::install_local(".", dependencies = TRUE)
 ```
 
 ## Usage

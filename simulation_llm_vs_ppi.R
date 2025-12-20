@@ -5,9 +5,11 @@ library(debiasLLMReporting)
 
 source("R/plot_utils.R")
 
-plan(multisession, workers = max(1, parallel::detectCores() - 1))
+# respects Slurm/LSF/containers
+plan(multisession, workers = availableCores())
 set.seed(123)
 
+# Simulation configuration
 SIM_CONFIG <- list(
   sample_size = 5000L,
   label_ratios = c(0.01, 0.05, 0.10, 0.20, 0.50),
@@ -23,12 +25,11 @@ SIM_CONFIG <- list(
   )
 )
 
-format_label_ratio <- function(x) paste0(scales::percent(x, accuracy = 1), " labeled")
-
 g_specs <- list(
   list(label = "PPI", transform = function(scores, context) scores)
 )
 
+# Compute calibration and test sizes
 derive_label_counts <- function(label_ratio, sample_size, m0_prop) {
   total_labels <- max(4L, round(label_ratio * sample_size))
   m0 <- max(2L, round(total_labels * m0_prop))
@@ -45,25 +46,31 @@ derive_label_counts <- function(label_ratio, sample_size, m0_prop) {
   )
 }
 
+# One replication for one grid point
 sim_one_condition <- function(theta, q0, q1, label_ratio, sample_size,
                               signal, g_specs, rep_id, nominal,
                               m0_prop, split_label) {
+  # counts and required total sample size
   counts <- derive_label_counts(label_ratio, sample_size, m0_prop)
   N_required <- max(counts$n_ppi + counts$N_ppi,
                     counts$n_llm_test + counts$m0 + counts$m1)
+  # true labels Y
   dgp <- generate_dgp_data(N_required, theta, signal)
   Y <- dgp$Y
+  # judge output Z w/ sensitivity and specificity
   Z <- ifelse(
     Y == 1,
     rbinom(N_required, 1, q1),
     rbinom(N_required, 1, 1 - q0)
   )
   f_hat <- Z
+  # Split into calibration/test/unlabeled for estimators
   Y_L <- Y[seq_len(counts$n_ppi)]
   f_L <- f_hat[seq_len(counts$n_ppi)]
   f_U <- f_hat[(counts$n_ppi + 1):(counts$n_ppi + counts$N_ppi)]
   Z_test <- f_hat[seq_len(counts$n_llm_test)]
   p_hat <- mean(Z_test)
+  # Calibration data for estimating q0, q1
   idx_neg <- which(Y == 0)
   idx_pos <- which(Y == 1)
   if (length(idx_neg) < counts$m0 || length(idx_pos) < counts$m1) {
@@ -75,6 +82,7 @@ sim_one_condition <- function(theta, q0, q1, label_ratio, sample_size,
   q1_hat <- mean(Z_cal1 == 1)
   theta_pilot <- mean(Y_L)
   g_context <- list(q0_hat = q0_hat, q1_hat = q1_hat, theta_pilot = theta_pilot)
+  # PPI estimator
   ppi_results <- map_dfr(g_specs, function(spec) {
     f_L_g <- spec$transform(f_L, g_context)
     f_U_g <- spec$transform(f_U, g_context)
@@ -88,6 +96,7 @@ sim_one_condition <- function(theta, q0, q1, label_ratio, sample_size,
       lambda = NA_real_
     )
   })
+  # PPI++ estimator
   ppi_pp_est <- ppi_pp_point_and_ci_general(Y_L = Y_L, f_L = f_L, f_U = f_U)
   ppi_pp_tbl <- tibble(
     method = "PPI++",
@@ -97,6 +106,7 @@ sim_one_condition <- function(theta, q0, q1, label_ratio, sample_size,
     ci_upper = ppi_pp_est$ci_upper,
     lambda = ppi_pp_est$lambda
   )
+  # LLM-as-a-judge corrected by Rogan-Gladen estimator
   llm_est <- llm_point_and_ci(
     p_hat = p_hat,
     q0_hat = q0_hat,
@@ -149,6 +159,7 @@ sim_one_condition <- function(theta, q0, q1, label_ratio, sample_size,
     )
 }
 
+# B replicates for one configuration
 run_one_grid <- function(theta, q0, q1, label_ratio, m0_prop, split_label) {
   map_dfr(
     1:SIM_CONFIG$B,
@@ -193,12 +204,13 @@ res_all <- future_pmap_dfr(
     split_label = param_grid$split_label
   ),
   run_one_grid,
-  .progress = TRUE,
+  .progress = FALSE,
   .options = furrr_options(seed = TRUE)
 )
 
 readr::write_csv(res_all, file.path(results_dir, "raw_simulation_results.csv"))
 
+# CI + bias summary per (theta, q0, q1, label_ratio, split, method) over Monte Carlo reps
 ci_summary <- res_all %>%
   filter(!is.na(theta_hat)) %>%
   mutate(
@@ -220,6 +232,7 @@ ci_summary <- res_all %>%
 
 readr::write_csv(ci_summary, file.path(results_dir, "ci_summary.csv"))
 
+# Calibration bias simmary for (q0hat, q1hat)
 q_est_summary <- res_all %>%
   distinct(theta_true, q0, q1, label_ratio, split_label, sample_size, rep, q0_hat, q1_hat) %>%
   group_by(theta_true, q0, q1, label_ratio, split_label, sample_size) %>%
@@ -245,14 +258,14 @@ save_plot <- function(plot_obj, filename, width = 14, height = 12) {
 # Prepare data for plotting
 ci_summary_plot <- ci_summary %>%
   mutate(
-    split_label = recode(split_label, "q0_20" = "20:80", "q0_50" = "50:50", "q0_80" = "80:20"),
+    split_label = factor(split_label, levels = c("20:80", "50:50", "80:20")),
     bias_pct = dplyr::if_else(theta_true != 0, 100 * bias / theta_true, NA_real_),
     q0_lab = paste0("q0 = ", q0),
     q1_lab = paste0("q1 = ", q1)
   )
 
 q_bias_long <- q_est_summary %>%
-  mutate(split_label = recode(split_label, "q0_20" = "20:80", "q0_50" = "50:50", "q0_80" = "80:20")) %>%
+  mutate(split_label = factor(split_label, levels = c("20:80", "50:50", "80:20"))) %>%
   pivot_longer(cols = c(q0_bias, q1_bias), names_to = "metric", values_to = "bias") %>%
   mutate(
     metric = recode(metric, q0_bias = "q0", q1_bias = "q1"),
@@ -260,9 +273,21 @@ q_bias_long <- q_est_summary %>%
     q1_lab = paste0("q1 = ", q1)
   )
 
+# DIAGNOSE: After building ci_summary_plot and q_bias_long
+message("ci_summary columns: ", paste(names(ci_summary_plot), collapse = ", "))
+message("q_bias_long columns: ", paste(names(q_bias_long), collapse = ", "))
+message("split_label levels: ", paste(levels(ci_summary_plot$split_label), collapse = ", "))
+stopifnot("split_label" %in% names(ci_summary_plot),
+          "split_label" %in% names(q_bias_long))
+
+# Optional: verify in summaries too
+stopifnot("split_label" %in% names(ci_summary),
+          "split_label" %in% names(q_est_summary))
+
 # -----------------------------------------------------------------------------
 # GRID PLOTS: One plot per (split, label_ratio), faceted by q0 x q1
 # -----------------------------------------------------------------------------
+
 for (split in unique(ci_summary_plot$split_label)) {
   for (lr in unique(ci_summary_plot$label_ratio)) {
     suffix <- paste0("_", split, "_labeled_", sprintf("%02d", as.integer(lr * 100)), ".png")
@@ -270,6 +295,9 @@ for (split in unique(ci_summary_plot$split_label)) {
 
     ci_sub <- filter(ci_summary_plot, split_label == split, label_ratio == lr)
     q_sub <- filter(q_bias_long, split_label == split, label_ratio == lr)
+
+    message("Plotting: split=", split, " lr=", lr, " n=", nrow(ci_sub))
+    stopifnot("split_label" %in% names(ci_sub), "split_label" %in% names(q_sub))
 
     save_plot(plot_coverage(ci_sub, q0_lab ~ q1_lab, "Coverage", subtitle, x_breaks = SIM_CONFIG$thetas), paste0("coverage", suffix))
     save_plot(plot_ci_width(ci_sub, q0_lab ~ q1_lab, "CI Width", subtitle, x_breaks = SIM_CONFIG$thetas), paste0("ci_width", suffix))
@@ -298,6 +326,8 @@ q_bias_diag <- q_bias_long %>%
                              levels = format_label_ratio(sort(unique(label_ratio))))
   )
 
+
+
 # Per-split diagonal plots
 for (split in unique(ci_summary_diag$split_label)) {
   suffix <- paste0("_diag_", split, ".png")
@@ -305,6 +335,9 @@ for (split in unique(ci_summary_diag$split_label)) {
 
   ci_sub <- filter(ci_summary_diag, split_label == split)
   q_sub <- filter(q_bias_diag, split_label == split)
+
+  message("Plotting: split=", split, " lr=", lr, " n=", nrow(ci_sub))
+  stopifnot("split_label" %in% names(ci_sub), "split_label" %in% names(q_sub))
 
   save_plot(plot_coverage(ci_sub, q_val_lab ~ label_ratio_lab, "Coverage (q0 = q1)", subtitle, x_breaks = SIM_CONFIG$thetas, point_size = 2), paste0("coverage", suffix), 16, 10)
   save_plot(plot_ci_width(ci_sub, q_val_lab ~ label_ratio_lab, "CI Width (q0 = q1)", subtitle, x_breaks = SIM_CONFIG$thetas, point_size = 2), paste0("ci_width", suffix), 16, 10)
@@ -316,11 +349,11 @@ for (split in unique(ci_summary_diag$split_label)) {
 # -----------------------------------------------------------------------------
 # AGGREGATE DIAGONAL PLOTS: All neg:pos splits with linetype
 # -----------------------------------------------------------------------------
-save_plot(plot_coverage(ci_summary_diag, q_val_lab ~ label_ratio_lab, "Coverage (q0 = q1)", linetype_var = split_label, use_aggregate = TRUE, x_breaks = SIM_CONFIG$thetas, point_size = 2), "coverage_diag_aggregate.png", 16, 10)
-save_plot(plot_ci_width(ci_summary_diag, q_val_lab ~ label_ratio_lab, "CI Width (q0 = q1)", linetype_var = split_label, use_aggregate = TRUE, x_breaks = SIM_CONFIG$thetas, point_size = 2), "ci_width_diag_aggregate.png", 16, 10)
-save_plot(plot_bias(ci_summary_diag, q_val_lab ~ label_ratio_lab, "Estimator Bias (q0 = q1)", linetype_var = split_label, use_aggregate = TRUE, x_breaks = SIM_CONFIG$thetas, point_size = 2), "bias_diag_aggregate.png", 16, 10)
-save_plot(plot_bias_pct(ci_summary_diag, q_val_lab ~ label_ratio_lab, "Percent Bias (q0 = q1)", linetype_var = split_label, use_aggregate = TRUE, x_breaks = SIM_CONFIG$thetas, point_size = 2), "bias_pct_diag_aggregate.png", 16, 10)
-save_plot(plot_q_bias(q_bias_diag, q_val_lab ~ label_ratio_lab, "Calibration Estimate Bias (q0 = q1)", linetype_var = split_label, use_aggregate = TRUE, x_breaks = SIM_CONFIG$thetas, point_size = 2), "q_bias_diag_aggregate.png", 16, 10)
+save_plot(plot_coverage(ci_summary_diag, q_val_lab ~ label_ratio_lab, "Coverage (q0 = q1)", linetype_var = "split_label", use_aggregate = TRUE, x_breaks = SIM_CONFIG$thetas, point_size = 2), "coverage_diag_aggregate.png", 16, 10)
+save_plot(plot_ci_width(ci_summary_diag, q_val_lab ~ label_ratio_lab, "CI Width (q0 = q1)", linetype_var = "split_label", use_aggregate = TRUE, x_breaks = SIM_CONFIG$thetas, point_size = 2), "ci_width_diag_aggregate.png", 16, 10)
+save_plot(plot_bias(ci_summary_diag, q_val_lab ~ label_ratio_lab, "Estimator Bias (q0 = q1)", linetype_var = "split_label", use_aggregate = TRUE, x_breaks = SIM_CONFIG$thetas, point_size = 2), "bias_diag_aggregate.png", 16, 10)
+save_plot(plot_bias_pct(ci_summary_diag, q_val_lab ~ label_ratio_lab, "Percent Bias (q0 = q1)", linetype_var = "split_label", use_aggregate = TRUE, x_breaks = SIM_CONFIG$thetas, point_size = 2), "bias_pct_diag_aggregate.png", 16, 10)
+save_plot(plot_q_bias(q_bias_diag, q_val_lab ~ label_ratio_lab, "Calibration Estimate Bias (q0 = q1)", linetype_var = "split_label", use_aggregate = TRUE, x_breaks = SIM_CONFIG$thetas, point_size = 2), "q_bias_diag_aggregate.png", 16, 10)
 
 # -----------------------------------------------------------------------------
 # OFF-DIAGONAL PLOTS: (q0=0.6, q1=0.9) and (q0=0.9, q1=0.6)
@@ -345,11 +378,11 @@ for (case in off_diag_cases) {
   subtitle <- paste0("q0 = ", case$q0, ", q1 = ", case$q1, " | All neg:pos ratios")
   title_prefix <- paste0(" (q0 = ", case$q0, ", q1 = ", case$q1, ")")
 
-  save_plot(plot_coverage(ci_sub, ~ label_ratio_lab, paste0("Coverage", title_prefix), subtitle, linetype_var = split_label, use_aggregate = TRUE, x_breaks = SIM_CONFIG$thetas, point_size = 2), paste0("coverage", suffix), 18, 6)
-  save_plot(plot_ci_width(ci_sub, ~ label_ratio_lab, paste0("CI Width", title_prefix), subtitle, linetype_var = split_label, use_aggregate = TRUE, x_breaks = SIM_CONFIG$thetas, point_size = 2), paste0("ci_width", suffix), 18, 6)
-  save_plot(plot_bias(ci_sub, ~ label_ratio_lab, paste0("Estimator Bias", title_prefix), subtitle, linetype_var = split_label, use_aggregate = TRUE, x_breaks = SIM_CONFIG$thetas, point_size = 2), paste0("bias", suffix), 18, 6)
-  save_plot(plot_bias_pct(ci_sub, ~ label_ratio_lab, paste0("Percent Bias", title_prefix), subtitle, linetype_var = split_label, use_aggregate = TRUE, x_breaks = SIM_CONFIG$thetas, point_size = 2), paste0("bias_pct", suffix), 18, 6)
-  save_plot(plot_q_bias(q_sub, ~ label_ratio_lab, paste0("Calibration Estimate Bias", title_prefix), subtitle, linetype_var = split_label, use_aggregate = TRUE, x_breaks = SIM_CONFIG$thetas, point_size = 2), paste0("q_bias", suffix), 18, 6)
+  save_plot(plot_coverage(ci_sub, ~ label_ratio_lab, paste0("Coverage", title_prefix), subtitle, linetype_var = "split_label", use_aggregate = TRUE, x_breaks = SIM_CONFIG$thetas, point_size = 2), paste0("coverage", suffix), 18, 6)
+  save_plot(plot_ci_width(ci_sub, ~ label_ratio_lab, paste0("CI Width", title_prefix), subtitle, linetype_var = "split_label", use_aggregate = TRUE, x_breaks = SIM_CONFIG$thetas, point_size = 2), paste0("ci_width", suffix), 18, 6)
+  save_plot(plot_bias(ci_sub, ~ label_ratio_lab, paste0("Estimator Bias", title_prefix), subtitle, linetype_var = "split_label", use_aggregate = TRUE, x_breaks = SIM_CONFIG$thetas, point_size = 2), paste0("bias", suffix), 18, 6)
+  save_plot(plot_bias_pct(ci_sub, ~ label_ratio_lab, paste0("Percent Bias", title_prefix), subtitle, linetype_var = "split_label", use_aggregate = TRUE, x_breaks = SIM_CONFIG$thetas, point_size = 2), paste0("bias_pct", suffix), 18, 6)
+  save_plot(plot_q_bias(q_sub, ~ label_ratio_lab, paste0("Calibration Estimate Bias", title_prefix), subtitle, linetype_var = "split_label", use_aggregate = TRUE, x_breaks = SIM_CONFIG$thetas, point_size = 2), paste0("q_bias", suffix), 18, 6)
 }
 
 message("Results saved to ", results_dir)
