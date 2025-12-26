@@ -13,6 +13,8 @@ Imports:
     tibble,
     dplyr,
     ggplot2,
+    numDeriv,
+    rlang,
     furrr,
     future,
     purrr,

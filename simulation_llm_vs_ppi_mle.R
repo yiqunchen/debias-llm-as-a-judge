@@ -3,6 +3,9 @@ library(future)
 library(furrr)
 library(debiasLLMReporting)
 
+# Always use the in-tree implementations (avoids stale installed versions).
+source("R/joint_mle.R")
+source("R/sim_estimators.R")
 source("R/plot_utils.R")
 
 plan(multisession, workers = max(1, parallel::detectCores() - 1))
@@ -12,13 +15,10 @@ SIM_CONFIG <- list(
   full_mle = TRUE,
   sample_size = 2000L,
   label_ratios = c(0.01, 0.05, 0.10, 0.20),
-  B = 1000L,
-  thetas = c(0.1, 0.3, 0.5,  0.7, 0.9),
-    #c(0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9),
+  B = 2000L,
+  thetas = c(0.1, 0.3, 0.5, 0.7, 0.9),
   q0_vals = c(0.6, 0.8),
-    #c(0.6, 0.7, 0.8, 0.9),
   q1_vals = c(0.6, 0.8),
-    #c(0.6, 0.7, 0.8, 0.9),
   signal = 1,
   nominal_coverage = 0.95,
   calibration_balances = tibble(
@@ -75,8 +75,8 @@ sim_one_condition <- function(theta, q0, q1, label_ratio, sample_size,
     m1_prop = numeric()
   )
   counts <- derive_label_counts(label_ratio, sample_size, m0_prop)
-  N_required <- max(counts$n_ppi + counts$N_ppi,
-                    counts$n_llm_test + counts$m0 + counts$m1)
+  # Total needed for disjoint splits: PPI labels + calibration + test
+  N_required <- counts$n_ppi + counts$m0 + counts$m1 + counts$n_llm_test
   dgp <- generate_dgp_data(N_required, theta, signal)
   Y <- dgp$Y
   Z <- ifelse(
@@ -88,32 +88,33 @@ sim_one_condition <- function(theta, q0, q1, label_ratio, sample_size,
   # Partition indices: labeled PPI set, calibration set, disjoint test set
   idx_ppi <- seq_len(counts$n_ppi)
   remaining <- setdiff(seq_len(N_required), idx_ppi)
-  idx_neg_rem <- intersect(remaining, which(Y == 0))
-  idx_pos_rem <- intersect(remaining, which(Y == 1))
-  if (length(idx_neg_rem) < counts$m0 || length(idx_pos_rem) < counts$m1) {
+
+  # Random calibration sample (not stratified!)
+  m_cal <- counts$m0 + counts$m1
+  if (length(remaining) < m_cal + counts$n_llm_test) {
     return(empty_row)
   }
-  idx_cal0 <- sample(idx_neg_rem, counts$m0)
-  idx_cal1 <- sample(idx_pos_rem, counts$m1)
-  idx_cal <- c(idx_cal0, idx_cal1)
+  idx_cal <- sample(remaining, m_cal)
   remaining <- setdiff(remaining, idx_cal)
-  if (length(remaining) < counts$n_llm_test) {
-    return(empty_row)
-  }
   idx_test <- remaining[seq_len(counts$n_llm_test)]
 
   Y_L <- Y[idx_ppi]
   f_L <- Z[idx_ppi]
-  f_U <- Z[idx_test]
+  f_U <- Z[idx_test]  # use test set as unlabeled pool for PPI
   Z_test <- Z[idx_test]
   p_hat <- mean(Z_test)
 
-  Z_cal0 <- Z[idx_cal0]
-  Z_cal1 <- Z[idx_cal1]
-  q0_hat <- mean(Z_cal0 == 0)
-  q1_hat <- mean(Z_cal1 == 1)
+  # Calibration data (random sample)
   y_cal <- Y[idx_cal]
   yhat_cal <- Z[idx_cal]
+
+  # Estimate q0, q1 from calibration
+  idx_cal_neg <- which(y_cal == 0)
+  idx_cal_pos <- which(y_cal == 1)
+  m0_actual <- length(idx_cal_neg)
+  m1_actual <- length(idx_cal_pos)
+  q0_hat <- if (m0_actual > 0) mean(yhat_cal[idx_cal_neg] == 0) else 0.5
+  q1_hat <- if (m1_actual > 0) mean(yhat_cal[idx_cal_pos] == 1) else 0.5
   theta_pilot <- mean(Y_L)
   g_context <- list(q0_hat = q0_hat, q1_hat = q1_hat, theta_pilot = theta_pilot)
   ppi_results <- map_dfr(g_specs, function(spec) {
@@ -143,8 +144,8 @@ sim_one_condition <- function(theta, q0, q1, label_ratio, sample_size,
     q0_hat = q0_hat,
     q1_hat = q1_hat,
     n = counts$n_llm_test,
-    m0 = counts$m0,
-    m1 = counts$m1,
+    m0 = m0_actual,
+    m1 = m1_actual,
     alpha = 1 - nominal
   )
   llm_tbl <- tibble(
@@ -221,11 +222,11 @@ sim_one_condition <- function(theta, q0, q1, label_ratio, sample_size,
       q0_hat = q0_hat,
       q1_hat = q1_hat,
       n_labeled = counts$n_ppi,
-      m0 = counts$m0,
-      m1 = counts$m1,
+      m0 = m0_actual,
+      m1 = m1_actual,
       split_label = split_label,
-      m0_prop = m0_prop,
-      m1_prop = 1 - m0_prop
+      m0_prop = m0_actual / (m0_actual + m1_actual),
+      m1_prop = m1_actual / (m0_actual + m1_actual)
     )
 }
 
@@ -258,7 +259,7 @@ param_grid <- expand_grid(
   left_join(SIM_CONFIG$calibration_balances, by = "split_label")
 
 timestamp <- format(Sys.time(), "%Y%m%d-%H%M%S")
-results_dir <- file.path("results", timestamp)
+results_dir <- file.path("results", paste0("mle_subset_", timestamp))
 plots_dir <- file.path(results_dir, "plots")
 dir.create(results_dir, recursive = TRUE, showWarnings = FALSE)
 dir.create(plots_dir, showWarnings = FALSE)
@@ -353,9 +354,16 @@ for (split in unique(ci_summary_plot$split_label)) {
 
     save_plot(plot_coverage(ci_sub, q0_lab ~ q1_lab, "Coverage", subtitle, x_breaks = SIM_CONFIG$thetas), paste0("coverage", suffix))
     save_plot(plot_ci_width(ci_sub, q0_lab ~ q1_lab, "CI Width", subtitle, x_breaks = SIM_CONFIG$thetas), paste0("ci_width", suffix))
+    save_plot(plot_ci_width(ci_sub, q0_lab ~ q1_lab, "CI Width (zoomed)", subtitle, x_breaks = SIM_CONFIG$thetas, y_limits = c(0, 0.5)), paste0("ci_width_zoomed", suffix))
     save_plot(plot_bias(ci_sub, q0_lab ~ q1_lab, "Estimator Bias", subtitle, x_breaks = SIM_CONFIG$thetas), paste0("bias", suffix))
     save_plot(plot_bias_pct(ci_sub, q0_lab ~ q1_lab, "Percent Bias", subtitle, x_breaks = SIM_CONFIG$thetas), paste0("bias_pct", suffix))
     save_plot(plot_q_bias(q_sub, q0_lab ~ q1_lab, "Calibration Estimate Bias", subtitle, x_breaks = SIM_CONFIG$thetas), paste0("q_bias", suffix))
+
+    # Plots excluding Naive
+    ci_sub_no_naive <- filter(ci_sub, method != "Naive")
+    save_plot(plot_coverage(ci_sub_no_naive, q0_lab ~ q1_lab, "Coverage (excl. Naive)", subtitle, x_breaks = SIM_CONFIG$thetas), paste0("coverage_no_naive", suffix))
+    save_plot(plot_ci_width(ci_sub_no_naive, q0_lab ~ q1_lab, "CI Width (excl. Naive)", subtitle, x_breaks = SIM_CONFIG$thetas), paste0("ci_width_no_naive", suffix))
+    save_plot(plot_ci_width(ci_sub_no_naive, q0_lab ~ q1_lab, "CI Width (excl. Naive, zoomed)", subtitle, x_breaks = SIM_CONFIG$thetas, y_limits = c(0, 0.5)), paste0("ci_width_no_naive_zoomed", suffix))
   }
 }
 
@@ -379,7 +387,6 @@ q_bias_diag <- q_bias_long %>%
   )
 
 if (nrow(ci_summary_diag) > 0) {
-  # Per-split diagonal plots
   for (split in unique(ci_summary_diag$split_label)) {
     suffix <- paste0("_diag_", split, ".png")
     subtitle <- paste0("neg:pos = ", split, " | q0 = q1 (diagonal)")
@@ -390,21 +397,34 @@ if (nrow(ci_summary_diag) > 0) {
 
     save_plot(plot_coverage(ci_sub, q_val_lab ~ label_ratio_lab, "Coverage (q0 = q1)", subtitle, x_breaks = SIM_CONFIG$thetas, point_size = 2), paste0("coverage", suffix), 16, 10)
     save_plot(plot_ci_width(ci_sub, q_val_lab ~ label_ratio_lab, "CI Width (q0 = q1)", subtitle, x_breaks = SIM_CONFIG$thetas, point_size = 2), paste0("ci_width", suffix), 16, 10)
+    save_plot(plot_ci_width(ci_sub, q_val_lab ~ label_ratio_lab, "CI Width (q0 = q1, zoomed)", subtitle, x_breaks = SIM_CONFIG$thetas, point_size = 2, y_limits = c(0, 0.5)), paste0("ci_width_zoomed", suffix), 16, 10)
     save_plot(plot_bias(ci_sub, q_val_lab ~ label_ratio_lab, "Estimator Bias (q0 = q1)", subtitle, x_breaks = SIM_CONFIG$thetas, point_size = 2), paste0("bias", suffix), 16, 10)
     save_plot(plot_bias_pct(ci_sub, q_val_lab ~ label_ratio_lab, "Percent Bias (q0 = q1)", subtitle, x_breaks = SIM_CONFIG$thetas, point_size = 2), paste0("bias_pct", suffix), 16, 10)
     if (nrow(q_sub) > 0) {
       save_plot(plot_q_bias(q_sub, q_val_lab ~ label_ratio_lab, "Calibration Estimate Bias (q0 = q1)", subtitle, x_breaks = SIM_CONFIG$thetas, point_size = 2), paste0("q_bias", suffix), 16, 10)
     }
+
+    # Plots excluding Naive
+    ci_sub_no_naive <- filter(ci_sub, method != "Naive")
+    save_plot(plot_coverage(ci_sub_no_naive, q_val_lab ~ label_ratio_lab, "Coverage (q0 = q1, excl. Naive)", subtitle, x_breaks = SIM_CONFIG$thetas, point_size = 2), paste0("coverage_no_naive", suffix), 16, 10)
+    save_plot(plot_ci_width(ci_sub_no_naive, q_val_lab ~ label_ratio_lab, "CI Width (q0 = q1, excl. Naive)", subtitle, x_breaks = SIM_CONFIG$thetas, point_size = 2), paste0("ci_width_no_naive", suffix), 16, 10)
+    save_plot(plot_ci_width(ci_sub_no_naive, q_val_lab ~ label_ratio_lab, "CI Width (q0 = q1, excl. Naive, zoomed)", subtitle, x_breaks = SIM_CONFIG$thetas, point_size = 2, y_limits = c(0, 0.5)), paste0("ci_width_no_naive_zoomed", suffix), 16, 10)
   }
 
-  # Aggregate diagonal plots
   save_plot(plot_coverage(ci_summary_diag, q_val_lab ~ label_ratio_lab, "Coverage (q0 = q1)", linetype_var = split_label, use_aggregate = TRUE, x_breaks = SIM_CONFIG$thetas, point_size = 2), "coverage_diag_aggregate.png", 16, 10)
   save_plot(plot_ci_width(ci_summary_diag, q_val_lab ~ label_ratio_lab, "CI Width (q0 = q1)", linetype_var = split_label, use_aggregate = TRUE, x_breaks = SIM_CONFIG$thetas, point_size = 2), "ci_width_diag_aggregate.png", 16, 10)
+  save_plot(plot_ci_width(ci_summary_diag, q_val_lab ~ label_ratio_lab, "CI Width (q0 = q1, zoomed)", linetype_var = split_label, use_aggregate = TRUE, x_breaks = SIM_CONFIG$thetas, point_size = 2, y_limits = c(0, 0.5)), "ci_width_zoomed_diag_aggregate.png", 16, 10)
   save_plot(plot_bias(ci_summary_diag, q_val_lab ~ label_ratio_lab, "Estimator Bias (q0 = q1)", linetype_var = split_label, use_aggregate = TRUE, x_breaks = SIM_CONFIG$thetas, point_size = 2), "bias_diag_aggregate.png", 16, 10)
   save_plot(plot_bias_pct(ci_summary_diag, q_val_lab ~ label_ratio_lab, "Percent Bias (q0 = q1)", linetype_var = split_label, use_aggregate = TRUE, x_breaks = SIM_CONFIG$thetas, point_size = 2), "bias_pct_diag_aggregate.png", 16, 10)
   if (nrow(q_bias_diag) > 0) {
     save_plot(plot_q_bias(q_bias_diag, q_val_lab ~ label_ratio_lab, "Calibration Estimate Bias (q0 = q1)", linetype_var = split_label, use_aggregate = TRUE, x_breaks = SIM_CONFIG$thetas, point_size = 2), "q_bias_diag_aggregate.png", 16, 10)
   }
+
+  # Aggregate plots excluding Naive
+  ci_summary_diag_no_naive <- filter(ci_summary_diag, method != "Naive")
+  save_plot(plot_coverage(ci_summary_diag_no_naive, q_val_lab ~ label_ratio_lab, "Coverage (q0 = q1, excl. Naive)", linetype_var = split_label, use_aggregate = TRUE, x_breaks = SIM_CONFIG$thetas, point_size = 2), "coverage_no_naive_diag_aggregate.png", 16, 10)
+  save_plot(plot_ci_width(ci_summary_diag_no_naive, q_val_lab ~ label_ratio_lab, "CI Width (q0 = q1, excl. Naive)", linetype_var = split_label, use_aggregate = TRUE, x_breaks = SIM_CONFIG$thetas, point_size = 2), "ci_width_no_naive_diag_aggregate.png", 16, 10)
+  save_plot(plot_ci_width(ci_summary_diag_no_naive, q_val_lab ~ label_ratio_lab, "CI Width (q0 = q1, excl. Naive, zoomed)", linetype_var = split_label, use_aggregate = TRUE, x_breaks = SIM_CONFIG$thetas, point_size = 2, y_limits = c(0, 0.5)), "ci_width_no_naive_zoomed_diag_aggregate.png", 16, 10)
 }
 
 # -----------------------------------------------------------------------------
@@ -434,11 +454,18 @@ for (case in off_diag_cases) {
 
   save_plot(plot_coverage(ci_sub, ~ label_ratio_lab, paste0("Coverage", title_prefix), subtitle, linetype_var = split_label, use_aggregate = TRUE, x_breaks = SIM_CONFIG$thetas, point_size = 2), paste0("coverage", suffix), 18, 6)
   save_plot(plot_ci_width(ci_sub, ~ label_ratio_lab, paste0("CI Width", title_prefix), subtitle, linetype_var = split_label, use_aggregate = TRUE, x_breaks = SIM_CONFIG$thetas, point_size = 2), paste0("ci_width", suffix), 18, 6)
+  save_plot(plot_ci_width(ci_sub, ~ label_ratio_lab, paste0("CI Width (zoomed)", title_prefix), subtitle, linetype_var = split_label, use_aggregate = TRUE, x_breaks = SIM_CONFIG$thetas, point_size = 2, y_limits = c(0, 0.5)), paste0("ci_width_zoomed", suffix), 18, 6)
   save_plot(plot_bias(ci_sub, ~ label_ratio_lab, paste0("Estimator Bias", title_prefix), subtitle, linetype_var = split_label, use_aggregate = TRUE, x_breaks = SIM_CONFIG$thetas, point_size = 2), paste0("bias", suffix), 18, 6)
   save_plot(plot_bias_pct(ci_sub, ~ label_ratio_lab, paste0("Percent Bias", title_prefix), subtitle, linetype_var = split_label, use_aggregate = TRUE, x_breaks = SIM_CONFIG$thetas, point_size = 2), paste0("bias_pct", suffix), 18, 6)
   if (nrow(q_sub) > 0) {
     save_plot(plot_q_bias(q_sub, ~ label_ratio_lab, paste0("Calibration Estimate Bias", title_prefix), subtitle, linetype_var = split_label, use_aggregate = TRUE, x_breaks = SIM_CONFIG$thetas, point_size = 2), paste0("q_bias", suffix), 18, 6)
   }
+
+  # Plots excluding Naive
+  ci_sub_no_naive <- filter(ci_sub, method != "Naive")
+  save_plot(plot_coverage(ci_sub_no_naive, ~ label_ratio_lab, paste0("Coverage (excl. Naive)", title_prefix), subtitle, linetype_var = split_label, use_aggregate = TRUE, x_breaks = SIM_CONFIG$thetas, point_size = 2), paste0("coverage_no_naive", suffix), 18, 6)
+  save_plot(plot_ci_width(ci_sub_no_naive, ~ label_ratio_lab, paste0("CI Width (excl. Naive)", title_prefix), subtitle, linetype_var = split_label, use_aggregate = TRUE, x_breaks = SIM_CONFIG$thetas, point_size = 2), paste0("ci_width_no_naive", suffix), 18, 6)
+  save_plot(plot_ci_width(ci_sub_no_naive, ~ label_ratio_lab, paste0("CI Width (excl. Naive, zoomed)", title_prefix), subtitle, linetype_var = split_label, use_aggregate = TRUE, x_breaks = SIM_CONFIG$thetas, point_size = 2, y_limits = c(0, 0.5)), paste0("ci_width_no_naive_zoomed", suffix), 18, 6)
 }
 
 message("Results saved to ", results_dir)

@@ -16,6 +16,9 @@ export(fit_misclassification_models)
 export(g_covariate_rg)
 export(fit_reppi_model)
 export(g_reppi_predict)
+export(fit_misclass_mle)
+export(grab_theta)
+export(sim_compare_info)
 
 # Plot utilities
 export(plot_base_theme)

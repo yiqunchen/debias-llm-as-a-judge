@@ -1,6 +1,39 @@
 # Plot utilities for simulation results
 # Reusable plotting functions for coverage, CI width, bias, and calibration plots
 
+# Colorblind-friendly palette (fixed mapping for methods)
+# Uses a subset of the Okabe-Ito palette which is designed for colorblind accessibility
+METHOD_COLORS <- c(
+
+"PPI" = "#E69F00",
+# orange
+"PPI++" = "#56B4E9",
+# sky blue
+"Rogan-Gladen" = "#009E73",
+# bluish green
+"Joint MLE (obs)" = "#F0E442",
+# yellow
+"Joint MLE (exp)" = "#0072B2",
+# blue
+"Naive" = "#D55E00",
+# vermillion
+"q0" = "#CC79A7",
+# reddish purple
+"q1" = "#999999"
+# gray
+)
+
+#' Get the fixed color scale for methods
+#' @param methods Character vector of method names to include
+#' @return ggplot2 scale_color_manual
+get_method_color_scale <- function(methods = NULL) {
+  if (is.null(methods)) {
+    scale_color_manual(values = METHOD_COLORS, drop = FALSE)
+  } else {
+    scale_color_manual(values = METHOD_COLORS[methods], drop = FALSE)
+  }
+}
+
 #' Base theme for standard plots
 plot_base_theme <- function() {
   theme_bw(base_size = 13) +
@@ -85,14 +118,20 @@ build_line_plot <- function(data,
                             point_size = 1.5,
                             line_width = 1) {
 
+  x_var <- rlang::enquo(x_var)
+  y_var <- rlang::enquo(y_var)
+  color_var <- rlang::enquo(color_var)
+  linetype_var <- rlang::enquo(linetype_var)
+  use_linetype <- !rlang::quo_is_null(linetype_var)
+
   # Build aesthetic mapping
-  if (is.null(linetype_var)) {
-    p <- ggplot(data, aes(x = {{ x_var }}, y = {{ y_var }},
-                          color = {{ color_var }}, group = {{ color_var }}))
+  if (!use_linetype) {
+    p <- ggplot(data, aes(x = !!x_var, y = !!y_var,
+                          color = !!color_var, group = !!color_var))
   } else {
-    p <- ggplot(data, aes(x = {{ x_var }}, y = {{ y_var }},
-                          color = {{ color_var }}, linetype = {{ linetype_var }},
-                          group = interaction({{ color_var }}, {{ linetype_var }})))
+    p <- ggplot(data, aes(x = !!x_var, y = !!y_var,
+                          color = !!color_var, linetype = !!linetype_var,
+                          group = interaction(!!color_var, !!linetype_var)))
   }
 
   # Add horizontal line if specified
@@ -125,7 +164,7 @@ build_line_plot <- function(data,
     y = y_lab,
     color = color_lab
   )
-  if (!is.null(linetype_var)) {
+  if (use_linetype) {
     labs_args$linetype <- linetype_lab
   }
   p <- p + do.call(labs, labs_args)
@@ -137,6 +176,10 @@ build_line_plot <- function(data,
   if (!is.null(y_limits)) {
     p <- p + scale_y_continuous(limits = y_limits)
   }
+
+  # Add fixed colorblind-friendly color scale
+  # This ensures consistent colors even when methods are filtered out
+  p <- p + scale_color_manual(values = METHOD_COLORS, drop = FALSE)
 
   # Add theme
   p <- p + if (use_aggregate_theme) plot_base_theme_aggregate() else plot_base_theme()
@@ -169,7 +212,7 @@ plot_coverage <- function(data, facet_formula, title = "Coverage", subtitle = ""
 #' Create CI width plot
 plot_ci_width <- function(data, facet_formula, title = "CI Width", subtitle = "",
                           linetype_var = NULL, use_aggregate = FALSE,
-                          x_breaks = NULL, point_size = 1.5) {
+                          x_breaks = NULL, point_size = 1.5, y_limits = NULL) {
   build_line_plot(
     data = data,
     x_var = theta_true,
@@ -181,6 +224,7 @@ plot_ci_width <- function(data, facet_formula, title = "CI Width", subtitle = ""
     subtitle = subtitle,
     y_lab = "Mean CI width",
     x_breaks = x_breaks,
+    y_limits = y_limits,
     use_aggregate_theme = use_aggregate,
     point_size = point_size
   )
