@@ -4,7 +4,7 @@
 \alias{ppi_bootstrap}
 \title{Bootstrap PPI estimator}
 \usage{
-ppi_bootstrap(Y_L, f_L, f_U, n_boot = 500, alpha = 0.05)
+ppi_bootstrap(Y_L, f_L, f_U, n_boot = 500, alpha = 0.1)
 }
 \arguments{
 \item{Y_L}{Vector of human labels on the calibration set.}

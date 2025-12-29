@@ -4,7 +4,7 @@
 \alias{bootstrap_ci}
 \title{Bootstrap confidence interval using percentile method.}
 \usage{
-bootstrap_ci(theta_boots, alpha = 0.05)
+bootstrap_ci(theta_boots, alpha = 0.1)
 }
 \arguments{
 \item{theta_boots}{Vector of bootstrap estimates.}

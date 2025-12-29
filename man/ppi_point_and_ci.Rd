@@ -4,7 +4,7 @@
 \alias{ppi_point_and_ci}
 \title{Prediction-powered mean estimator with logit CI.}
 \usage{
-ppi_point_and_ci(Y_L, f_L, f_U, alpha = 0.05)
+ppi_point_and_ci(Y_L, f_L, f_U, alpha = 0.1)
 }
 \arguments{
 \item{Y_L}{Vector of human labels on the calibration set.}

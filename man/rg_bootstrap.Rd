@@ -4,7 +4,7 @@
 \alias{rg_bootstrap}
 \title{Bootstrap Rogan-Gladen (LLM) estimator}
 \usage{
-rg_bootstrap(Y_cal, Yhat_cal, Yhat_test, n_boot = 500, alpha = 0.05)
+rg_bootstrap(Y_cal, Yhat_cal, Yhat_test, n_boot = 500, alpha = 0.1)
 }
 \arguments{
 \item{Y_cal}{True labels on calibration set.}

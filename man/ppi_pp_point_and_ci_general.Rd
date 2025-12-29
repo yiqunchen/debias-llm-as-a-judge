@@ -4,13 +4,7 @@
 \alias{ppi_pp_point_and_ci_general}
 \title{Tuned PPI++ estimator using numeric lambda search.}
 \usage{
-ppi_pp_point_and_ci_general(
-  Y_L,
-  f_L,
-  f_U,
-  alpha = 0.05,
-  lambda_range = c(0, 1)
-)
+ppi_pp_point_and_ci_general(Y_L, f_L, f_U, alpha = 0.1, lambda_range = c(0, 1))
 }
 \arguments{
 \item{Y_L, f_L, f_U}{Observed labels and surrogate scores.}

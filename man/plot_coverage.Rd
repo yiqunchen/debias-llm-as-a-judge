@@ -13,7 +13,8 @@ plot_coverage(
   use_aggregate = FALSE,
   x_breaks = NULL,
   point_size = 1.5,
-  y_limits = NULL
+  y_limits = NULL,
+  alpha = 0.9
 )
 }
 \arguments{
@@ -40,10 +41,13 @@ aggregate plots with many legend entries.}
 \item{point_size}{Point size for the scatter overlay.}
 
 \item{y_limits}{Optional y-axis limits (c(min, max)).}
+
+\item{alpha}{Nominal coverage level for the horizontal reference line.
+Defaults to 0.9.}
 }
 \value{
 A \code{ggplot} object showing empirical coverage as a function of
-\code{theta_true}, with a horizontal reference line at 0.95.
+\code{theta_true}, with a horizontal reference line at \code{alpha}.
 }
 \description{
 Plot empirical coverage across simulation settings

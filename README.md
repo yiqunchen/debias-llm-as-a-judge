@@ -14,6 +14,42 @@ We compare three main approaches:
 
 3. **PPI++**: An extension of PPI that optimizes a tuning parameter (lambda) to minimize variance while maintaining valid confidence intervals.
 
+## Installation
+
+```r
+# Install from GitHub
+# install.packages("remotes")  # if needed
+remotes::install_github("yiqunchen/debias-llm-as-a-judge")
+```
+
+## Quick Start
+
+```r
+library(debiasLLMReporting)
+
+# Simulated example
+set.seed(42)
+N <- 500; m <- 50
+theta_true <- 0.6; q0 <- 0.85; q1 <- 0.80
+
+# Generate data
+Y_all <- rbinom(N, 1, theta_true)
+Yhat_all <- ifelse(Y_all == 1, rbinom(N, 1, q1), 1 - rbinom(N, 1, q0))
+
+# Split into calibration and test
+idx_cal <- sample(N, m)
+Y_cal <- Y_all[idx_cal]
+Yhat_cal <- Yhat_all[idx_cal]
+Yhat_test <- Yhat_all[-idx_cal]
+
+# Apply PPI++
+result <- ppi_pp_point_and_ci_general(
+  Y_L = Y_cal, f_L = Yhat_cal, f_U = Yhat_test, alpha = 0.10
+)
+cat("Estimate:", round(result$theta, 3),
+    "95% CI: [", round(result$ci_lower, 3), ",", round(result$ci_upper, 3), "]\n")
+```
+
 ## Key Features
 
 - Simulation framework for comparing estimator performance across:
@@ -30,36 +66,6 @@ We compare three main approaches:
 
 - Comprehensive visualization suite with faceted plots
 
-## Installation
-
-```r
-# Install devtools if needed
-if (!requireNamespace("devtools", quietly = TRUE)) {
-  install.packages("devtools")
-}
-# Install the package and its dependencies
-devtools::install_local(".", dependencies = TRUE)
-```
-
-## Usage
-
-```r
-# Install the package
-devtools::install_local(".")
-
-# Load the package
-library(debiasLLMReporting)
-```
-
-## Reproducibility
-
-The `reproduce/` directory contains scripts to replicate our analyses:
-
-- `simulation_llm_vs_ppi.R` - Monte Carlo simulation comparing estimators across parameter grid
-- `apply_estimators.R` - Apply estimators to real LLM judge evaluation data
-
-Results are saved to timestamped directories under `results/`.
-
 ## Package Functions
 
 Core estimators:
@@ -69,6 +75,22 @@ Core estimators:
 - `ppi_pp_point_and_ci_general()` - PPI++ with optimized lambda
 - `eif_point_and_ci()` - Efficient influence function estimator
 - `fit_misclass_mle()` - Joint MLE for misclassification model
+
+## Vignettes
+
+See the package vignettes for detailed tutorials:
+
+- [Getting Started](articles/getting-started.html) - Basic usage with simulated data
+- [Real Data Example](articles/real-data-example.html) - Applying methods to LLM judge data
+
+## Reproducibility
+
+The `reproduce/` directory contains scripts to replicate our analyses:
+
+- `simulation_llm_vs_ppi.R` - Monte Carlo simulation comparing estimators across parameter grid
+- `apply_estimators.R` - Apply estimators to real LLM judge evaluation data
+
+Results are saved to timestamped directories under `results/`.
 
 ## License
 

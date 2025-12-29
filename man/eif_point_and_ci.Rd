@@ -4,7 +4,7 @@
 \alias{eif_point_and_ci}
 \title{EIF (Efficient Influence Function) estimator for binary surrogates.}
 \usage{
-eif_point_and_ci(Y_cal, Yhat_cal, Yhat_test, alpha = 0.05)
+eif_point_and_ci(Y_cal, Yhat_cal, Yhat_test, alpha = 0.1)
 }
 \arguments{
 \item{Y_cal}{Vector of true labels on the calibration set.}

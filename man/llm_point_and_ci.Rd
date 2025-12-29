@@ -4,7 +4,7 @@
 \alias{llm_point_and_ci}
 \title{LLM-as-a-judge corrected estimator with finite-sample adjustment.}
 \usage{
-llm_point_and_ci(p_hat, q0_hat, q1_hat, n, m0, m1, alpha = 0.05, eps_J = 1e-04)
+llm_point_and_ci(p_hat, q0_hat, q1_hat, n, m0, m1, alpha = 0.1, eps_J = 1e-04)
 }
 \arguments{
 \item{p_hat}{Average LLM score on the test set.}

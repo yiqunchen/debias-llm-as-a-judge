@@ -4,7 +4,7 @@
 \alias{logit_ci}
 \title{Wald-style confidence interval via logit transform.}
 \usage{
-logit_ci(theta_hat, var_hat, alpha = 0.05)
+logit_ci(theta_hat, var_hat, alpha = 0.1)
 }
 \arguments{
 \item{theta_hat}{Point estimate on probability scale.}

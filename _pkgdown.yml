@@ -1,0 +1,66 @@
+url: https://yiqunchen.github.io/debias-llm-as-a-judge/
+
+template:
+  bootstrap: 5
+  math-rendering: mathjax
+
+authors:
+  Yiqun Chen:
+    href: https://yiqunchen.github.io/
+  Moran Guo:
+    href: https://github.com/Raymond2Moran
+
+navbar:
+  structure:
+    left: [intro, getting-started, real-data-example, reference]
+    right: [search, github]
+  components:
+    getting-started:
+      text: Getting Started
+      href: articles/getting-started.html
+    real-data-example:
+      text: Real Data Example
+      href: articles/real-data-example.html
+
+articles:
+  - title: Tutorials
+    navbar: ~
+    contents:
+      - getting-started
+      - real-data-example
+
+reference:
+  - title: Core Estimators
+    desc: Main functions for debiased prevalence estimation
+    contents:
+      - ppi_point_and_ci
+      - ppi_pp_point_and_ci_general
+      - llm_point_and_ci
+      - eif_point_and_ci
+
+  - title: Bootstrap Methods
+    desc: Bootstrap-based confidence intervals
+    contents:
+      - ppi_bootstrap
+      - rg_bootstrap
+
+  - title: Helper Functions
+    desc: Utility functions
+    contents:
+      - bootstrap_ci
+      - logit_ci
+
+  - title: Visualization
+    desc: Plotting functions for simulation results
+    contents:
+      - plot_coverage
+      - plot_ci_width
+      - plot_bias
+      - plot_bias_pct
+      - plot_q_bias
+      - build_line_plot
+      - generate_plot_suite
+      - get_method_color_scale
+      - plot_base_theme
+      - plot_base_theme_aggregate
+      - format_label_ratio
