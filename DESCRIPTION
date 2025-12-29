@@ -5,7 +5,7 @@ Version: 0.0.1
 Authors@R: person(given = "Chen", family = "Lab", email = "chenlab@example.com",
     role = c("aut", "cre"))
 Description: Reusable helpers to study LLM-as-a-judge estimators against PPI variants.
-License: MIT
+License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 Imports:
@@ -15,7 +15,12 @@ Imports:
     ggplot2,
     numDeriv,
     rlang,
-    furrr,
-    future,
     purrr,
     quadprog
+Suggests:
+    testthat (>= 3.0.0),
+    furrr,
+    future,
+    scales
+Config/testthat/edition: 3
+RoxygenNote: 7.3.2

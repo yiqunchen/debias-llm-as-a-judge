@@ -3,55 +3,56 @@ library(future)
 library(furrr)
 library(debiasLLMReporting)
 
-source("R/plot_utils.R")
-
-plan(multisession, workers = max(1, parallel::detectCores() - 1))
+# respects Slurm/LSF/containers
+plan(multisession, workers = availableCores())
 set.seed(123)
+
+# =============================================================================
+# SIMULATION CONFIGURATION
+# =============================================================================
+#
+# Sampling design (RANDOM, not stratified):
+#   1. Generate N observations with true prevalence theta
+#   2. Randomly select m = label_ratio * N for labeling (calibration)
+#   3. m0 and m1 are RANDOM - determined by theta and sampling
+#   4. Remaining n = N - m are unlabeled (test)
+#
+# All estimators use the SAME split:
+#   - Calibration: m labeled observations (Y, Yhat pairs)
+#   - Test: n unlabeled observations (Yhat only)
+#
+# =============================================================================
 
 SIM_CONFIG <- list(
   full_mle = TRUE,
-  sample_size = 2000L,
-  label_ratios = c(0.01, 0.05, 0.10, 0.20),
-  B = 1000L,
-  thetas = c(0.1, 0.3, 0.5,  0.7, 0.9),
-    #c(0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9),
-  q0_vals = c(0.6, 0.8),
-    #c(0.6, 0.7, 0.8, 0.9),
-  q1_vals = c(0.6, 0.8),
-    #c(0.6, 0.7, 0.8, 0.9),
+  N = 2000L,                                    # Total sample size
+  label_ratios = c(0.01, 0.05, 0.10, 0.20),     # Fraction labeled
+  B = 1000L,                                    # Monte Carlo replicates
+  thetas = seq(0.1, 0.9, 0.1),          # True prevalence
+  q0_vals = c(0.6, 0.7, 0.8),                        # Specificity values
+  q1_vals = c(0.6, 0.7, 0.8),                        # Sensitivity values
   signal = 1,
-  nominal_coverage = 0.95,
-  calibration_balances = tibble(
-    split_label = c("20:80", "50:50", "80:20"),
-    m0_prop = c(0.2, 0.5, 0.8)
-  )
+  nominal_coverage = 0.9
 )
 
-format_label_ratio <- function(x) paste0(scales::percent(x, accuracy = 1), " labeled")
+# =============================================================================
+# SIMULATION FUNCTIONS
+# =============================================================================
 
-g_specs <- list(
-  list(label = "PPI", transform = function(scores, context) scores)
-)
+#' Run one Monte Carlo replicate
+#'
+#' @param theta True prevalence
+#' @param q0 True specificity P(Yhat=0|Y=0)
+#' @param q1 True sensitivity P(Yhat=1|Y=1)
+#' @param label_ratio Fraction of observations that are labeled
+#' @param N Total sample size
+#' @param signal DGP signal strength
+#' @param rep_id Replicate ID
+#' @param nominal Nominal coverage level
+sim_one_rep <- function(theta, q0, q1, label_ratio, N, signal, rep_id, nominal) {
 
-derive_label_counts <- function(label_ratio, sample_size, m0_prop) {
-  total_labels <- max(4L, round(label_ratio * sample_size))
-  m0 <- max(2L, round(total_labels * m0_prop))
-  m1 <- max(2L, total_labels - m0)
-  if (m0 + m1 > total_labels) {
-    m1 <- total_labels - m0
-  }
-  list(
-    n_ppi = total_labels,
-    N_ppi = sample_size,
-    n_llm_test = sample_size,
-    m0 = m0,
-    m1 = m1
-  )
-}
+  # Empty result for early returns
 
-sim_one_condition <- function(theta, q0, q1, label_ratio, sample_size,
-                              signal, g_specs, rep_id, nominal,
-                              m0_prop, split_label) {
   empty_row <- tibble(
     method = character(),
     theta_hat = numeric(),
@@ -63,74 +64,84 @@ sim_one_condition <- function(theta, q0, q1, label_ratio, sample_size,
     q0 = numeric(),
     q1 = numeric(),
     label_ratio = numeric(),
-    sample_size = numeric(),
+    N = integer(),
+    n = integer(),
+    m = integer(),
+    m0 = integer(),
+    m1 = integer(),
     rep = integer(),
     q0_hat = numeric(),
-    q1_hat = numeric(),
-    n_labeled = numeric(),
-    m0 = numeric(),
-    m1 = numeric(),
-    split_label = character(),
-    m0_prop = numeric(),
-    m1_prop = numeric()
+    q1_hat = numeric()
   )
-  counts <- derive_label_counts(label_ratio, sample_size, m0_prop)
-  N_required <- max(counts$n_ppi + counts$N_ppi,
-                    counts$n_llm_test + counts$m0 + counts$m1)
-  dgp <- generate_dgp_data(N_required, theta, signal)
+
+  # ---------------------------------------------------------------------------
+  # Generate data
+  # ---------------------------------------------------------------------------
+  dgp <- generate_dgp_data(N, theta, signal)
   Y <- dgp$Y
-  Z <- ifelse(
+
+  # Surrogate predictions with sensitivity q1 and specificity q0
+  Yhat <- ifelse(
     Y == 1,
-    rbinom(N_required, 1, q1),
-    rbinom(N_required, 1, 1 - q0)
+    rbinom(N, 1, q1),        # True positive rate = q1
+    rbinom(N, 1, 1 - q0)     # False positive rate = 1 - q0
   )
 
-  # Partition indices: labeled PPI set, calibration set, disjoint test set
-  idx_ppi <- seq_len(counts$n_ppi)
-  remaining <- setdiff(seq_len(N_required), idx_ppi)
-  idx_neg_rem <- intersect(remaining, which(Y == 0))
-  idx_pos_rem <- intersect(remaining, which(Y == 1))
-  if (length(idx_neg_rem) < counts$m0 || length(idx_pos_rem) < counts$m1) {
+  # ---------------------------------------------------------------------------
+  # Random split into calibration (labeled) and test (unlabeled)
+  # ---------------------------------------------------------------------------
+  m <- max(4L, round(label_ratio * N))   # Calibration size
+  n <- N - m                              # Test size
+
+  idx_cal <- sample(N, m)                 # Random calibration indices
+
+idx_test <- setdiff(seq_len(N), idx_cal)
+
+  # Calibration data (labeled)
+  Y_cal <- Y[idx_cal]
+  Yhat_cal <- Yhat[idx_cal]
+
+  # Test data (unlabeled - only Yhat observed)
+  Yhat_test <- Yhat[idx_test]
+
+  # Observed class counts in calibration (RANDOM, depends on theta)
+  m0 <- sum(Y_cal == 0)
+  m1 <- sum(Y_cal == 1)
+
+  # Need at least 2 of each class for estimation
+  if (m0 < 2 || m1 < 2) {
     return(empty_row)
   }
-  idx_cal0 <- sample(idx_neg_rem, counts$m0)
-  idx_cal1 <- sample(idx_pos_rem, counts$m1)
-  idx_cal <- c(idx_cal0, idx_cal1)
-  remaining <- setdiff(remaining, idx_cal)
-  if (length(remaining) < counts$n_llm_test) {
-    return(empty_row)
-  }
-  idx_test <- remaining[seq_len(counts$n_llm_test)]
 
-  Y_L <- Y[idx_ppi]
-  f_L <- Z[idx_ppi]
-  f_U <- Z[idx_test]
-  Z_test <- Z[idx_test]
-  p_hat <- mean(Z_test)
+  # ---------------------------------------------------------------------------
+  # Estimate confusion matrix parameters from calibration
+  # ---------------------------------------------------------------------------
+  q0_hat <- mean(Yhat_cal[Y_cal == 0] == 0)  # Estimated specificity
+  q1_hat <- mean(Yhat_cal[Y_cal == 1] == 1)  # Estimated sensitivity
+  p_hat <- mean(Yhat_test)                    # Test positive rate
 
-  Z_cal0 <- Z[idx_cal0]
-  Z_cal1 <- Z[idx_cal1]
-  q0_hat <- mean(Z_cal0 == 0)
-  q1_hat <- mean(Z_cal1 == 1)
-  y_cal <- Y[idx_cal]
-  yhat_cal <- Z[idx_cal]
-  theta_pilot <- mean(Y_L)
-  g_context <- list(q0_hat = q0_hat, q1_hat = q1_hat, theta_pilot = theta_pilot)
-  ppi_results <- map_dfr(g_specs, function(spec) {
-    f_L_g <- spec$transform(f_L, g_context)
-    f_U_g <- spec$transform(f_U, g_context)
-    est <- ppi_point_and_ci(Y_L, f_L_g, f_U_g)
-    tibble(
-      method = spec$label,
-      theta_hat = est$theta,
-      var_hat = est$var,
-      ci_lower = est$ci_lower,
-      ci_upper = est$ci_upper,
-      lambda = NA_real_
-    )
-  })
-  ppi_pp_est <- ppi_pp_point_and_ci_general(Y_L = Y_L, f_L = f_L, f_U = f_U)
-  ppi_pp_tbl <- tibble(
+  # ---------------------------------------------------------------------------
+  # ESTIMATORS
+  # All use same calibration (m) and test (n) split
+  # ---------------------------------------------------------------------------
+  results <- list()
+
+  # 1. PPI estimator
+  ppi_est <- ppi_point_and_ci(Y_L = Y_cal, f_L = Yhat_cal, f_U = Yhat_test,
+                               alpha = 1 - nominal)
+  results$ppi <- tibble(
+    method = "PPI",
+    theta_hat = ppi_est$theta,
+    var_hat = ppi_est$var,
+    ci_lower = ppi_est$ci_lower,
+    ci_upper = ppi_est$ci_upper,
+    lambda = NA_real_
+  )
+
+  # 2. PPI++ estimator
+  ppi_pp_est <- ppi_pp_point_and_ci_general(Y_L = Y_cal, f_L = Yhat_cal,
+                                             f_U = Yhat_test, alpha = 1 - nominal)
+  results$ppi_pp <- tibble(
     method = "PPI++",
     theta_hat = ppi_pp_est$theta,
     var_hat = ppi_pp_est$var,
@@ -138,307 +149,303 @@ sim_one_condition <- function(theta, q0, q1, label_ratio, sample_size,
     ci_upper = ppi_pp_est$ci_upper,
     lambda = ppi_pp_est$lambda
   )
-  llm_est <- llm_point_and_ci(
+
+  # 3. Rogan-Gladen estimator
+  rg_est <- llm_point_and_ci(
     p_hat = p_hat,
     q0_hat = q0_hat,
     q1_hat = q1_hat,
-    n = counts$n_llm_test,
-    m0 = counts$m0,
-    m1 = counts$m1,
+    n = n,
+    m0 = m0,
+    m1 = m1,
     alpha = 1 - nominal
   )
-  llm_tbl <- tibble(
+  results$rg <- tibble(
     method = "Rogan-Gladen",
-    theta_hat = llm_est$theta,
-    var_hat = llm_est$var,
-    ci_lower = llm_est$ci_lower,
-    ci_upper = llm_est$ci_upper,
+    theta_hat = rg_est$theta,
+    var_hat = rg_est$var,
+    ci_lower = rg_est$ci_lower,
+    ci_upper = rg_est$ci_upper,
     lambda = NA_real_
   )
-  joint_tbl <- tibble(
-    method = character(),
-    theta_hat = numeric(),
-    var_hat = numeric(),
-    ci_lower = numeric(),
-    ci_upper = numeric(),
-    lambda = numeric()
-  )
+
+  # 4. Joint MLE estimator
   if (isTRUE(SIM_CONFIG$full_mle)) {
-    joint_tbl <- tryCatch({
-      joint_fit <- fit_misclass_mle(
-        y_cal = y_cal,
-        yhat_cal = yhat_cal,
-        yhat_test = Z_test
+    mle_result <- tryCatch({
+      mle_fit <- fit_misclass_mle(
+        y_cal = Y_cal,
+        yhat_cal = Yhat_cal,
+        yhat_test = Yhat_test,
+        level = nominal
       )
-      se_theta_obs <- unname(joint_fit$se_obs["theta"])
-      se_theta_exp <- unname(joint_fit$se_exp["theta"])
-      var_obs <- if (is.na(se_theta_obs)) NA_real_ else se_theta_obs^2
-      var_exp <- if (is.na(se_theta_exp)) NA_real_ else se_theta_exp^2
+      se_theta <- unname(mle_fit$se_obs["theta"])
+      var_hat <- if (is.na(se_theta)) NA_real_ else se_theta^2
       tibble(
-        method = c("Joint MLE (obs)", "Joint MLE (exp)"),
-        theta_hat = rep(joint_fit$theta_hat, 2),
-        var_hat = c(var_obs, var_exp),
-        ci_lower = c(joint_fit$ci_theta_obs[1], joint_fit$ci_theta_exp[1]),
-        ci_upper = c(joint_fit$ci_theta_obs[2], joint_fit$ci_theta_exp[2]),
-        lambda = rep(NA_real_, 2)
+        method = "Joint MLE",
+        theta_hat = mle_fit$theta_hat,
+        var_hat = var_hat,
+        ci_lower = mle_fit$ci_theta_obs[1],
+        ci_upper = mle_fit$ci_theta_obs[2],
+        lambda = NA_real_
       )
     }, error = function(e) {
-      warning("Joint MLE failed: ", conditionMessage(e))
       tibble(
-        method = c("Joint MLE (obs)", "Joint MLE (exp)"),
-        theta_hat = rep(NA_real_, 2),
-        var_hat = rep(NA_real_, 2),
-        ci_lower = rep(NA_real_, 2),
-        ci_upper = rep(NA_real_, 2),
-        lambda = rep(NA_real_, 2)
+        method = "Joint MLE",
+        theta_hat = NA_real_,
+        var_hat = NA_real_,
+        ci_lower = NA_real_,
+        ci_upper = NA_real_,
+        lambda = NA_real_
       )
     })
+    results$mle <- mle_result
   }
-  # Naive estimator: just use raw LLM predictions with standard Wald CI
-  n_naive <- counts$n_llm_test
+
+  # 5. Naive estimator (no correction)
   naive_theta <- p_hat
-  naive_var <- p_hat * (1 - p_hat) / n_naive
+  naive_var <- p_hat * (1 - p_hat) / n
   z_alpha <- qnorm(1 - (1 - nominal) / 2)
   naive_se <- sqrt(naive_var)
-  naive_ci_lower <- pmax(naive_theta - z_alpha * naive_se, 0)
-  naive_ci_upper <- pmin(naive_theta + z_alpha * naive_se, 1)
-  naive_tbl <- tibble(
+  results$naive <- tibble(
     method = "Naive",
     theta_hat = naive_theta,
     var_hat = naive_var,
-    ci_lower = naive_ci_lower,
-    ci_upper = naive_ci_upper,
+    ci_lower = pmax(naive_theta - z_alpha * naive_se, 0),
+    ci_upper = pmin(naive_theta + z_alpha * naive_se, 1),
     lambda = NA_real_
   )
-  bind_rows(ppi_results, ppi_pp_tbl, llm_tbl, joint_tbl, naive_tbl) %>%
+
+  # 6. EIF estimator
+  eif_est <- eif_point_and_ci(
+    Y_cal = Y_cal,
+    Yhat_cal = Yhat_cal,
+    Yhat_test = Yhat_test,
+    alpha = 1 - nominal
+  )
+  results$eif <- tibble(
+    method = "EIF",
+    theta_hat = eif_est$theta,
+    var_hat = eif_est$var,
+    ci_lower = eif_est$ci_lower,
+    ci_upper = eif_est$ci_upper,
+    lambda = NA_real_
+  )
+
+  # Combine all results
+  bind_rows(results) %>%
     mutate(
       theta_true = theta,
       q0 = q0,
       q1 = q1,
       label_ratio = label_ratio,
-      sample_size = sample_size,
+      N = N,
+      n = n,
+      m = m,
+      m0 = m0,
+      m1 = m1,
       rep = rep_id,
       q0_hat = q0_hat,
-      q1_hat = q1_hat,
-      n_labeled = counts$n_ppi,
-      m0 = counts$m0,
-      m1 = counts$m1,
-      split_label = split_label,
-      m0_prop = m0_prop,
-      m1_prop = 1 - m0_prop
+      q1_hat = q1_hat
     )
 }
 
-run_one_grid <- function(theta, q0, q1, label_ratio, m0_prop, split_label) {
+#' Run B replicates for one parameter configuration
+run_one_config <- function(theta, q0, q1, label_ratio) {
   map_dfr(
-    1:SIM_CONFIG$B,
-    ~ sim_one_condition(
+    seq_len(SIM_CONFIG$B),
+    ~ sim_one_rep(
       theta = theta,
       q0 = q0,
       q1 = q1,
       label_ratio = label_ratio,
-      sample_size = SIM_CONFIG$sample_size,
+      N = SIM_CONFIG$N,
       signal = SIM_CONFIG$signal,
-      g_specs = g_specs,
       rep_id = .x,
-      nominal = SIM_CONFIG$nominal_coverage,
-      m0_prop = m0_prop,
-      split_label = split_label
+      nominal = SIM_CONFIG$nominal_coverage
     )
   )
 }
 
+# =============================================================================
+# RUN SIMULATION
+# =============================================================================
+
+# Parameter grid (no more calibration_balances - m0/m1 are random!)
 param_grid <- expand_grid(
   theta = SIM_CONFIG$thetas,
   q0 = SIM_CONFIG$q0_vals,
   q1 = SIM_CONFIG$q1_vals,
-  label_ratio = SIM_CONFIG$label_ratios,
-  split_label = SIM_CONFIG$calibration_balances$split_label
-) %>%
-  left_join(SIM_CONFIG$calibration_balances, by = "split_label")
+  label_ratio = SIM_CONFIG$label_ratios
+)
 
+message("Running simulation with ", nrow(param_grid), " configurations x ",
+        SIM_CONFIG$B, " replicates")
+
+# Setup output directory
 timestamp <- format(Sys.time(), "%Y%m%d-%H%M%S")
 results_dir <- file.path("results", timestamp)
 plots_dir <- file.path(results_dir, "plots")
 dir.create(results_dir, recursive = TRUE, showWarnings = FALSE)
 dir.create(plots_dir, showWarnings = FALSE)
 
+# Run simulation in parallel
 res_all <- future_pmap_dfr(
   list(
     theta = param_grid$theta,
     q0 = param_grid$q0,
     q1 = param_grid$q1,
-    label_ratio = param_grid$label_ratio,
-    m0_prop = param_grid$m0_prop,
-    split_label = param_grid$split_label
+    label_ratio = param_grid$label_ratio
   ),
-  run_one_grid,
+  run_one_config,
   .progress = TRUE,
   .options = furrr_options(seed = TRUE)
 )
 
-#readr::write_csv(res_all, file.path(results_dir, "raw_simulation_results.csv"))
+# =============================================================================
+# SUMMARIZE RESULTS
+# =============================================================================
 
+# CI and bias summary
 ci_summary <- res_all %>%
   filter(!is.na(theta_hat)) %>%
-  mutate(
-    covered = theta_true >= ci_lower & theta_true <= ci_upper
-  ) %>%
-  group_by(theta_true, q0, q1, label_ratio, split_label, sample_size, method) %>%
+  mutate(covered = theta_true >= ci_lower & theta_true <= ci_upper) %>%
+  group_by(theta_true, q0, q1, label_ratio, N, method) %>%
   summarise(
+    n_reps = n(),
     ci_width = mean(ci_upper - ci_lower, na.rm = TRUE),
     coverage = mean(covered, na.rm = TRUE),
     mse = mean((theta_hat - theta_true)^2, na.rm = TRUE),
     bias = mean(theta_hat - theta_true, na.rm = TRUE),
     var_est = var(theta_hat, na.rm = TRUE),
     lambda_mean = mean(lambda, na.rm = TRUE),
+    m0_mean = mean(m0, na.rm = TRUE),
+    m1_mean = mean(m1, na.rm = TRUE),
     .groups = "drop"
   ) %>%
-  mutate(
-    coverage_gap = coverage - SIM_CONFIG$nominal_coverage
-  )
+  mutate(coverage_gap = coverage - SIM_CONFIG$nominal_coverage)
 
 readr::write_csv(ci_summary, file.path(results_dir, "ci_summary.csv"))
 
+# Calibration parameter estimation summary
 q_est_summary <- res_all %>%
-  distinct(theta_true, q0, q1, label_ratio, split_label, sample_size, rep, q0_hat, q1_hat) %>%
-  group_by(theta_true, q0, q1, label_ratio, split_label, sample_size) %>%
+  distinct(theta_true, q0, q1, label_ratio, N, rep, q0_hat, q1_hat, m0, m1) %>%
+  group_by(theta_true, q0, q1, label_ratio, N) %>%
   summarise(
     q0_bias = mean(q0_hat - q0, na.rm = TRUE),
     q1_bias = mean(q1_hat - q1, na.rm = TRUE),
     q0_rmse = sqrt(mean((q0_hat - q0)^2, na.rm = TRUE)),
     q1_rmse = sqrt(mean((q1_hat - q1)^2, na.rm = TRUE)),
+    m0_mean = mean(m0, na.rm = TRUE),
+    m1_mean = mean(m1, na.rm = TRUE),
     .groups = "drop"
   )
 
 readr::write_csv(q_est_summary, file.path(results_dir, "q_est_summary.csv"))
 
-# Save plot helper (wraps ggsave with plots_dir)
+# =============================================================================
+# PLOTTING
+# =============================================================================
+
 save_plot <- function(plot_obj, filename, width = 14, height = 12) {
   ggsave(file.path(plots_dir, filename), plot_obj, width = width, height = height, dpi = 400)
 }
 
-# =============================================================================
-# PLOTTING SECTION
-# =============================================================================
-
-# Prepare data for plotting
+# Prepare plotting data
 ci_summary_plot <- ci_summary %>%
   mutate(
-    split_label = recode(split_label, "q0_20" = "20:80", "q0_50" = "50:50", "q0_80" = "80:20"),
-    bias_pct = dplyr::if_else(theta_true != 0, 100 * bias / theta_true, NA_real_),
+    bias_pct = if_else(theta_true != 0, 100 * bias / theta_true, NA_real_),
     q0_lab = paste0("q0 = ", q0),
-    q1_lab = paste0("q1 = ", q1)
+    q1_lab = paste0("q1 = ", q1),
+    label_ratio_lab = factor(format_label_ratio(label_ratio),
+                              levels = format_label_ratio(sort(unique(label_ratio))))
   )
 
 q_bias_long <- q_est_summary %>%
-  mutate(split_label = recode(split_label, "q0_20" = "20:80", "q0_50" = "50:50", "q0_80" = "80:20")) %>%
   pivot_longer(cols = c(q0_bias, q1_bias), names_to = "metric", values_to = "bias") %>%
   mutate(
     metric = recode(metric, q0_bias = "q0", q1_bias = "q1"),
     q0_lab = paste0("q0 = ", q0),
-    q1_lab = paste0("q1 = ", q1)
+    q1_lab = paste0("q1 = ", q1),
+    label_ratio_lab = factor(format_label_ratio(label_ratio),
+                              levels = format_label_ratio(sort(unique(label_ratio))))
   )
 
 # -----------------------------------------------------------------------------
-# GRID PLOTS: One plot per (split, label_ratio), faceted by q0 x q1
+# GRID PLOTS: Per label_ratio, faceted by q0 x q1
 # -----------------------------------------------------------------------------
-for (split in unique(ci_summary_plot$split_label)) {
-  for (lr in unique(ci_summary_plot$label_ratio)) {
-    suffix <- paste0("_", split, "_labeled_", sprintf("%02d", as.integer(lr * 100)), ".png")
-    subtitle <- paste0("neg:pos = ", split, " | ", scales::percent(lr, accuracy = 1), " labeled")
 
-    ci_sub <- filter(ci_summary_plot, split_label == split, label_ratio == lr)
-    q_sub <- filter(q_bias_long, split_label == split, label_ratio == lr)
+for (lr in unique(ci_summary_plot$label_ratio)) {
+  suffix <- paste0("_labeled_", sprintf("%02d", as.integer(lr * 100)), ".png")
+  subtitle <- paste0(scales::percent(lr, accuracy = 1), " labeled (m0, m1 random)")
 
-    save_plot(plot_coverage(ci_sub, q0_lab ~ q1_lab, "Coverage", subtitle, x_breaks = SIM_CONFIG$thetas), paste0("coverage", suffix))
-    save_plot(plot_ci_width(ci_sub, q0_lab ~ q1_lab, "CI Width", subtitle, x_breaks = SIM_CONFIG$thetas), paste0("ci_width", suffix))
-    save_plot(plot_bias(ci_sub, q0_lab ~ q1_lab, "Estimator Bias", subtitle, x_breaks = SIM_CONFIG$thetas), paste0("bias", suffix))
-    save_plot(plot_bias_pct(ci_sub, q0_lab ~ q1_lab, "Percent Bias", subtitle, x_breaks = SIM_CONFIG$thetas), paste0("bias_pct", suffix))
-    save_plot(plot_q_bias(q_sub, q0_lab ~ q1_lab, "Calibration Estimate Bias", subtitle, x_breaks = SIM_CONFIG$thetas), paste0("q_bias", suffix))
-  }
+  ci_sub <- filter(ci_summary_plot, label_ratio == lr)
+  q_sub <- filter(q_bias_long, label_ratio == lr)
+
+  message("Plotting: lr=", lr, " n=", nrow(ci_sub))
+
+  # All methods
+  save_plot(plot_coverage(ci_sub, q0_lab ~ q1_lab, "Coverage", subtitle,
+                          x_breaks = SIM_CONFIG$thetas), paste0("coverage", suffix))
+  save_plot(plot_ci_width(ci_sub, q0_lab ~ q1_lab, "CI Width", subtitle,
+                          x_breaks = SIM_CONFIG$thetas), paste0("ci_width", suffix))
+  save_plot(plot_bias(ci_sub, q0_lab ~ q1_lab, "Estimator Bias", subtitle,
+                      x_breaks = SIM_CONFIG$thetas), paste0("bias", suffix))
+  save_plot(plot_bias_pct(ci_sub, q0_lab ~ q1_lab, "Percent Bias", subtitle,
+                          x_breaks = SIM_CONFIG$thetas), paste0("bias_pct", suffix))
+  save_plot(plot_q_bias(q_sub, q0_lab ~ q1_lab, "Calibration Estimate Bias", subtitle,
+                        x_breaks = SIM_CONFIG$thetas), paste0("q_bias", suffix))
+
+  # Excluding Naive for better zoom
+  ci_sub_no_naive <- filter(ci_sub, method != "Naive")
+  save_plot(plot_coverage(ci_sub_no_naive, q0_lab ~ q1_lab, "Coverage (excl. Naive)", subtitle,
+                          x_breaks = SIM_CONFIG$thetas, y_limits = c(0.8, 1)), paste0("coverage_no_naive", suffix))
+  save_plot(plot_ci_width(ci_sub_no_naive, q0_lab ~ q1_lab, "CI Width (excl. Naive)", subtitle,
+                          x_breaks = SIM_CONFIG$thetas), paste0("ci_width_no_naive", suffix))
+  save_plot(plot_bias(ci_sub_no_naive, q0_lab ~ q1_lab, "Estimator Bias (excl. Naive)", subtitle,
+                      x_breaks = SIM_CONFIG$thetas), paste0("bias_no_naive", suffix))
+  save_plot(plot_bias_pct(ci_sub_no_naive, q0_lab ~ q1_lab, "Percent Bias (excl. Naive)", subtitle,
+                          x_breaks = SIM_CONFIG$thetas), paste0("bias_pct_no_naive", suffix))
 }
 
 # -----------------------------------------------------------------------------
 # DIAGONAL PLOTS: q0 == q1, faceted by q_val x label_ratio
 # -----------------------------------------------------------------------------
+
 ci_summary_diag <- ci_summary_plot %>%
   filter(q0 == q1) %>%
-  mutate(
-    q_val_lab = paste0("q0 = q1 = ", q0),
-    label_ratio_lab = factor(format_label_ratio(label_ratio),
-                             levels = format_label_ratio(sort(unique(label_ratio))))
-  )
+  mutate(q_val_lab = paste0("q0 = q1 = ", q0))
 
 q_bias_diag <- q_bias_long %>%
   filter(q0 == q1) %>%
-  mutate(
-    q_val_lab = paste0("q0 = q1 = ", q0),
-    label_ratio_lab = factor(format_label_ratio(label_ratio),
-                             levels = format_label_ratio(sort(unique(label_ratio))))
-  )
+  mutate(q_val_lab = paste0("q0 = q1 = ", q0))
 
 if (nrow(ci_summary_diag) > 0) {
-  # Per-split diagonal plots
-  for (split in unique(ci_summary_diag$split_label)) {
-    suffix <- paste0("_diag_", split, ".png")
-    subtitle <- paste0("neg:pos = ", split, " | q0 = q1 (diagonal)")
+  subtitle <- "Diagonal (q0 = q1), m0/m1 random"
 
-    ci_sub <- filter(ci_summary_diag, split_label == split)
-    q_sub <- filter(q_bias_diag, split_label == split)
-    if (nrow(ci_sub) == 0) next
-
-    save_plot(plot_coverage(ci_sub, q_val_lab ~ label_ratio_lab, "Coverage (q0 = q1)", subtitle, x_breaks = SIM_CONFIG$thetas, point_size = 2), paste0("coverage", suffix), 16, 10)
-    save_plot(plot_ci_width(ci_sub, q_val_lab ~ label_ratio_lab, "CI Width (q0 = q1)", subtitle, x_breaks = SIM_CONFIG$thetas, point_size = 2), paste0("ci_width", suffix), 16, 10)
-    save_plot(plot_bias(ci_sub, q_val_lab ~ label_ratio_lab, "Estimator Bias (q0 = q1)", subtitle, x_breaks = SIM_CONFIG$thetas, point_size = 2), paste0("bias", suffix), 16, 10)
-    save_plot(plot_bias_pct(ci_sub, q_val_lab ~ label_ratio_lab, "Percent Bias (q0 = q1)", subtitle, x_breaks = SIM_CONFIG$thetas, point_size = 2), paste0("bias_pct", suffix), 16, 10)
-    if (nrow(q_sub) > 0) {
-      save_plot(plot_q_bias(q_sub, q_val_lab ~ label_ratio_lab, "Calibration Estimate Bias (q0 = q1)", subtitle, x_breaks = SIM_CONFIG$thetas, point_size = 2), paste0("q_bias", suffix), 16, 10)
-    }
-  }
-
-  # Aggregate diagonal plots
-  save_plot(plot_coverage(ci_summary_diag, q_val_lab ~ label_ratio_lab, "Coverage (q0 = q1)", linetype_var = split_label, use_aggregate = TRUE, x_breaks = SIM_CONFIG$thetas, point_size = 2), "coverage_diag_aggregate.png", 16, 10)
-  save_plot(plot_ci_width(ci_summary_diag, q_val_lab ~ label_ratio_lab, "CI Width (q0 = q1)", linetype_var = split_label, use_aggregate = TRUE, x_breaks = SIM_CONFIG$thetas, point_size = 2), "ci_width_diag_aggregate.png", 16, 10)
-  save_plot(plot_bias(ci_summary_diag, q_val_lab ~ label_ratio_lab, "Estimator Bias (q0 = q1)", linetype_var = split_label, use_aggregate = TRUE, x_breaks = SIM_CONFIG$thetas, point_size = 2), "bias_diag_aggregate.png", 16, 10)
-  save_plot(plot_bias_pct(ci_summary_diag, q_val_lab ~ label_ratio_lab, "Percent Bias (q0 = q1)", linetype_var = split_label, use_aggregate = TRUE, x_breaks = SIM_CONFIG$thetas, point_size = 2), "bias_pct_diag_aggregate.png", 16, 10)
+  # All methods
+  save_plot(plot_coverage(ci_summary_diag, q_val_lab ~ label_ratio_lab, "Coverage (q0 = q1)", subtitle,
+                          x_breaks = SIM_CONFIG$thetas, point_size = 2), "coverage_diag.png", 16, 10)
+  save_plot(plot_ci_width(ci_summary_diag, q_val_lab ~ label_ratio_lab, "CI Width (q0 = q1)", subtitle,
+                          x_breaks = SIM_CONFIG$thetas, point_size = 2), "ci_width_diag.png", 16, 10)
+  save_plot(plot_bias(ci_summary_diag, q_val_lab ~ label_ratio_lab, "Estimator Bias (q0 = q1)", subtitle,
+                      x_breaks = SIM_CONFIG$thetas, point_size = 2), "bias_diag.png", 16, 10)
+  save_plot(plot_bias_pct(ci_summary_diag, q_val_lab ~ label_ratio_lab, "Percent Bias (q0 = q1)", subtitle,
+                          x_breaks = SIM_CONFIG$thetas, point_size = 2), "bias_pct_diag.png", 16, 10)
   if (nrow(q_bias_diag) > 0) {
-    save_plot(plot_q_bias(q_bias_diag, q_val_lab ~ label_ratio_lab, "Calibration Estimate Bias (q0 = q1)", linetype_var = split_label, use_aggregate = TRUE, x_breaks = SIM_CONFIG$thetas, point_size = 2), "q_bias_diag_aggregate.png", 16, 10)
+    save_plot(plot_q_bias(q_bias_diag, q_val_lab ~ label_ratio_lab, "Calibration Estimate Bias (q0 = q1)", subtitle,
+                          x_breaks = SIM_CONFIG$thetas, point_size = 2), "q_bias_diag.png", 16, 10)
   }
-}
 
-# -----------------------------------------------------------------------------
-# OFF-DIAGONAL PLOTS: (q0=0.6, q1=0.9) and (q0=0.9, q1=0.6)
-# -----------------------------------------------------------------------------
-off_diag_cases <- list(
-  list(q0 = 0.6, q1 = 0.9, label = "q0=0.6_q1=0.9"),
-  list(q0 = 0.9, q1 = 0.6, label = "q0=0.9_q1=0.6")
-)
-
-for (case in off_diag_cases) {
-  ci_sub <- ci_summary_plot %>%
-    filter(q0 == case$q0, q1 == case$q1) %>%
-    mutate(label_ratio_lab = factor(format_label_ratio(label_ratio),
-                                    levels = format_label_ratio(sort(unique(label_ratio)))))
-
-  if (nrow(ci_sub) == 0) next
-
-  q_sub <- q_bias_long %>%
-    filter(q0 == case$q0, q1 == case$q1) %>%
-    mutate(label_ratio_lab = factor(format_label_ratio(label_ratio),
-                                    levels = format_label_ratio(sort(unique(label_ratio)))))
-
-  suffix <- paste0("_offdiag_", case$label, ".png")
-  subtitle <- paste0("q0 = ", case$q0, ", q1 = ", case$q1, " | All neg:pos ratios")
-  title_prefix <- paste0(" (q0 = ", case$q0, ", q1 = ", case$q1, ")")
-
-  save_plot(plot_coverage(ci_sub, ~ label_ratio_lab, paste0("Coverage", title_prefix), subtitle, linetype_var = split_label, use_aggregate = TRUE, x_breaks = SIM_CONFIG$thetas, point_size = 2), paste0("coverage", suffix), 18, 6)
-  save_plot(plot_ci_width(ci_sub, ~ label_ratio_lab, paste0("CI Width", title_prefix), subtitle, linetype_var = split_label, use_aggregate = TRUE, x_breaks = SIM_CONFIG$thetas, point_size = 2), paste0("ci_width", suffix), 18, 6)
-  save_plot(plot_bias(ci_sub, ~ label_ratio_lab, paste0("Estimator Bias", title_prefix), subtitle, linetype_var = split_label, use_aggregate = TRUE, x_breaks = SIM_CONFIG$thetas, point_size = 2), paste0("bias", suffix), 18, 6)
-  save_plot(plot_bias_pct(ci_sub, ~ label_ratio_lab, paste0("Percent Bias", title_prefix), subtitle, linetype_var = split_label, use_aggregate = TRUE, x_breaks = SIM_CONFIG$thetas, point_size = 2), paste0("bias_pct", suffix), 18, 6)
-  if (nrow(q_sub) > 0) {
-    save_plot(plot_q_bias(q_sub, ~ label_ratio_lab, paste0("Calibration Estimate Bias", title_prefix), subtitle, linetype_var = split_label, use_aggregate = TRUE, x_breaks = SIM_CONFIG$thetas, point_size = 2), paste0("q_bias", suffix), 18, 6)
-  }
+  # Excluding Naive
+  ci_diag_no_naive <- filter(ci_summary_diag, method != "Naive")
+  save_plot(plot_coverage(ci_diag_no_naive, q_val_lab ~ label_ratio_lab, "Coverage (q0 = q1, excl. Naive)", subtitle,
+                          x_breaks = SIM_CONFIG$thetas, point_size = 2, y_limits = c(0.8, 1)), "coverage_no_naive_diag.png", 16, 10)
+  save_plot(plot_ci_width(ci_diag_no_naive, q_val_lab ~ label_ratio_lab, "CI Width (q0 = q1, excl. Naive)", subtitle,
+                          x_breaks = SIM_CONFIG$thetas, point_size = 2), "ci_width_no_naive_diag.png", 16, 10)
+  save_plot(plot_bias(ci_diag_no_naive, q_val_lab ~ label_ratio_lab, "Estimator Bias (q0 = q1, excl. Naive)", subtitle,
+                      x_breaks = SIM_CONFIG$thetas, point_size = 2), "bias_no_naive_diag.png", 16, 10)
+  save_plot(plot_bias_pct(ci_diag_no_naive, q_val_lab ~ label_ratio_lab, "Percent Bias (q0 = q1, excl. Naive)", subtitle,
+                          x_breaks = SIM_CONFIG$thetas, point_size = 2), "bias_pct_no_naive_diag.png", 16, 10)
 }
 
 message("Results saved to ", results_dir)

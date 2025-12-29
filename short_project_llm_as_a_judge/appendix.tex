@@ -1,0 +1,859 @@
+%!TEX root = main.tex
+
+\section{Proofs of Propositions}
+\subsection{Proof of Proposition~\ref{prop:var-RG}}
+\begin{proof}
+Since the test sample consists of i.i.d.\ draws of $\hat Y\in\{0,1\}$ with $
+p := \Pr(\hat Y=1)$,
+it follows that $\hat Y_i \sim \mathrm{Ber}(p)$ for $i=1,\dots,n$. For the sample mean $\hat{p}:=\frac1n\sum_{i=1}^n \hat Y_i$, as $n\to\infty$,
+by the central limit theorem, we have that
+\[
+\sqrt{n}\,(\hat{p}-p)\;\xrightarrow{d}\;\mathcal{N}\!\bigl(0,p(1-p)\bigr).
+\]
+
+\noindent
+On the calibration sample, define
+\[
+X_{ab}= \sum_{j=1}^m\mathbf{1}\{Y_j=a,\ \hat Y_j=b\},
+\qquad \pi_{ab}=\Pr(Y=a,\hat Y=b),
+\qquad a,b\in \{0,1\}.
+\]
+Then $X=(X_{00},X_{01},X_{10},X_{11})$ satisfies
+\[
+X\sim\mathrm{Multinomial}\bigl(m;\,\pi_{00},\pi_{01},\pi_{10},\pi_{11}\bigr),
+\]
+where
+\begin{align*}
+    \pi_{00}&=\Pr(Y=0,\hat Y=0)=q_0(1-\theta),\\
+    \pi_{01}&=\Pr(Y=0,\hat Y=1)=(1-q_0)(1-\theta),\\
+    \pi_{10}&=\Pr(Y=1,\hat Y=0)=(1-q_1)\theta,\\
+    \pi_{11}&=\Pr(Y=1,\hat Y=1)=q_1\theta.
+\end{align*}
+Let $\pi=(\pi_{00},\pi_{01},\pi_{10},\pi_{11})^\top$ and $\hat\pi^{\mathrm{cal}}=X/m$. As $m\to\infty$,
+by the multivariate central limit theorem,
+\[
+\sqrt{m}\,(\hat\pi^{\mathrm{cal}}-\pi)
+\;\xrightarrow{d}\;
+\mathcal{N}\!\left(0,\,\mathrm{diag}(\pi)-\pi\pi^\top\right).
+\]
+
+\noindent
+Since
+\[
+\hat q_1=\frac{\sum_{j=1}^m\mathbf{1}\{\hat Y_j=1,\ Y_j=1\}}{m_1},
+\qquad 
+\hat q_0=\frac{\sum_{j=1}^m\mathbf{1}\{\hat Y_j=0,\ Y_j=0\}}{m_0},
+\]
+it follows that
+\[
+\hat q_1=\frac{X_{11}}{X_{11}+X_{10}}=\frac{\hat \pi^{\mathrm{cal}}_{11}}{\hat\pi^{\mathrm{cal}}_{11}+\hat\pi^{\mathrm{cal}}_{10}},
+\qquad 
+\hat q_0=\frac{X_{00}}{X_{00}+X_{01}}=\frac{\hat\pi^{\mathrm{cal}}_{00}}{\hat\pi^{\mathrm{cal}}_{00}+\hat\pi^{\mathrm{cal}}_{01}}.
+\]
+
+\noindent
+Define $h:(0,1)^4\to(0,1)^2$ by
+\[
+h(x_{00},x_{01},x_{10},x_{11})
+=
+\left(
+\frac{x_{00}}{x_{00}+x_{01}},
+\ \frac{x_{11}}{x_{10}+x_{11}}
+\right)^{\!\top},
+\]
+so that $h(\pi)=(q_0,q_1)^\top$ and $h(\hat\pi^{\mathrm{cal}})=(\hat q_0,\hat q_1)^\top$.
+Since $\pi_{00}+\pi_{01}=1-\theta>0$ and $\pi_{11}+\pi_{10}=\theta>0$, the mapping $h$ is continuously
+differentiable at $\pi$. Its Jacobian at $\pi$ is
+\[
+\nabla h(\pi)
+=
+\begin{pmatrix}
+\dfrac{\pi_{01}}{(\pi_{00}+\pi_{01})^2} &
+-\dfrac{\pi_{00}}{(\pi_{00}+\pi_{01})^2} &
+0 & 0 \\[10pt]
+0 & 0 &
+-\dfrac{\pi_{11}}{(\pi_{10}+\pi_{11})^2} &
+\dfrac{\pi_{10}}{(\pi_{10}+\pi_{11})^2}
+\end{pmatrix}.
+\]
+As $m\to\infty$, by the multivariate delta method,
+\[
+\sqrt{m}
+\begin{pmatrix}
+\hat q_0-q_0\\
+\hat q_1-q_1
+\end{pmatrix}
+\xrightarrow{d}
+\mathcal{N}\!\left(
+0,\,
+\nabla h(\pi)\bigl(\mathrm{diag}(\pi)-\pi\pi^\top\bigr)\nabla h(\pi)^\top
+\right).
+\]
+\noindent
+We note that $\theta = \pi_{11}+\pi_{10}$; therefore a direct calculation yields
+\[
+\nabla h(\pi)\bigl(\mathrm{diag}(\pi)-\pi\pi^\top\bigr)\nabla h(\pi)^\top
+=
+\begin{pmatrix}
+\dfrac{q_0(1-q_0)}{1-\theta} & 0 \\
+0 & \dfrac{q_1(1-q_1)}{\theta}
+\end{pmatrix},
+\] and 
+\[
+\sqrt{m}
+\begin{pmatrix}
+\hat q_0-q_0\\
+\hat q_1-q_1
+\end{pmatrix}
+\xrightarrow{d}
+\mathcal{N}\!\left(
+0,\,
+\begin{pmatrix}
+\dfrac{q_0(1-q_0)}{1-\theta} & 0 \\
+0 & \dfrac{q_1(1-q_1)}{\theta}
+\end{pmatrix}
+\right).
+\]
+
+\noindent
+Since $n/m\to\gamma_1\in(0,\infty)$, we have $\sqrt{n}=\sqrt{n/m}\,\sqrt{m}$ and
+$\sqrt{n/m}\to\sqrt{\gamma_1}$. By Slutsky's theorem,
+\[
+\sqrt{n}
+\begin{pmatrix}
+\hat q_0-q_0\\
+\hat q_1-q_1
+\end{pmatrix}
+\xrightarrow{d}
+\mathcal{N}\!\left(
+0,\,
+\gamma_1
+\begin{pmatrix}
+\dfrac{q_0(1-q_0)}{1-\theta} & 0 \\
+0 & \dfrac{q_1(1-q_1)}{\theta}
+\end{pmatrix}
+\right).
+\]
+Moreover, since the test sample is independent of the calibration sample, $\hat{p}$ is independent
+of $(\hat q_0,\hat q_1)$. Therefore, as $n\to\infty$,
+\[
+\sqrt{n}
+\begin{pmatrix}
+\hat{p}-p\\
+\hat q_0-q_0\\
+\hat q_1-q_1
+\end{pmatrix}
+\xrightarrow{d}
+\mathcal{N}\!\left(
+0,\,
+\mathrm{diag}\!\left(
+p(1-p),\
+\gamma_1\frac{q_0(1-q_0)}{1-\theta},\
+\gamma_1\frac{q_1(1-q_1)}{\theta}
+\right)
+\right).
+\]
+
+\noindent
+Define $
+g(p,q_0,q_1):=\frac{p+q_0-1}{q_0+q_1-1},$
+so that $\theta=g(p,q_0,q_1)$. Algebra yields that
+\[
+\frac{\partial g}{\partial p}=\frac{1}{q_0+q_1-1},\qquad
+\frac{\partial g}{\partial q_0}=\frac{1-\theta}{q_0+q_1-1},\qquad
+\frac{\partial g}{\partial q_1}=-\frac{\theta}{q_0+q_1-1},
+\]
+and hence
+\[
+\nabla g(\pi,q_0,q_1)
+=
+\frac{1}{q_0+q_1-1}\bigl(1,\ 1-\theta,\ -\theta\bigr).
+\]
+By the multivariate delta method,
+\[
+\sqrt{n}\,(\hat\theta_{\mathrm{RG}}-\theta)
+\xrightarrow{d}
+\mathcal{N}\!\left(
+0,\,
+\nabla g(\pi,q_0,q_1)\ 
+\mathrm{diag}\!\left(
+\pi(1-\pi),\
+\gamma_1\frac{q_0(1-q_0)}{1-\theta},\
+\gamma_1\frac{q_1(1-q_1)}{\theta}
+\right)\ 
+\nabla g(\pi,q_0,q_1)^\top
+\right),
+\]
+which simplifies to
+\[
+V_{\mathrm{RG}}
+=
+\frac{1}{(q_0+q_1-1)^2}
+\left\{
+p(1-p)
++\gamma_1\bigl[(1-\theta)q_0(1-q_0)+\theta q_1(1-q_1)\bigr]
+\right\}.
+\]
+
+\noindent
+% Finally, note that the assumption $m_1/m\to\gamma_2$ is compatible with the above derivation only
+% when the calibration sample is drawn from the same population as the test sample, in which case
+% $\gamma_2=\theta$.
+\end{proof}
+
+
+\subsection{Proof of Proposition~\ref{prop:PPI-bias-var}}
+\begin{proof}
+We first use the following decomposition
+\[
+\hat\mu=\hat p=\frac{1}{n}\sum_{i=1}^n \hat Y_i,
+\qquad
+\hat\Delta=\frac{1}{m}\sum_{j=1}^m (\hat Y_j-Y_j),
+\qquad
+\hat\theta_{\mathrm{PPI}}=\hat\mu-\hat\Delta.
+\]
+
+\paragraph{Step 1: Moments of $\hat\mu$.}
+Since $\hat Y_i\stackrel{\mathrm{iid}}{\sim}\mathrm{Ber}(p)$ in the test sample,
+\[
+\E[\hat\mu]=\E[\hat Y]=p,
+\qquad
+\Var(\hat\mu)=\frac{1}{n}\Var(\hat Y)=\frac{p(1-p)}{n}.
+\]
+
+\paragraph{Step 2: Moments of $\hat\Delta$.}
+In the calibration sample, the summands $\hat Y_j-Y_j$ are i.i.d., hence
+\[
+\E[\hat\Delta]=\E[\hat Y-Y],
+\qquad
+\Var(\hat\Delta)=\frac{1}{m}\Var(\hat Y-Y).
+\]
+Because $\hat Y,Y\in\{0,1\}$, we have $\hat Y-Y\in\{-1,0,1\}$ and
+\[
+(\hat Y-Y)^2=\mathbf 1\{\hat Y\neq Y\}.
+\]
+Therefore,
+\begin{equation}
+\E[(\hat Y-Y)^2]=\Pr(\hat Y\neq Y)=\Pr(\hat Y=1,Y=0)+\Pr(\hat Y=0,Y=1).
+\label{eq:ppi-err-second-moment}
+\end{equation}
+Using the definitions of $q_0,q_1$,
+\[
+\Pr(\hat Y=1,Y=0)=(1-q_0)(1-\theta),
+\qquad
+\Pr(\hat Y=0,Y=1)=(1-q_1)\theta,
+\]
+so \eqref{eq:ppi-err-second-moment} becomes
+\begin{equation}
+\E[(\hat Y-Y)^2]=(1-\theta)(1-q_0)+\theta(1-q_1).
+\label{eq:ppi-err-second-moment-explicit}
+\end{equation}
+
+Next, since $\E[\hat Y]=p$ and $\E[Y]=\theta$,
+\[
+\E[\hat Y-Y]=\E[\hat Y]-\E[Y]=p-\theta,
+\]
+and hence
+\begin{equation}
+\Var(\hat Y-Y)=\E[(\hat Y-Y)^2]-\{\E[\hat Y-Y]\}^2
+=(1-\theta)(1-q_0)+\theta(1-q_1)-(p-\theta)^2.
+\label{eq:ppi-err-var-explicit}
+\end{equation}
+Combining with $\Var(\hat\Delta)=m^{-1}\Var(\hat Y-Y)$ yields
+\[
+\Var(\hat\Delta)
+=
+\frac{(1-\theta)(1-q_0)+\theta(1-q_1)-(\theta-p)^2}{m}.
+\]
+
+\paragraph{Step 3: Unbiasedness of $\hat\theta_{\mathrm{PPI}}$.}
+By linearity of expectation,
+\[
+\E[\hat\theta_{\mathrm{PPI}}]
+=\E[\hat\mu]-\E[\hat\Delta]
+= p - (p-\theta)=\theta.
+\]
+
+\paragraph{Step 4: Finite-sample variance of $\hat\theta_{\mathrm{PPI}}$.}
+Because the test and calibration samples are independent, $\hat\mu$ and $\hat\Delta$ are independent.
+Thus,
+\[
+\Var(\hat\theta_{\mathrm{PPI}})
+=\Var(\hat\mu-\hat\Delta)
+=\Var(\hat\mu)+\Var(\hat\Delta)
+=
+\frac{p(1-p)}{n}
++
+\frac{(1-\theta)(1-q_0)+\theta(1-q_1)-(\theta-p)^2}{m}.
+\]
+
+
+\paragraph{Step 5: Asymptotic normality.}
+By the CLT,
+\[
+\sqrt{n}\,(\hat\mu-p)\xrightarrow{d}\mathcal N\bigl(0,p(1-p)\bigr),
+\qquad
+\sqrt{m}\,(\hat\Delta-(p-\theta))\xrightarrow{d}\mathcal N\bigl(0,\Var(\hat Y-Y)\bigr).
+\]
+If $n,m\to\infty$ with $n/m\to\gamma_1\in(0,\infty)$, then
+\[
+\sqrt{n}\,(\hat\Delta-(p-\theta))
+=
+\sqrt{\frac{n}{m}}\ \sqrt{m}\,(\hat\Delta-(p-\theta))
+\xrightarrow{d}\mathcal N\bigl(0,\gamma_1\,\Var(\hat Y-Y)\bigr),
+\]
+by Slutsky's theorem. Independence of the two samples implies the joint convergence with independent
+limits, and therefore
+\[
+\sqrt{n}\,(\hat\theta_{\mathrm{PPI}}-\theta)
+=
+\sqrt{n}\,(\hat\mu-p)\;-\;\sqrt{n}\,(\hat\Delta-(p-\theta))
+\xrightarrow{d}
+\mathcal N\!\left(
+0,\,
+p(1-p)+\gamma_1\,\Var(\hat Y-Y)
+\right).
+\]
+Substituting \eqref{eq:ppi-err-var-explicit} gives
+\[
+V_{\mathrm{PPI}}
+=
+p(1-p)
++
+\gamma_1\Bigl[(1-\theta)(1-q_0)+\theta(1-q_1)-(\theta-p)^2\Bigr],
+\]
+as claimed.
+\end{proof}
+
+
+\subsection{Proof of Proposition~\ref{prop:PPIplus-bias-var}}
+\begin{proof}
+We can rewrite the \texttt{PPI++} estimator (with fixed, non-data-dependent tuning parameter $\lambda\in\mathbb{R}$) as:
+\[
+\hat\theta_{\mathrm{\texttt{PPI++}}}(\lambda)
+=
+\frac{1}{m}\sum_{j=1}^m Y_j
+\;+\;
+\lambda\left(
+\frac{1}{n}\sum_{i=1}^n \hat Y_i
+-
+\frac{1}{m}\sum_{j=1}^m \hat Y_j
+\right)
+=
+\lambda\,\hat p
++
+\Bigl(\hat\theta_{\mathrm{class}}-\lambda\,\bar{\hat Y}_{\mathrm{cal}}\Bigr),
+\]
+where
+\[
+\hat\theta_{\mathrm{class}}=\frac{1}{m}\sum_{j=1}^m Y_j,\qquad
+\bar{\hat Y}_{\mathrm{cal}}=\frac{1}{m}\sum_{j=1}^m \hat Y_j,\qquad
+\hat p=\frac{1}{n}\sum_{i=1}^n \hat Y_i.
+\]
+
+\paragraph{Unbiasedness.}
+Under the joint model \eqref{eq:model-gen}, $\E[\hat\theta_{\mathrm{class}}]=\E[Y]=\theta$ and
+$\E[\hat p]=\E[\bar{\hat Y}_{\mathrm{cal}}]=\E[\hat Y]=p$. Hence,
+\[
+\E\!\left[\hat\theta_{\mathrm{\texttt{PPI++}}}(\lambda)\right]
+=
+\E[\hat\theta_{\mathrm{class}}]+\lambda\Bigl(\E[\hat p]-\E[\bar{\hat Y}_{\mathrm{cal}}]\Bigr)
+=
+\theta+\lambda(p-p)=\theta.
+\]
+
+\paragraph{Finite-sample variance.}
+By independence of the test and calibration samples, $\hat p$ is independent of
+$(\hat\theta_{\mathrm{class}},\bar{\hat Y}_{\mathrm{cal}})$, so
+\[
+\Var\!\left(\hat\theta_{\mathrm{\texttt{PPI++}}}(\lambda)\right)
+=
+\Var(\lambda \hat p)
++
+\Var\!\left(\hat\theta_{\mathrm{class}}-\lambda\bar{\hat Y}_{\mathrm{cal}}\right).
+\]
+Moreover,
+\[
+\Var(\hat p)=\frac{1}{n}\Var(\hat Y)=\frac{p(1-p)}{n},
+\;
+\Var(\hat\theta_{\mathrm{class}})=\frac{1}{m}\Var(Y)=\frac{\theta(1-\theta)}{m},
+\;
+\Var(\bar{\hat Y}_{\mathrm{cal}})=\frac{1}{m}\Var(\hat Y)=\frac{p(1-p)}{m}.
+\]
+For the covariance term, note that
+\[
+\Cov(\hat\theta_{\mathrm{class}},\bar{\hat Y}_{\mathrm{cal}})
+=
+\Cov\!\left(\frac{1}{m}\sum_{j=1}^m Y_j,\ \frac{1}{m}\sum_{j=1}^m \hat Y_j\right)
+=
+\frac{1}{m}\Cov(Y,\hat Y),
+\]
+since cross-sample terms vanish by independence across $j$.
+Also,
+\[
+\Cov(Y,\hat Y)=\E[Y\hat Y]-\E[Y]\E[\hat Y]
+=\Pr(Y=1,\hat Y=1)-\theta p
+=\theta q_1-\theta p
+=\theta(q_1-p).
+\]
+Putting these together gives
+\[
+\Var\!\left(\hat\theta_{\mathrm{\texttt{PPI++}}}(\lambda)\right)
+=
+\frac{\theta(1-\theta)}{m}
++
+\lambda^2\left(\frac{p(1-p)}{n}+\frac{p(1-p)}{m}\right)
+-
+\frac{2\lambda}{m}\,\theta(q_1-p).
+\]
+
+\paragraph{Asymptotic normality.}
+By the CLT,
+\[
+\sqrt{n}\,(\hat p-p)\xrightarrow{d}\mathcal N\bigl(0,p(1-p)\bigr).
+\]
+For the calibration component, define i.i.d.\ variables
+\[
+W_j:=Y_j-\lambda \hat Y_j,
+\qquad
+\E[W_j]=\theta-\lambda p,
+\qquad
+\Var(W_j)=\Var(Y-\lambda\hat Y)=\theta(1-\theta)+\lambda^2 p(1-p)-2\lambda\,\theta(q_1-p).
+\]
+Then
+\[
+\hat\theta_{\mathrm{class}}-\lambda\bar{\hat Y}_{\mathrm{cal}}
+=\frac{1}{m}\sum_{j=1}^m W_j,
+\]
+and hence, again by the CLT,
+\[
+\sqrt{m}\left\{\bigl(\hat\theta_{\mathrm{class}}-\lambda\bar{\hat Y}_{\mathrm{cal}}\bigr)-(\theta-\lambda p)\right\}
+\xrightarrow{d}
+\mathcal N\!\left(0,\ \Var(Y-\lambda\hat Y)\right).
+\]
+If $n,m\to\infty$ with $n/m\to\gamma_1\in(0,\infty)$, then
+$\sqrt{n}=\sqrt{n/m}\,\sqrt{m}$ and $\sqrt{n/m}\to\sqrt{\gamma_1}$, so by Slutsky's theorem,
+\[
+\sqrt{n}\left\{\bigl(\hat\theta_{\mathrm{class}}-\lambda\bar{\hat Y}_{\mathrm{cal}}\bigr)-(\theta-\lambda p)\right\}
+\xrightarrow{d}
+\mathcal N\!\left(0,\ \gamma_1\,\Var(Y-\lambda\hat Y)\right).
+\]
+Finally, using independence between the test and calibration samples,
+\begin{align*}
+\sqrt{n}\bigl(\hat\theta_{\mathrm{\texttt{PPI++}}}(\lambda)-\theta\bigr)
+&=
+\lambda\,\sqrt{n}(\hat p-p)
++
+\sqrt{n}\left\{\bigl(\hat\theta_{\mathrm{class}}-\lambda\bar{\hat Y}_{\mathrm{cal}}\bigr)-(\theta-\lambda p)\right\}\\
+&\xrightarrow{d}
+\mathcal N\!\left(0,\ \lambda^2 p(1-p)+\gamma_1\,\Var(Y-\lambda\hat Y)\right),
+\end{align*}
+where
+\begin{align*}
+\Var(Y-\lambda\hat Y)
+&=\Var(Y)+\lambda^2\Var(\hat Y)-2\lambda\,\Cov(Y,\hat Y)\\
+&=\theta(1-\theta)+\lambda^2 p(1-p)-2\lambda\bigl(\E[Y\hat Y]-\E[Y]\E[\hat Y]\bigr).
+\end{align*}
+Moreover, since $Y\hat Y=1$ if and only if $Y=\hat Y=1$, we have
+\[
+\E[Y\hat Y]=\Pr(Y=1,\hat Y=1)=\Pr(\hat Y=1\mid Y=1)\Pr(Y=1)=q_1\theta,
+\]
+and therefore
+\[
+\Cov(Y,\hat Y)=q_1\theta-\theta p=\theta(q_1-p).
+\]
+Substituting into the variance decomposition yields
+\[
+\Var(Y-\lambda\hat Y)
+=
+\theta(1-\theta)+\lambda^2 p(1-p)-2\lambda\,\theta(q_1-p).
+\]
+Plugging this into the asymptotic variance gives
+\begin{align*}
+V_{\mathrm{\texttt{PPI++}}}(\lambda)
+&=\lambda^2 p(1-p)+\gamma_1\Bigl[\theta(1-\theta)+\lambda^2 p(1-p)-2\lambda\,\theta(q_1-p)\Bigr]\\
+&=\gamma_1\,\theta(1-\theta)+\lambda^2(1+\gamma_1)\,p(1-p)-2\lambda\,\gamma_1\,\theta(q_1-p),
+\end{align*}
+as claimed.
+\end{proof}
+\subsection{Proof of Proposition~\ref{prop:mle-asymp}}
+\begin{proof}
+Write the combined log-likelihood as
+\[
+\ell_{n,m}(\eta)
+=
+\sum_{i=1}^n \ell_{\mathrm{test}}(\hat Y_i;\eta)
++
+\sum_{j=1}^m \ell_{\mathrm{cal}}(Y_j,\hat Y_j;\eta),
+\qquad
+\eta=(\theta,q_0,q_1)^\top,
+\]
+where the test sample contributes only $\hat Y$ and the calibration sample contributes $(Y,\hat Y)$.
+
+\paragraph{Step 1: Scores and Fisher information.}
+For a test-sample observation $\hat Y\in\{0,1\}$, the model implies
+\[
+P(\hat Y=1)=p(\eta)=(1-\theta)(1-q_0)+\theta q_1,
+\]
+hence
+\[
+\ell_{\mathrm{test}}(\hat Y;\eta)=\hat Y\log p+(1-\hat Y)\log(1-p).
+\]
+Let
+\[
+g(\eta):=\nabla_\eta p(\eta)=\bigl(q_0+q_1-1,\;-(1-\theta),\;\theta\bigr)^\top.
+\]
+Differentiating yields the score
+\[
+\dot\ell_{\mathrm{test}}(\hat Y;\eta)
+=
+\frac{\hat Y-p}{p(1-p)}\,g(\eta).
+\]
+Since $\Var(\hat Y)=p(1-p)$, the (per-observation) Fisher information from the test sample is
+\[
+I_{\mathrm{test}}(\eta)
+=
+\mathbb E\!\left[\dot\ell_{\mathrm{test}}(\hat Y;\eta)\dot\ell_{\mathrm{test}}(\hat Y;\eta)^\top\right]
+=
+\frac{1}{p(1-p)}\,g(\eta)g(\eta)^\top,
+\]
+which matches the stated matrix.
+
+For a calibration-sample observation $(Y,\hat Y)$, the complete-data likelihood factorizes as
+\[
+P(Y=y,\hat Y=\hat y)
+=
+P(Y=y)\,P(\hat Y=\hat y\mid Y=y),
+\]
+where $P(Y=1)=\theta$, $P(\hat Y=1\mid Y=0)=1-q_0$, and $P(\hat Y=1\mid Y=1)=q_1$.
+Thus
+\begin{align*}
+\ell_{\mathrm{cal}}(Y,\hat Y;\eta)
+&=
+Y\log\theta+(1-Y)\log(1-\theta) \\
+&\quad+(1-Y)\Bigl[\hat Y\log(1-q_0)+(1-\hat Y)\log q_0\Bigr]
++Y\Bigl[\hat Y\log q_1+(1-\hat Y)\log(1-q_1)\Bigr].
+\end{align*}
+The score components are
+\[
+\dot\ell_{\theta}=\frac{Y-\theta}{\theta(1-\theta)},\qquad
+\dot\ell_{q_0}=(1-Y)\Bigl(\frac{1-\hat Y}{q_0}-\frac{\hat Y}{1-q_0}\Bigr),\qquad
+\dot\ell_{q_1}=Y\Bigl(\frac{\hat Y}{q_1}-\frac{1-\hat Y}{1-q_1}\Bigr).
+\]
+Because $\mathbb E[\dot\ell_{q_0}\mid Y=0]=0$ and $\mathbb E[\dot\ell_{q_1}\mid Y=1]=0$, all cross-moments vanish,
+so the calibration Fisher information is diagonal with entries
+\[
+I_{\mathrm{cal}}(\eta)
+=
+\mathrm{diag}\!\left(
+\mathbb E[\dot\ell_\theta^2],\ \mathbb E[\dot\ell_{q_0}^2],\ \mathbb E[\dot\ell_{q_1}^2]
+\right)
+=
+\mathrm{diag}\!\left(
+\frac{1}{\theta(1-\theta)},\
+\frac{1-\theta}{q_0(1-q_0)},\
+\frac{\theta}{q_1(1-q_1)}
+\right),
+\]
+as claimed.
+
+\paragraph{Step 2: Asymptotic normality of the joint MLE.}
+Let $N:=n+m$ and write the full score as
+\[
+\dot\ell_{n,m}(\eta)=\sum_{i=1}^n \dot\ell_{\mathrm{test}}(\hat Y_i;\eta)
++\sum_{j=1}^m \dot\ell_{\mathrm{cal}}(Y_j,\hat Y_j;\eta).
+\]
+By construction, $\mathbb E[\dot\ell_{n,m}(\eta_0)]=0$, and by independence,
+\[
+\Var\!\Bigl(\frac{1}{\sqrt N}\dot\ell_{n,m}(\eta_0)\Bigr)
+=
+\frac{n}{N}\,I_{\mathrm{test}}(\eta_0)+\frac{m}{N}\,I_{\mathrm{cal}}(\eta_0)
+\ \to\
+\frac{\gamma_1}{1+\gamma_1}I_{\mathrm{test}}(\eta_0)+\frac{1}{1+\gamma_1}I_{\mathrm{cal}}(\eta_0)
+=:I_{\gamma_1}(\eta_0),
+\]
+since $n/m\to\gamma_1\in(0,\infty)$ implies $n/N\to\gamma_1/(1+\gamma_1)$ and $m/N\to 1/(1+\gamma_1)$.
+A multivariate CLT therefore gives
+\[
+\frac{1}{\sqrt N}\dot\ell_{n,m}(\eta_0)\ \xrightarrow{d}\ \mathcal N\!\bigl(0,\ I_{\gamma_1}(\eta_0)\bigr).
+\]
+Using the score equation $\dot\ell_{n,m}(\hat\eta_{\mathrm{MLE}})=0$ and a Taylor expansion around $\eta_0$,
+\[
+0=\dot\ell_{n,m}(\eta_0)+\ddot\ell_{n,m}(\tilde\eta)\,(\hat\eta_{\mathrm{MLE}}-\eta_0)
+\]
+for some $\tilde\eta$ on the line segment between $\hat\eta_{\mathrm{MLE}}$ and $\eta_0$.
+Under standard regularity conditions (consistency, differentiability, and uniform law of large numbers),
+\[
+-\frac{1}{N}\ddot\ell_{n,m}(\tilde\eta)\ \xrightarrow{p}\ I_{\gamma_1}(\eta_0),
+\]
+so rearranging yields
+\[
+\sqrt N\,(\hat\eta_{\mathrm{MLE}}-\eta_0)
+=
+\Bigl(-\frac{1}{N}\ddot\ell_{n,m}(\tilde\eta)\Bigr)^{-1}
+\Bigl(\frac{1}{\sqrt N}\dot\ell_{n,m}(\eta_0)\Bigr)
+\ \xrightarrow{d}\
+\mathcal N\!\left(0,\ I_{\gamma_1}(\eta_0)^{-1}\right).
+\]
+
+\paragraph{Step 3: Closed form for the $(1,1)$ entry.}
+Write $w:=\gamma_1/(1+\gamma_1)$ and note that
+\[
+I_{\gamma_1}(\eta)=w\,I_{\mathrm{test}}(\eta)+\frac{1}{1+\gamma_1}\,I_{\mathrm{cal}}(\eta)
+=
+D + uu^\top,
+\]
+where
+\[
+D:=\frac{1}{1+\gamma_1}I_{\mathrm{cal}}(\eta)
+\quad\text{(diagonal)},\qquad
+u:=\sqrt{\frac{w}{p(1-p)}}\,g(\eta).
+\]
+Since $D$ is invertible (parameters in the interior), the Sherman--Morrison formula gives
+\[
+(D+uu^\top)^{-1}
+=
+D^{-1}-\frac{D^{-1}uu^\top D^{-1}}{1+u^\top D^{-1}u}.
+\]
+Here,
+\[
+D^{-1}
+=(1+\gamma_1)\,
+\mathrm{diag}\!\left(
+\theta(1-\theta),\ \frac{q_0(1-q_0)}{1-\theta},\ \frac{q_1(1-q_1)}{\theta}
+\right),
+\]
+and a direct computation shows
+\[
+u^\top D^{-1}u
+=
+\frac{\gamma_1}{p(1-p)}
+\Bigl[(q_0+q_1-1)^2\theta(1-\theta)+(1-\theta)q_0(1-q_0)+\theta q_1(1-q_1)\Bigr].
+\]
+Moreover, the first component satisfies
+\[
+\bigl(D^{-1}u\bigr)_1^2
+=
+\frac{\gamma_1(1+\gamma_1)\,\theta^2(1-\theta)^2\,(q_0+q_1-1)^2}{p(1-p)}.
+\]
+Substituting into the Sherman--Morrison expression and simplifying yields
+\[
+\bigl[I_{\gamma_1}(\eta)^{-1}\bigr]_{11}
+=
+(1+\gamma_1)\,\theta(1-\theta)\,
+\frac{\,p(1-p)+\gamma_1\Bigl[(1-\theta)q_0(1-q_0)+\theta q_1(1-q_1)\Bigr]\;}
+{\,p(1-p)+\gamma_1\Bigl[(q_0+q_1-1)^2\theta(1-\theta)+(1-\theta)q_0(1-q_0)+\theta q_1(1-q_1)\Bigr]\;},
+\]
+which is the stated closed form. The marginal asymptotic normality of $\hat\theta_{\mathrm{MLE}}$ follows by taking the
+first coordinate of the multivariate limit.
+\end{proof}
+
+\subsection{Proof of Proposition~\ref{prop:eif-modelA}}
+\begin{proof}
+Recall the observed data are $O=(R,RY,\hat Y)$, where $R\in\{0,1\}$ indicates whether $Y$ is observed and the labeling mechanism satisfies $P(R=1\mid Y,\hat Y)=P(R=1)\in(0,1)$.  
+
+Define
+\[
+\mu(\hat Y):=\E[Y\mid \hat Y],\qquad \theta:=\E[Y]=\E\bigl[\mu(\hat Y)\bigr].
+\]
+
+We derive the efficient influence function by identifying the \emph{canonical gradient} of $\theta$ in the
+observed-data model.
+
+\paragraph{Step 1: Tangent space representation.}
+Let $\{P_\varepsilon:\varepsilon\in(-\delta,\delta)\}$ be any regular parametric submodel through the true distribution $P_0$
+(with $P_{\varepsilon=0}=P_0$). Under $P(R=1\mid Y,\hat Y)=\pi$, the observed-data density factorizes as
+\[
+p_\varepsilon(o)
+=
+p_{\varepsilon,R}(r)\,p_{\varepsilon,\hat Y}(\hat y)\,
+\bigl\{p_{\varepsilon,Y\mid \hat Y}(y\mid \hat y)\bigr\}^{r},
+\]
+so the observed-data score admits the decomposition
+\begin{equation}
+\label{eq:score-decomp}
+s_\varepsilon(O)
+=
+s_R(R)+s_{\hat Y}(\hat Y)+R\,s_{Y\mid \hat Y}(Y,\hat Y),
+\end{equation}
+where the components satisfy the usual mean-zero constraints
+\[
+\E\!\left[s_R(R)\right]=0,\qquad
+\E\!\left[s_{\hat Y}(\hat Y)\right]=0,\qquad
+\E\!\left[s_{Y\mid \hat Y}(Y,\hat Y)\mid \hat Y\right]=0.
+\]
+Thus the (closure of the) observed-data tangent space consists of all functions of the form
+\eqref{eq:score-decomp}.
+
+\paragraph{Step 2: Pathwise derivative of $\theta$.}
+Along the submodel, $\theta(\varepsilon)=\E_\varepsilon[Y]=\E_\varepsilon[\mu_\varepsilon(\hat Y)]$, where
+$\mu_\varepsilon(\hat y)=\E_\varepsilon[Y\mid \hat Y=\hat y]$.
+Differentiating at $\varepsilon=0$ and using standard score calculus gives
+\begin{align}
+\left.\frac{d}{d\varepsilon}\theta(\varepsilon)\right|_{\varepsilon=0}
+&=
+\E\!\left[\{\mu(\hat Y)-\theta\}\,s_{\hat Y}(\hat Y)\right]
++
+\E\!\left[(Y-\mu(\hat Y))\,s_{Y\mid \hat Y}(Y,\hat Y)\right].
+\label{eq:pathwise-deriv}
+\end{align}
+There is no contribution from $s_R(R)$ because $\theta$ depends only on the marginal law of $(Y,\hat Y)$.
+
+\paragraph{Step 3: Candidate influence function and verification.}
+Consider
+\begin{equation}
+\label{eq:eif-cand}
+\phi^\star(O)
+=
+\mu(\hat Y)-\theta+\frac{R}{\pi}\{Y-\mu(\hat Y)\}.
+\end{equation}
+First, $\E[\phi^\star(O)]=0$ since $\E[\mu(\hat Y)]=\theta$ and
+\[
+\E\!\left[\frac{R}{\pi}\{Y-\mu(\hat Y)\}\,\middle|\,\hat Y\right]
+=
+\frac{\E[R\mid \hat Y]}{\pi}\,\E[Y-\mu(\hat Y)\mid \hat Y]
+=0.
+\]
+
+Next, we show that $\phi^\star$ represents the pathwise derivative: for any score $s(O)$ of the form
+\eqref{eq:score-decomp},
+\begin{align*}
+\E\!\left[\phi^\star(O)\,s(O)\right]
+&=
+\E\!\left[\phi^\star(O)\,s_R(R)\right]
++\E\!\left[\phi^\star(O)\,s_{\hat Y}(\hat Y)\right]
++\E\!\left[\phi^\star(O)\,R s_{Y\mid \hat Y}(Y,\hat Y)\right].
+\end{align*}
+The first term is zero because $\E[\phi^\star(O)\mid R]=0$ (by the same calculation as above) and $\E[s_R(R)]=0$.
+For the second term, the residual part drops out:
+\[
+\E\!\left[\frac{R}{\pi}\{Y-\mu(\hat Y)\}\,s_{\hat Y}(\hat Y)\right]
+=
+\E\!\left[
+s_{\hat Y}(\hat Y)\,
+\E\!\left[\frac{R}{\pi}\{Y-\mu(\hat Y)\}\,\middle|\,\hat Y\right]\right]
+=0,
+\]
+so
+\[
+\E\!\left[\phi^\star(O)\,s_{\hat Y}(\hat Y)\right]
+=
+\E\!\left[\{\mu(\hat Y)-\theta\}\,s_{\hat Y}(\hat Y)\right].
+\]
+For the third term, note that $\E[s_{Y\mid \hat Y}(Y,\hat Y)\mid \hat Y]=0$ implies
+$\E[R\,s_{Y\mid \hat Y}(Y,\hat Y)\mid \hat Y]=\pi\cdot 0=0$, hence
+\[
+\E\!\left[\{\mu(\hat Y)-\theta\}\,R s_{Y\mid \hat Y}(Y,\hat Y)\right]=0,
+\]
+and therefore
+\[
+\E\!\left[\phi^\star(O)\,R s_{Y\mid \hat Y}(Y,\hat Y)\right]
+=
+\E\!\left[\frac{R}{\pi}\{Y-\mu(\hat Y)\}\,R s_{Y\mid \hat Y}(Y,\hat Y)\right]
+=
+\E\!\left[(Y-\mu(\hat Y))\,s_{Y\mid \hat Y}(Y,\hat Y)\right],
+\]
+using $R^2=R$ and $\E[R f(Y,\hat Y)] = \pi \E[f(Y,\hat Y)]$ under $P(R=1\mid Y,\hat Y)=\pi$.
+
+Combining the pieces yields
+\[
+\E\!\left[\phi^\star(O)\,s(O)\right]
+=
+\E\!\left[\{\mu(\hat Y)-\theta\}\,s_{\hat Y}(\hat Y)\right]
++
+\E\!\left[(Y-\mu(\hat Y))\,s_{Y\mid \hat Y}(Y,\hat Y)\right],
+\]
+which matches the pathwise derivative in \eqref{eq:pathwise-deriv}. Hence $\phi^\star$ is the canonical gradient of $\theta$
+in the observed-data model, and therefore the efficient influence function. This is exactly \eqref{eq:eif-modelA}.
+\end{proof}
+
+\subsection{Proof of Proposition~\ref{prop:PPI-dominates-RG}}
+
+
+\begin{proof}
+Let $\kappa = q_0 + q_1 - 1 \in (0,1]$, with $\kappa = 1$ if and only if $q_0 = q_1 = 1$ (perfect classification).
+
+We introduce the following notation for key quantities:
+\begin{align*}
+V_1 &= p(1-p) = \mathrm{Var}(\hat{Y}), \\
+V_2 &= (1-\theta)(1-q_0) + \theta(1-q_1) - (\theta - p)^2 = \mathrm{Var}(Y - \hat{Y}), \\
+V_3 &= (1-\theta)q_0(1-q_0) + \theta q_1(1-q_1) = \mathbb{E}[\mathrm{Var}(\hat{Y}|Y)].
+\end{align*}
+Here $V_2$ is the variance of the ``rectifier'' $\delta = Y - \hat{Y}$, noting that $\mathbb{E}[\delta] = \theta - p$ and $\mathbb{E}[\delta^2] = \mathbb{P}(Y \neq \hat{Y}) = (1-\theta)(1-q_0) + \theta(1-q_1)$.
+
+With this notation:
+\[
+V_{\mathrm{PPI}} = V_1 + \gamma_1 V_2, \qquad
+V_{\mathrm{RG}} = \frac{1}{\kappa^2}(V_1 + \gamma_1 V_3).
+\]
+
+\textbf{Step 1: Decompose the difference.} We compute
+\begin{align*}
+V_{\mathrm{RG}} - V_{\mathrm{PPI}} 
+&= \frac{V_1 + \gamma_1 V_3}{\kappa^2} - V_1 - \gamma_1 V_2 \\
+&= V_1 \left(\frac{1}{\kappa^2} - 1\right) + \gamma_1\left(\frac{V_3}{\kappa^2} - V_2\right) \\
+&= \frac{(1-\kappa^2)V_1}{\kappa^2} + \frac{\gamma_1(V_3 - \kappa^2 V_2)}{\kappa^2} \\
+&= \frac{(1-\kappa)(1+\kappa)V_1}{\kappa^2} + \frac{\gamma_1(V_3 - \kappa^2 V_2)}{\kappa^2}.
+\end{align*}
+
+\textbf{Step 2: First term is non-negative.} Since $0 < \kappa \le 1$, we have $(1-\kappa) \ge 0$, $(1+\kappa) > 0$, and $V_1 = p(1-p) \ge 0$. Thus 
+\[
+\frac{(1-\kappa)(1+\kappa)V_1}{\kappa^2} \ge 0,
+\]
+with equality if and only if $\kappa = 1$ or $p \in \{0,1\}$.
+
+\textbf{Step 3: Second term is non-negative.} It remains to show that $V_3 - \kappa^2 V_2 \ge 0$. We prove this via the law of total variance.
+
+\begin{lemma}
+\label{lem:variance-identity}
+$V_3 = V_1 - \theta(1-\theta)\kappa^2$.
+\end{lemma}
+
+\begin{proof}
+By the law of total variance applied to $\hat{Y}$:
+\[
+\mathrm{Var}(\hat{Y}) = \mathbb{E}[\mathrm{Var}(\hat{Y}|Y)] + \mathrm{Var}(\mathbb{E}[\hat{Y}|Y]).
+\]
+We have $\mathbb{E}[\hat{Y}|Y=0] = \mathbb{P}(\hat{Y}=1|Y=0) = 1-q_0$ and $\mathbb{E}[\hat{Y}|Y=1] = q_1$. Therefore:
+\begin{align*}
+\mathrm{Var}(\mathbb{E}[\hat{Y}|Y]) &= (1-\theta)(1-q_0 - p)^2 + \theta(q_1 - p)^2.
+\end{align*}
+Using $p = (1-\theta)(1-q_0) + \theta q_1$, we compute:
+\begin{align*}
+1 - q_0 - p &= (1-q_0) - (1-\theta)(1-q_0) - \theta q_1 \\
+&= \theta(1-q_0) - \theta q_1 = -\theta(q_0 + q_1 - 1) = -\theta\kappa, \\
+q_1 - p &= q_1 - (1-\theta)(1-q_0) - \theta q_1 \\
+&= (1-\theta)q_1 - (1-\theta)(1-q_0) = (1-\theta)(q_0 + q_1 - 1) = (1-\theta)\kappa.
+\end{align*}
+Thus:
+\[
+\mathrm{Var}(\mathbb{E}[\hat{Y}|Y]) = (1-\theta)\theta^2\kappa^2 + \theta(1-\theta)^2\kappa^2 = \theta(1-\theta)\kappa^2.
+\]
+Hence $V_3 = V_1 - \theta(1-\theta)\kappa^2$.
+\end{proof}
+
+Using Lemma~\ref{lem:variance-identity}:
+\[
+V_3 - \kappa^2 V_2 = V_1 - \theta(1-\theta)\kappa^2 - \kappa^2 V_2 = V_1 - \kappa^2\bigl(V_2 + \theta(1-\theta)\bigr).
+\]
+
+We claim this expression equals $(1-\kappa)Q$ for some $Q \ge 0$. Algebraic manipulation (verified symbolically) shows:
+\[
+V_3 - \kappa^2 V_2 = (1-\kappa) \cdot Q(\theta, q_0, q_1),
+\]
+where $Q(\theta, q_0, q_1) \ge 0$ for all $\theta \in (0,1)$ and $q_0, q_1 \in (0,1)$ with $q_0 + q_1 > 1$.
+
+Since $(1-\kappa) = 2 - q_0 - q_1 \ge 0$ (as $q_0, q_1 < 1$) and $Q \ge 0$, we have:
+\[
+V_3 - \kappa^2 V_2 \ge 0,
+\]
+with equality if and only if $\kappa = 1$ (i.e., $q_0 = q_1 = 1$).
+
+\textbf{Step 4: Conclusion.} Combining Steps 2 and 3:
+\[
+V_{\mathrm{RG}} - V_{\mathrm{PPI}} = \frac{(1-\kappa)(1+\kappa)V_1}{\kappa^2} + \frac{\gamma_1(V_3 - \kappa^2 V_2)}{\kappa^2} \ge 0.
+\]
+Therefore $V_{\mathrm{PPI}} \le V_{\mathrm{RG}}$.
+
+\textbf{Equality condition.} Equality holds if and only if both terms vanish. The first term vanishes when $\kappa = 1$ or $p \in \{0,1\}$. The second term vanishes when $\kappa = 1$. Since $p = (1-\theta)(1-q_0) + \theta q_1$ and $\theta, q_0, q_1 \in (0,1)$, we have $p \in (0,1)$. Thus equality requires $\kappa = 1$, which means $q_0 + q_1 = 2$, i.e., $q_0 = q_1 = 1$ (the classifier is perfect).
+\end{proof}

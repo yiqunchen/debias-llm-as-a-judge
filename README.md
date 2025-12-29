@@ -33,33 +33,42 @@ We compare three main approaches:
 ## Installation
 
 ```r
-# Install dependencies
-install.packages(c("tidyverse", "future", "furrr", "quadprog"))
-
-# Install package
-devtools::install_local(".")
+# Install devtools if needed
+if (!requireNamespace("devtools", quietly = TRUE)) {
+  install.packages("devtools")
+}
+# Install the package and its dependencies
+devtools::install_local(".", dependencies = TRUE)
 ```
 
 ## Usage
 
-The main simulation script is `simulation_llm_vs_ppi.R`, which runs a full comparison across the parameter grid and generates diagnostic plots.
-
 ```r
-source("simulation_llm_vs_ppi.R")
+# Install the package
+devtools::install_local(".")
+
+# Load the package
+library(debiasLLMReporting)
 ```
 
-Results are saved to a timestamped directory under `results/`.
+## Reproducibility
+
+The `reproduce/` directory contains scripts to replicate our analyses:
+
+- `simulation_llm_vs_ppi.R` - Monte Carlo simulation comparing estimators across parameter grid
+- `apply_estimators.R` - Apply estimators to real LLM judge evaluation data
+
+Results are saved to timestamped directories under `results/`.
 
 ## Package Functions
 
-Core estimators in `R/sim_estimators.R`:
+Core estimators:
 
-- `llm_point_and_ci()`: Measurement error corrected estimator with finite-sample adjustments
-- `ppi_point_and_ci()`: Standard PPI estimator
-- `ppi_pp_point_and_ci_general()`: PPI++ with optimized lambda
-- `generate_dgp_data()`: Simulate Bernoulli outcomes with controllable prevalence
-
-Additional utilities for multiclass settings and covariate-adjusted estimation are also provided.
+- `llm_point_and_ci()` - Rogan-Gladen estimator with delta method CI
+- `ppi_point_and_ci()` - Standard PPI estimator
+- `ppi_pp_point_and_ci_general()` - PPI++ with optimized lambda
+- `eif_point_and_ci()` - Efficient influence function estimator
+- `fit_misclass_mle()` - Joint MLE for misclassification model
 
 ## License
 

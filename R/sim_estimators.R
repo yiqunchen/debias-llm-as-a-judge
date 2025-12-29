@@ -56,22 +56,35 @@ class_one_hot <- function(y, K) {
 
 #' Generate Bernoulli responses with controllable prevalence.
 #'
+#' Draws i.i.d. binary outcomes with the specified prevalence. The simpler
+#' exchangeable design is appropriate when estimators do not condition on
+#' covariates.
+#'
 #' @param N Integer; number of observations to simulate.
 #' @param theta Target marginal prevalence for the Bernoulli outcome.
-#' @param signal Numeric; strength of the latent signal.
+#' @param signal Unused; retained for API compatibility.
 #'
-#' @return A list containing feature matrix `X`, outcome vector `Y`, and
-#'   per-sample probabilities `p_true`.
+#' @return A list containing outcome vector `Y`.
 #' @export
 generate_dgp_data <- function(N, theta, signal = 1) {
-  p <- 5L
-  X <- matrix(rnorm(N * p), N, p)
-  eta <- signal * (1.5 * X[, 1] - 1 * X[, 2]^2 + 0.5 * sin(X[, 3]))
-  fn <- function(c) mean(plogis(eta + c)) - theta
-  c_hat <- uniroot(fn, interval = c(-15, 15))$root
-  prob <- plogis(eta + c_hat)
-  Y <- rbinom(N, 1, prob)
-  list(X = X, Y = Y, p_true = prob)
+  Y <- rbinom(N, 1, theta)
+  list(Y = Y)
+}
+
+#' Bootstrap confidence interval using percentile method.
+#'
+#' @param theta_boots Vector of bootstrap estimates.
+#' @param alpha Miscoverage level for the interval.
+#'
+#' @return A list with `lower` and `upper` bounds.
+#' @export
+bootstrap_ci <- function(theta_boots, alpha = 0.10) {
+  theta_boots <- theta_boots[!is.na(theta_boots)]
+  if (length(theta_boots) < 2) {
+    return(list(lower = NA_real_, upper = NA_real_))
+  }
+  qs <- stats::quantile(theta_boots, probs = c(alpha / 2, 1 - alpha / 2))
+  list(lower = unname(qs[1]), upper = unname(qs[2]))
 }
 
 #' Wald-style confidence interval via logit transform.
@@ -82,7 +95,7 @@ generate_dgp_data <- function(N, theta, signal = 1) {
 #'
 #' @return A list with `lower` and `upper` bounds.
 #' @export
-logit_ci <- function(theta_hat, var_hat, alpha = 0.05) {
+logit_ci <- function(theta_hat, var_hat, alpha = 0.10) {
   th <- clamp01(theta_hat)
   z <- qnorm(1 - alpha / 2)
   se <- sqrt(max(var_hat, 0))
@@ -102,7 +115,7 @@ logit_ci <- function(theta_hat, var_hat, alpha = 0.05) {
 #'
 #' @return List with `theta`, `var`, and CI endpoints.
 #' @export
-ppi_point_and_ci <- function(Y_L, f_L, f_U, alpha = 0.05) {
+ppi_point_and_ci <- function(Y_L, f_L, f_U, alpha = 0.10) {
   n <- length(Y_L)
   N <- length(f_U)
   theta_hat <- mean(f_U) + mean(Y_L - f_L)
@@ -130,7 +143,7 @@ ppi_point_and_ci <- function(Y_L, f_L, f_U, alpha = 0.05) {
 #' @return List with `theta`, `var`, and CI endpoints.
 #' @export
 llm_point_and_ci <- function(p_hat, q0_hat, q1_hat, n, m0, m1,
-                             alpha = 0.05, eps_J = 1e-4) {
+                             alpha = 0.10, eps_J = 1e-4) {
   z <- qnorm(1 - alpha / 2)
   p_tilde <- (n * p_hat + z^2 / 2) / (n + z^2)
   q0_tilde <- (m0 * q0_hat + 1) / (m0 + 2)
@@ -194,7 +207,7 @@ lambda_hat_ppi_pp_numeric <- function(Y_L, f_L, f_U,
 #' @return List containing `theta`, `lambda`, variance, and CI limits.
 #' @export
 ppi_pp_point_and_ci_general <- function(Y_L, f_L, f_U,
-                                        alpha = 0.05,
+                                        alpha = 0.10,
                                         lambda_range = c(0, 1)) {
   lam_fit <- lambda_hat_ppi_pp_numeric(Y_L, f_L, f_U, lambda_range)
   lambda_hat <- lam_fit$minimum
@@ -230,14 +243,14 @@ g_rogan_gladen <- function(z, q0_pilot, q1_pilot, eps = 1e-3) {
   ifelse(abs(J) < eps, z, pmin(pmax((z + q0_pilot - 1) / J, 0), 1))
 }
 
-#' Posterior P(Y=1 | \\hat Z=z) under plug-in confusion matrix.
+#' Posterior \eqn{P(Y = 1 \mid \hat Z = z)} under plug-in confusion matrix.
 #'
 #' This transform corresponds to the Bayes correction described in the
 #' general PPI-with-g framework: use pilot prevalence and judge sensitivity/
 #' specificity to predict the posterior probability that the underlying
 #' human label is positive.
 #'
-#' @param z Binary surrogate outputs (0/1) or probabilities in [0,1].
+#' @param z Binary surrogate outputs (0/1) or probabilities in \eqn{[0,1]}.
 #' @param q0_pilot,q1_pilot Pilot specificity/sensitivity.
 #' @param theta_pilot Pilot prevalence (e.g., mean of labeled outcomes).
 #' @param eps Small positive value preventing division by zero.
@@ -256,7 +269,10 @@ g_posterior_prob <- function(z, q0_pilot, q1_pilot, theta_pilot, eps = 1e-6) {
 
 #' Constrained least-squares Rogan–Gladen estimator.
 #'
-#' Solves \\min_{\\pi \\in \\Delta_{K-1}} ||\\hat p - \\hat M \\pi||_2^2 to enforce
+#' Solves the quadratic program
+#' \deqn{
+#'   \min_{\pi \in \Delta_{K-1}} \left\| \hat p - \hat M \pi \right\|_2^2
+#' } to enforce
 #' simplex structure on the prevalence vector.
 #'
 #' @param M_hat Estimated confusion matrix (K x K).
@@ -277,7 +293,7 @@ rg_least_squares_simplex <- function(M_hat, p_hat, jitter = 1e-6) {
 
 #' Identity g-transform for multiclass surrogates.
 #'
-#' @param S Integer vector of surrogate class labels in {1,...,K}.
+#' @param S Integer vector of surrogate class labels in \eqn{\{1,...,K\}}.
 #' @param context List containing at least `K`.
 #'
 #' @return Matrix with one-hot rows representing S.
@@ -314,8 +330,8 @@ g_confusion_inverse <- function(S, context) {
 #' @param K Number of classes.
 #' @param laplace Small positive smoothing constant added to each cell.
 #'
-#' @return K x K column-stochastic matrix \hat M with entries
-#'   P(S=a | Y=b).
+#' @return K x K column-stochastic matrix \eqn{\hat{M}} with entries
+#'   \eqn{P(S=a \mid Y=b)}.
 #' @export
 estimate_confusion_matrix <- function(S, Y, K, laplace = 1e-3) {
   M <- matrix(laplace, nrow = K, ncol = K)
@@ -339,6 +355,9 @@ estimate_confusion_matrix <- function(S, Y, K, laplace = 1e-3) {
 #' @param g_transform Function mapping (S, context) to an n x K matrix.
 #' @param context List passed into `g_transform` (must include `K`).
 #' @param alpha Miscoverage level for per-class Wald intervals.
+#' @param project Logical; if TRUE (default), the raw class-prevalence
+#'   estimates are projected onto the probability simplex so that they
+#'   are nonnegative and sum to one.
 #'
 #' @return A list containing per-class prevalence estimates, variance
 #'   estimates, and Wald confidence limits.
@@ -348,7 +367,7 @@ ppi_multiclass <- function(S_unlabeled,
                            Y_labeled,
                            g_transform,
                            context,
-                           alpha = 0.05,
+                           alpha = 0.10,
                            project = TRUE) {
   stopifnot(length(S_labeled) == length(Y_labeled))
   K <- context$K
@@ -404,7 +423,7 @@ ppi_pp_multiclass <- function(S_unlabeled,
                               S_labeled,
                               Y_labeled,
                               K,
-                              alpha = 0.05) {
+                              alpha = 0.10) {
   f_U <- class_one_hot(S_unlabeled, K)
   f_L <- class_one_hot(S_labeled, K)
   Y_mat <- class_one_hot(Y_labeled, K)
@@ -443,15 +462,15 @@ covariate_formula <- function(response, covariates) {
 
 #' Fit covariate-dependent misclassification models.
 #'
-#' Estimates P(S=1 | Y=1, X) and P(S=1 | Y=0, X) via logistic regression on the
+#' Estimates \eqn{P(S=1 \mid Y=1, X)} and \eqn{P(S=1 \mid Y=0, X)} via logistic regression on the
 #' calibration data.
 #'
 #' @param covariates Data frame of covariates observed on the calibration set.
 #' @param Y Calibration human labels.
 #' @param S Calibration surrogate outputs (0/1).
 #'
-#' @return A list with two glm objects: one for the positive class (tp_model)
-#'   and one for the negative class (fp_model).
+#' @return A list with two glm objects: one for the positive class (`tp_model`)
+#'   and one for the negative class (`fp_model`).
 #' @export
 fit_misclassification_models <- function(covariates, Y, S) {
   covariates <- as.data.frame(covariates)
@@ -473,7 +492,7 @@ fit_misclassification_models <- function(covariates, Y, S) {
 
 #' Covariate-adjusted Rogan--Gladen transform.
 #'
-#' Uses covariate-specific estimates of q0(X) and q1(X) to form an adjusted
+#' Uses covariate-specific estimates of \eqn{q_0(X)} and \eqn{q_1(X)} to form an adjusted
 #' surrogate via the RG formula.
 #'
 #' @param S Surrogate outputs (0/1) on either labeled or unlabeled data.
@@ -494,7 +513,7 @@ g_covariate_rg <- function(S, covariates, models, eps = 1e-4) {
   clamp01(g_val, eps = eps)
 }
 
-#' Fit a RePPI-style logistic regression for g(S,X).
+#' Fit a RePPI-style logistic regression for \eqn{g(S,X)}.
 #'
 #' @param covariates Data frame of covariates on the calibration set.
 #' @param S Calibration surrogate outputs (0/1).
@@ -520,10 +539,365 @@ fit_reppi_model <- function(covariates, S, Y) {
 #' @param covariates Data frame of covariates.
 #' @param model Fitted glm from `fit_reppi_model`.
 #'
-#' @return Predicted probabilities of Y=1 given (S,X).
+#' @return Predicted probabilities, \eqn{P(Y = 1 \mid S, X)}.
 #' @export
 g_reppi_predict <- function(S, covariates, model) {
+
   covariates <- as.data.frame(covariates)
   preds <- stats::predict(model, newdata = data.frame(S = S, covariates), type = "response")
   clamp01(preds)
+}
+
+#' EIF (Efficient Influence Function) estimator for binary surrogates.
+#'
+#' Implements the post-stratified efficient estimator from the EIF theory.
+#' For binary surrogates, this estimates \eqn{\theta = E[Y]} using:
+#' \deqn{\hat\theta_{EIF} = (1-\hat p)\hat\mu_0 + \hat p \hat\mu_1}
+#' where \eqn{\hat\mu_0, \hat\mu_1} are the conditional means of Y given
+#' \eqn{\hat Y = 0, 1} estimated from calibration data, and \eqn{\hat p}
+#' is the proportion of \eqn{\hat Y = 1} in the test sample.
+#'
+#' This estimator is asymptotically efficient in Model A (surrogates are
+#' conditionally independent of outcomes given covariates).
+#'
+#' @param Y_cal Vector of true labels on the calibration set.
+#' @param Yhat_cal Vector of surrogate predictions (0/1) on the calibration set.
+#' @param Yhat_test Vector of surrogate predictions (0/1) on the test set.
+#' @param alpha Miscoverage level for the confidence interval.
+#'
+#' @return A list containing:
+#'   \describe{
+#'     \item{theta}{Point estimate of the prevalence.}
+#'     \item{var}{Estimated variance of the estimator.}
+#'     \item{ci_lower}{Lower bound of the confidence interval.}
+#'     \item{ci_upper}{Upper bound of the confidence interval.}
+#'     \item{mu0_hat}{Estimated \eqn{E[Y | \hat Y = 0]}.}
+#'     \item{mu1_hat}{Estimated \eqn{E[Y | \hat Y = 1]}.}
+#'     \item{p_hat}{Proportion of \eqn{\hat Y = 1} in test set.}
+#'   }
+#' @export
+eif_point_and_ci <- function(Y_cal, Yhat_cal, Yhat_test, alpha = 0.10) {
+  # Return NA results if inputs are problematic
+  na_result <- list(
+    theta = NA_real_,
+    var = NA_real_,
+    ci_lower = NA_real_,
+    ci_upper = NA_real_,
+    mu0_hat = NA_real_,
+    mu1_hat = NA_real_,
+    p_hat = NA_real_
+  )
+
+  # Check for sufficient valid data
+  if (length(Y_cal) != length(Yhat_cal) ||
+      length(Y_cal) == 0 ||
+      length(Yhat_test) == 0) {
+    return(na_result)
+  }
+
+  # Filter to valid calibration observations
+  valid_cal <- !is.na(Y_cal) & !is.na(Yhat_cal) & Yhat_cal %in% c(0, 1)
+  Y_cal <- Y_cal[valid_cal]
+  Yhat_cal <- Yhat_cal[valid_cal]
+
+  # Filter to valid test observations
+  valid_test <- !is.na(Yhat_test) & Yhat_test %in% c(0, 1)
+  Yhat_test <- Yhat_test[valid_test]
+
+  # Check we still have enough data
+  if (length(Y_cal) == 0 || length(Yhat_test) == 0) {
+    return(na_result)
+  }
+
+  # Calibration sample sizes
+  idx0 <- which(Yhat_cal == 0)
+  idx1 <- which(Yhat_cal == 1)
+  m0 <- length(idx0)
+  m1 <- length(idx1)
+  m <- m0 + m1
+
+  # Test sample size
+  n <- length(Yhat_test)
+
+  # Handle edge cases
+  if (m0 == 0 || m1 == 0 || n == 0) {
+    return(list(
+      theta = NA_real_,
+      var = NA_real_,
+      ci_lower = NA_real_,
+      ci_upper = NA_real_,
+      mu0_hat = NA_real_,
+      mu1_hat = NA_real_,
+      p_hat = NA_real_
+    ))
+  }
+
+  # Estimate mu0 and mu1 from calibration data
+  mu0_hat <- mean(Y_cal[idx0])
+  mu1_hat <- mean(Y_cal[idx1])
+
+  # Estimate p from test data
+  p_hat <- mean(Yhat_test)
+
+  # Point estimate: post-stratified estimator
+  theta_hat <- (1 - p_hat) * mu0_hat + p_hat * mu1_hat
+
+  # Variance estimation using delta method
+
+  # Var(theta) = (mu1 - mu0)^2 * Var(p_hat) +
+  #              (1-p)^2 * Var(mu0_hat) +
+  #              p^2 * Var(mu1_hat)
+  #
+  # For binary Y: Var(Y|Yhat=k) = mu_k * (1 - mu_k)
+
+  var_p <- p_hat * (1 - p_hat) / n
+  var_mu0 <- mu0_hat * (1 - mu0_hat) / m0
+  var_mu1 <- mu1_hat * (1 - mu1_hat) / m1
+
+  var_hat <- (mu1_hat - mu0_hat)^2 * var_p +
+    (1 - p_hat)^2 * var_mu0 +
+    p_hat^2 * var_mu1
+
+  var_hat <- max(var_hat, 0)
+
+  # Confidence interval using logit transform for better coverage
+  ci <- logit_ci(theta_hat, var_hat, alpha)
+
+  list(
+    theta = theta_hat,
+    var = var_hat,
+    ci_lower = ci$lower,
+    ci_upper = ci$upper,
+    mu0_hat = mu0_hat,
+    mu1_hat = mu1_hat,
+    p_hat = p_hat
+  )
+}
+
+# =============================================================================
+# BOOTSTRAP VARIANCE ESTIMATORS
+# =============================================================================
+
+#' Bootstrap PPI estimator
+#'
+#' @param Y_L Vector of human labels on the calibration set.
+#' @param f_L Surrogate predictions on the calibration set.
+#' @param f_U Surrogate predictions on the unlabeled/test set.
+#' @param n_boot Number of bootstrap replicates.
+#' @param alpha Miscoverage level for the confidence interval.
+#'
+#' @return List with theta, var (bootstrap), and CI endpoints.
+#' @export
+ppi_bootstrap <- function(Y_L, f_L, f_U, n_boot = 500, alpha = 0.10) {
+  n_L <- length(Y_L)
+  n_U <- length(f_U)
+
+  # Point estimate
+  theta_hat <- mean(f_U) + mean(Y_L - f_L)
+
+  # Bootstrap
+  theta_boots <- numeric(n_boot)
+  for (b in seq_len(n_boot)) {
+    idx_L <- sample(n_L, n_L, replace = TRUE)
+    idx_U <- sample(n_U, n_U, replace = TRUE)
+    theta_boots[b] <- mean(f_U[idx_U]) + mean(Y_L[idx_L] - f_L[idx_L])
+  }
+
+  var_boot <- stats::var(theta_boots)
+  ci <- bootstrap_ci(theta_boots, alpha)
+
+  list(
+    theta = theta_hat,
+    var = var_boot,
+    ci_lower = ci$lower,
+    ci_upper = ci$upper
+  )
+}
+
+#' Bootstrap PPI++ estimator
+#'
+#' @param Y_L Vector of human labels on the calibration set.
+#' @param f_L Surrogate predictions on the calibration set.
+#' @param f_U Surrogate predictions on the unlabeled/test set.
+#' @param n_boot Number of bootstrap replicates.
+#' @param alpha Miscoverage level for the confidence interval.
+#' @param lambda_range Interval to constrain lambda.
+#'
+#' @return List with theta, lambda, var (bootstrap), and CI endpoints.
+#' @export
+ppi_pp_bootstrap <- function(Y_L, f_L, f_U, n_boot = 500, alpha = 0.10,
+                              lambda_range = c(0, 1)) {
+  # Point estimate with optimal lambda
+  est <- ppi_pp_point_and_ci_general(Y_L, f_L, f_U, alpha, lambda_range)
+
+  n_L <- length(Y_L)
+  n_U <- length(f_U)
+
+  # Bootstrap
+  theta_boots <- numeric(n_boot)
+  lambda_boots <- numeric(n_boot)
+  for (b in seq_len(n_boot)) {
+    idx_L <- sample(n_L, n_L, replace = TRUE)
+    idx_U <- sample(n_U, n_U, replace = TRUE)
+    boot_est <- ppi_pp_point_and_ci_general(
+      Y_L[idx_L], f_L[idx_L], f_U[idx_U], alpha, lambda_range
+    )
+    theta_boots[b] <- boot_est$theta
+    lambda_boots[b] <- boot_est$lambda
+  }
+
+  var_boot <- stats::var(theta_boots)
+  ci <- bootstrap_ci(theta_boots, alpha)
+
+  list(
+    theta = est$theta,
+    lambda = est$lambda,
+    var = var_boot,
+    ci_lower = ci$lower,
+    ci_upper = ci$upper
+  )
+}
+
+#' Bootstrap Rogan-Gladen (LLM) estimator
+#'
+#' @param Y_cal True labels on calibration set.
+#' @param Yhat_cal Surrogate predictions on calibration set.
+#' @param Yhat_test Surrogate predictions on test set.
+#' @param n_boot Number of bootstrap replicates.
+#' @param alpha Miscoverage level for the confidence interval.
+#'
+#' @return List with theta, var (bootstrap), and CI endpoints.
+#' @export
+rg_bootstrap <- function(Y_cal, Yhat_cal, Yhat_test, n_boot = 500, alpha = 0.10) {
+  m <- length(Y_cal)
+  n <- length(Yhat_test)
+
+  # Point estimate
+  idx0 <- which(Y_cal == 0)
+  idx1 <- which(Y_cal == 1)
+  m0 <- length(idx0)
+  m1 <- length(idx1)
+
+  if (m0 == 0 || m1 == 0) {
+    return(list(theta = NA_real_, var = NA_real_,
+                ci_lower = NA_real_, ci_upper = NA_real_))
+  }
+
+  q0_hat <- mean(Yhat_cal[idx0] == 0)
+  q1_hat <- mean(Yhat_cal[idx1] == 1)
+  p_hat <- mean(Yhat_test)
+  J <- q0_hat + q1_hat - 1
+
+  if (abs(J) < 1e-6) {
+    return(list(theta = NA_real_, var = NA_real_,
+                ci_lower = NA_real_, ci_upper = NA_real_))
+  }
+
+  theta_hat <- (p_hat + q0_hat - 1) / J
+  theta_hat <- pmin(pmax(theta_hat, 0), 1)
+
+  # Bootstrap
+  theta_boots <- numeric(n_boot)
+  for (b in seq_len(n_boot)) {
+    idx_cal_b <- sample(m, m, replace = TRUE)
+    idx_test_b <- sample(n, n, replace = TRUE)
+
+    Y_cal_b <- Y_cal[idx_cal_b]
+    Yhat_cal_b <- Yhat_cal[idx_cal_b]
+    Yhat_test_b <- Yhat_test[idx_test_b]
+
+    idx0_b <- which(Y_cal_b == 0)
+    idx1_b <- which(Y_cal_b == 1)
+
+    if (length(idx0_b) == 0 || length(idx1_b) == 0) {
+      theta_boots[b] <- NA_real_
+      next
+    }
+
+    q0_b <- mean(Yhat_cal_b[idx0_b] == 0)
+    q1_b <- mean(Yhat_cal_b[idx1_b] == 1)
+    p_b <- mean(Yhat_test_b)
+    J_b <- q0_b + q1_b - 1
+
+    if (abs(J_b) < 1e-6) {
+      theta_boots[b] <- NA_real_
+    } else {
+      theta_boots[b] <- pmin(pmax((p_b + q0_b - 1) / J_b, 0), 1)
+    }
+  }
+
+  var_boot <- stats::var(theta_boots, na.rm = TRUE)
+  ci <- bootstrap_ci(theta_boots, alpha)
+
+  list(
+    theta = theta_hat,
+    var = var_boot,
+    ci_lower = ci$lower,
+    ci_upper = ci$upper
+  )
+}
+
+#' Bootstrap EIF estimator
+#'
+#' @param Y_cal True labels on calibration set.
+#' @param Yhat_cal Surrogate predictions on calibration set.
+#' @param Yhat_test Surrogate predictions on test set.
+#' @param n_boot Number of bootstrap replicates.
+#' @param alpha Miscoverage level for the confidence interval.
+#'
+#' @return List with theta, var (bootstrap), and CI endpoints.
+#' @export
+eif_bootstrap <- function(Y_cal, Yhat_cal, Yhat_test, n_boot = 500, alpha = 0.10) {
+  m <- length(Y_cal)
+  n <- length(Yhat_test)
+
+  # Point estimate
+  idx0 <- which(Yhat_cal == 0)
+  idx1 <- which(Yhat_cal == 1)
+  m0 <- length(idx0)
+  m1 <- length(idx1)
+
+  if (m0 == 0 || m1 == 0) {
+    return(list(theta = NA_real_, var = NA_real_,
+                ci_lower = NA_real_, ci_upper = NA_real_))
+  }
+
+  mu0_hat <- mean(Y_cal[idx0])
+  mu1_hat <- mean(Y_cal[idx1])
+  p_hat <- mean(Yhat_test)
+  theta_hat <- (1 - p_hat) * mu0_hat + p_hat * mu1_hat
+
+  # Bootstrap
+  theta_boots <- numeric(n_boot)
+  for (b in seq_len(n_boot)) {
+    idx_cal_b <- sample(m, m, replace = TRUE)
+    idx_test_b <- sample(n, n, replace = TRUE)
+
+    Y_cal_b <- Y_cal[idx_cal_b]
+    Yhat_cal_b <- Yhat_cal[idx_cal_b]
+    Yhat_test_b <- Yhat_test[idx_test_b]
+
+    idx0_b <- which(Yhat_cal_b == 0)
+    idx1_b <- which(Yhat_cal_b == 1)
+
+    if (length(idx0_b) == 0 || length(idx1_b) == 0) {
+      theta_boots[b] <- NA_real_
+      next
+    }
+
+    mu0_b <- mean(Y_cal_b[idx0_b])
+    mu1_b <- mean(Y_cal_b[idx1_b])
+    p_b <- mean(Yhat_test_b)
+    theta_boots[b] <- (1 - p_b) * mu0_b + p_b * mu1_b
+  }
+
+  var_boot <- stats::var(theta_boots, na.rm = TRUE)
+  ci <- bootstrap_ci(theta_boots, alpha)
+
+  list(
+    theta = theta_hat,
+    var = var_boot,
+    ci_lower = ci$lower,
+    ci_upper = ci$upper
+  )
 }

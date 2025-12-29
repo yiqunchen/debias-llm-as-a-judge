@@ -94,7 +94,7 @@ clip01 <- function(x) pmin(pmax(x, 0), 1)
 
 logit_safe <- function(p, eps = 1e-6) pmin(pmax(p, eps), 1 - eps)
 
-wald_ci_prob <- function(est, se, level = 0.95, clip = TRUE) {
+wald_ci_prob <- function(est, se, level = 0.90, clip = TRUE) {
   if (is.na(se)) {
     return(c(NA_real_, NA_real_))
   }
@@ -116,7 +116,8 @@ wald_ci_prob <- function(est, se, level = 0.95, clip = TRUE) {
 #' @param level Confidence level.
 #'
 #' @return Numeric vector of length 2 with (lower, upper) bounds.
-logit_ci_prob <- function(est, se, level = 0.95) {
+#' @export
+logit_ci_prob <- function(est, se, level = 0.90) {
   if (is.na(se) || is.na(est)) {
     return(c(NA_real_, NA_real_))
   }
@@ -142,11 +143,12 @@ logit_ci_prob <- function(est, se, level = 0.95) {
 #' @param y_cal Human labels on the calibration split (0/1).
 #' @param yhat_cal Surrogate predictions on the calibration split (0/1).
 #' @param yhat_test Surrogate predictions on the unlabeled/test split (0/1).
+#' @param level Confidence level for the Wald intervals. Defaults to 0.90.
 #'
 #' @return A list containing the MLEs, variance-covariance matrices from the
 #'   observed and expected Fisher information, and Wald intervals for \\theta.
 #' @export
-fit_misclass_mle <- function(y_cal, yhat_cal, yhat_test) {
+fit_misclass_mle <- function(y_cal, yhat_cal, yhat_test, level = 0.90) {
   counts <- joint_mle_counts(y_cal, yhat_cal, yhat_test)
   n_test <- counts$T1 + counts$T0
   m_cal <- counts$N11 + counts$N10 + counts$N01 + counts$N00
@@ -225,8 +227,8 @@ fit_misclass_mle <- function(y_cal, yhat_cal, yhat_test) {
   se_obs <- sqrt(diag(vcov_tq0q1_obs))
   se_exp <- sqrt(diag(vcov_tq0q1_exp))
   # Use logit-transformed CI for better coverage near boundaries
-  ci_theta_obs <- logit_ci_prob(theta_hat, se_obs["theta"])
-  ci_theta_exp <- logit_ci_prob(theta_hat, se_exp["theta"])
+  ci_theta_obs <- logit_ci_prob(theta_hat, se_obs["theta"], level = level)
+  ci_theta_exp <- logit_ci_prob(theta_hat, se_exp["theta"], level = level)
   list(
     theta_hat = theta_hat,
     q0_hat = q0_hat,
@@ -251,7 +253,7 @@ fit_misclass_mle <- function(y_cal, yhat_cal, yhat_test) {
 #'
 #' @return List with theta_hat, observed/expected SEs, and CIs.
 #' @export
-grab_theta <- function(fit, level = 0.95) {
+grab_theta <- function(fit, level = 0.90) {
   list(
     theta_hat = fit$theta_hat,
     se_obs = unname(fit$se_obs["theta"]),
@@ -315,7 +317,7 @@ sim_compare_info <- function(B = 1000, N = 5000,
                              q0_true = 0.8,
                              q1_true = 0.85,
                              m_cal = 500,
-                             level = 0.95) {
+                             level = 0.90) {
   if (m_cal >= N) {
     stop("m_cal must be less than N.")
   }
@@ -333,7 +335,7 @@ sim_compare_info <- function(B = 1000, N = 5000,
     y_cal <- Y[idx_cal]
     yhat_cal <- Yhat[idx_cal]
     yhat_test <- Yhat[idx_test]
-    fit <- fit_misclass_mle(y_cal, yhat_cal, yhat_test)
+    fit <- fit_misclass_mle(y_cal, yhat_cal, yhat_test, level = level)
     ci_theta_obs <- logit_ci_prob(fit$theta_hat, fit$se_obs["theta"], level)
     ci_theta_exp <- logit_ci_prob(fit$theta_hat, fit$se_exp["theta"], level)
     ci_q0_obs <- logit_ci_prob(fit$q0_hat, fit$se_obs["q0"], level)

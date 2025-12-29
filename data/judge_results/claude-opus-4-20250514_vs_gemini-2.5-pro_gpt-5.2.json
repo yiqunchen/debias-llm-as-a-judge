@@ -1,0 +1,1942 @@
+[
+  {
+    "id": "71fdece3-2416-4f9c-ad22-17d759811c9d",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "8e4e7918-3754-4c72-bd02-e99e67122f32",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "f582a2c0-668b-47a3-8de7-153c57fde3f5",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "d28f59c3-66fb-49fe-8b2b-00f3d6e853b3",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "3bb70211-d6b1-463b-a785-79dff5a338d8",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "2e928f7f-e1a9-4b7d-8287-cce661d8f1fb",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "5b271c4f-b4ab-44f7-a5bd-056ebc14a6f2",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "ff36e6b7-3442-41b4-9aef-855b19337021",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "537b33c1-560f-493d-ae9f-707f0f4b03eb",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "81bc6978-7b24-48cd-acba-50074204095e",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "ad41e9d5-bc02-4dce-af65-9a0d2d13c683",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "2a8c5be3-f789-41bd-9416-4398c5f18184",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "ac459d9d-c25d-4f67-ae3d-82cd01f63423",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "2419d087-a6cc-4dd5-bf0c-2d8b340348e7",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "f35fcaa7-3c85-4655-8033-2741c08922e1",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "4012100d-651a-49e5-9c1d-b9ce644a03fc",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "17cba4c0-0ddc-4147-9532-7821880351e7",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "515781fe-29df-4b9d-bcca-4aedc3359fa0",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "d3861248-af79-43b8-bf99-c7f1aae40d15",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "e9c90a0a-8ca1-4d91-9e10-1717c14ae571",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "c497c759-398a-4c3f-bc99-973f179f5d25",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "ae7f82e1-0b3b-455b-a1d6-25aca826e659",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "28db072c-78d1-4aaa-bfa0-09aa9d3283b5",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "1863cfa7-ba65-4177-b729-be548922be51",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "14a1a602-8459-4c46-864c-d633194f0944",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "e88e0813-aaa5-4c3c-a826-bbc8157d870b",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "719fb325-13aa-4e9e-8027-838ef7becd1e",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "e8d61a43-99ef-4f09-9161-6d5a174587a4",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "54684a68-270f-42ec-8a2b-b69b3b1bb05c",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "a5db2fa9-2ef3-4c5e-bd94-f981b194f8fc",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "2413da16-ee7b-48b6-9d7f-7e772a3205e1",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "4afceef2-737e-45ee-827d-2b4af6268d65",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "6c2cd4c5-0b71-4ef2-9db5-ab0fc99641c3",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "26ca3bf1-8919-4867-b8be-97c870e81b87",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "e9accadf-8ee8-47f7-8a42-57a96df584c2",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "d37300bf-32da-48e1-bdb5-b3a17fd391d5",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "ba08a75c-f7d5-43d5-9809-1a1266d47fd3",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "49640839-b358-4fd6-ab75-a0534e00efae",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "be12b7ab-0614-4141-95c1-32d1afe44fb5",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "93685979-f834-4da7-acfe-595a404242a9",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "6b11370f-60d9-4a8e-a175-b49cf1529ece",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "ed0a0cec-14f3-459d-a6c3-c46acfd3120a",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "e87f1680-0d15-485f-b6a5-77a80e2b6012",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "8a039f7e-aa5d-4e86-bef1-bfaf9730392c",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "7ae86d53-6112-4b72-aa93-734b3edfe76c",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "b18543dc-7861-4a76-ba8c-bf8b0a07952b",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "3b907746-b788-43eb-be98-791c6af8f8ac",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "2fc23146-da81-4e80-b700-6eb353b167ab",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "3122b834-54a8-4a88-b7fe-a5c69f7bd212",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "ad003914-4d52-42cd-a2b1-d500e4d4fac9",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "921b9b96-aa07-4b09-976e-d12fda70b79f",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "694811be-5b7b-4fbb-a8d3-d4ecfd86bfa0",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "a4e484fa-485e-4e4e-91bf-9ba3529cadfe",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "d9f04f9a-c9c1-4fb9-9cb1-a0636524af12",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "2374711f-99b6-420f-bac7-31047e28070e",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "bcdec0b2-de68-48c7-bbc8-b982e075cc96",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "5fdc0806-74c3-47fd-ab64-f605c31b0a49",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "4a658bf6-5b6a-4fbd-9620-09e044c5b8c6",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "a1415dc6-a7ca-4c91-80eb-d38653349e5f",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "c502e948-f4d6-4762-85ed-1233eb367646",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "f5975479-d0a9-4e60-8e5d-186ad36fa1ba",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "d856a8a8-b9ba-41df-a626-cac509b4107e",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "7a895c88-1fa2-4c4a-96d6-6d701af02ca7",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "112084bf-bd9b-41b3-bd91-a78174045455",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "3e7c0bd3-e0d4-4182-91c0-82d633a58c88",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "649f8724-c8a7-41a9-aa2f-2bf8eba4ceb9",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "1cde1a45-dc80-4a81-a065-dbd42e75c4e6",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "ad8436d9-4b76-440c-be7e-26224ce0e042",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "3fc8f936-73ad-4dd8-acb7-343b6419d1b5",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "f7a6bf54-1f29-4185-99fa-c7e62b318097",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "9ffe1574-a3f7-48f0-b3ab-2e8adb54f99e",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "f58863ec-37fe-426e-8350-aacd8f66b574",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "5c134525-509f-4a58-bf33-bb9bb41a9b72",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "e322e269-353a-4cc5-b72e-6b3e37557c50",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "17041830-83ab-43a1-8786-30a923d0a425",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "3e7a1def-b14a-4736-9195-c54547988089",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "87acce6c-687a-415b-928a-a9f538863b31",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "a83ae75e-68b6-4866-b963-2fb651bb0c15",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "28b7b0b0-9f1d-46b5-ab8a-f78252e4bda7",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "30d73197-7c31-46f3-8d80-00623ec849ee",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "75bf5d14-b99f-4da7-9561-5a5776572d0b",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "bedbac71-1f17-4ef8-81db-1f8f311750e1",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "d600b5a2-76ba-44f9-8975-c4391dd71114",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "cf7bbe8b-d08d-4f44-ab46-ec576a5dad49",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "4a5bed0a-5fc2-45d3-aec7-99af46121ccc",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "74e27fcb-5171-45f7-bc81-062837679558",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "bb91c3dc-63b7-42c1-8313-f21f76ba0be1",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "3fc4bee3-277f-4119-9c28-6d02d8ee033c",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "5c81a545-7ca4-463b-bb67-eb596ee9218b",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "d4602b07-03e3-4256-88be-84b33a12a4dd",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "bf8d63c3-75d5-454b-9e26-00ac93c34f8c",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "045aefd1-9143-4814-97d7-8e84a5dd6893",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "fc59dfd2-5f05-42da-aa89-cc731fd6fb0f",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "99f17cc5-d4f3-454c-89eb-c7744015d333",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "283a277d-f391-4c58-aa66-3275ae80c53c",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "544b5df4-d4c9-4e46-9006-d514d047afb5",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "60bd03ec-1b77-4ee6-a1c3-3b6796e5c46c",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "7d96f4f2-849d-4a43-ace3-e05e910b3c88",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "15db8a0b-cbfe-48b7-88d5-5a483ab9bb17",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "7cdc9e30-0115-4540-9a0a-885d899042b6",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "aeebe65b-9c67-496b-837f-66bc0f028531",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "784eacd6-04c9-495b-b8c5-bc8075dfe24c",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "370b3f06-5e6d-4a5f-98b3-dec415078cb1",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "fa177a90-b882-468c-ad6f-943df7f97a90",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "577b4dd1-fa23-432e-a215-9527896af2e5",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "0639fbf3-e80b-4b73-bda4-2ae9c251fd76",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "68b4d270-9a19-402e-9e04-5e08d2dae8a0",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "3ac30cb6-1086-4279-bd56-1a02580cdaf5",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "0aa6b0c8-11a7-4c29-8e24-3ce8e1ce423d",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "8c09c092-0228-4d5f-a1b3-693497587ecd",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "7ae75dc1-6086-4102-bc37-f1458e66b86f",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "031ffe20-c9bc-4184-b09a-03d582aa5f57",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "899efa65-9d3b-4e2a-990a-e33e77a80276",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "3968adcb-b8eb-401b-9c12-4a36cd1d7f39",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "c9124cdd-584b-4c86-8e3d-1690cb4b579d",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "6809a5b3-5bb5-4e54-851c-217c9b789932",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "635b54dc-2723-446f-9bef-4ebe2556e3b4",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "e0b7447a-55f4-4a37-b6b7-a86a05060303",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "c71a32f1-367c-4b23-bf99-ccf5d74efed0",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "ea2883f0-1d54-4b0b-99ed-848bb848f4d1",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "3e8404cf-676c-4b78-88ee-6855afa1a9bf",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "5201b9a0-b333-49e6-9c7f-56770e7a0fe0",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "1dd236cb-faae-464e-b9f5-423d592c19b9",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "4d69c3ae-b517-4ed4-9e20-c11411382041",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "6de3182c-7bb1-4bca-985e-ae352a9f3b7c",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "fe18cae0-3445-4e70-b456-6d857ca845ce",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "f2eeb0ac-4682-45f7-973a-92e8175857fa",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "2fe2fd3c-b9d0-4ed0-96cf-a08255c58f5a",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "04756b4d-a9f9-47db-8ff6-98fb28e17fcc",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "3d0cd8c4-2fb9-416c-aa46-4a1738dada78",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "1526b6d0-0aba-4d47-9202-1ab2bb63a6fc",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "c2dbcbb9-52a1-44f3-b76d-905ef7d39aa0",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "735d28bf-fb13-4c39-976e-1fc94b497ece",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "79987edb-b540-4dd1-ae1b-0783671a3d0a",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "af0cb872-6eb7-4882-baf2-39a9c891742f",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "03049ba1-ceeb-4a65-9959-86b99048a722",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "a4cf37dd-3418-4f0c-9bde-327fa5dee05b",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "03491774-f2ed-4f21-890c-2a0e29f228d5",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "f4577f43-3259-4471-a717-46531420deaa",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "4b22782e-8c07-49eb-bc2e-df004787196a",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "4b42f4f2-7981-48ce-ab0e-177d85bf8dc2",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "c9a984da-4f21-4c23-9e77-f68d678c645d",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "adf99bc2-0b08-47ef-bfaf-1f451b951021",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "a6e196e5-8c8a-4617-a5ed-482674814136",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "4b08f189-53d8-4bf8-8385-052b991ce8e2",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "264e6be2-6690-4cba-b5a2-23118d6f710d",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "01e6b0e9-1459-496f-8288-d20cfc929a6e",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "d0e5e157-e8ad-4f9f-8c29-34d5f3c405ac",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "8cccaa04-6e13-454d-8bf4-2e04f4805595",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "ad21a5e0-b341-4c72-88ca-a944073c0b92",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "5dc24fe4-0f7c-40ec-bf7f-95102c15189b",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "bdef5088-e0d1-4510-8a85-88b603385cc5",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "a3904e92-3d63-438b-9eb6-bb2fd66614ab",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "f43bb8d1-d453-4d35-9f13-faa7ebec7a5e",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "9be17e06-1558-45f9-b48b-3451766ba732",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "2e9856f7-bb24-47d0-8546-49b13b807dee",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "93418e9a-8d24-4c69-a25b-9e7d7a15d8b1",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "b4b4987a-6b68-4f02-ac2d-c8ff74536600",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "1c44fdcb-7ad4-417a-9950-9f4fca5bb14e",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "dd0baa0b-70a4-406e-9b1f-c74175f5257b",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "0e2432e0-531a-47e7-82e2-cbc765a91ad2",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "7a8fe538-229c-494e-bcbc-53c5cdcd7efe",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "e416c1e0-b4c7-478d-9d77-b32b5d110f53",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "686f91b4-6f09-4f81-b617-7429633df4af",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "1e072932-becf-4fe1-96ba-46ec67e63e0f",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "1f603aff-c622-47ec-a7bb-8666b0900b07",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "9711d3e7-dae7-45c1-9bc5-f00550b79131",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "0a3245ff-6b8c-49f0-bf9f-91a910c5a5fe",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "b4716659-f513-497f-9dad-b1fa9db6b396",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "257ca8d7-9e96-4160-b7e1-9eb2fad6693c",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "80369972-249f-49ce-a92d-76b6ca3fed1c",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "47c49884-413f-49cb-938a-b58c2877af33",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "36446bbf-559b-4af9-9d8b-5184bfbbe4c8",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "614ed616-6e6c-4d50-9ca3-f26aac3615ae",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "6418d514-1f3a-4f8b-8e81-d3498d9c2542",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "20ca8abc-1b50-4f35-bea3-faa076233536",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "3aa90bd0-41f6-4466-b4e6-3c9c1508b819",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "0e8aedf5-72a4-4c34-9391-dbaddaf4d89f",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "c894e899-0d16-465a-b9a4-64c174c3df8f",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "556463eb-6449-49fc-bf42-d3bd0a4c3898",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "c802d826-bbcc-4ca2-b25e-d07503005cbb",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "69cbf47e-19df-4cdc-a7bf-eb103130e355",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "8f1b928d-8cc8-4718-96e2-4245d9090972",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "82ca7acc-52e8-404c-a69d-810d3d4b33e4",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "616bc253-7a12-4883-a0ca-ee09b5455e84",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "b847f938-abc9-41d9-b7b4-e02e68ca3813",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "7b85f37d-7be0-4289-80ff-5a79f68b4ec7",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "c10fc3fa-fc62-412a-af08-3a9c00f297db",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "2b4cbb98-09b9-47ec-bbd3-2fc4874c475a",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "fb544e48-2c0b-4966-9758-ad0344a6c28a",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "90a17568-ab7e-4c09-b7af-8ebba7d34879",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "0d5d3638-aba9-441b-9ca6-c10ea45b2a3f",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "77195cbf-92c4-4fa1-89e3-ff21f7efdaf7",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "334ff7ff-2071-43b6-a7aa-29521267c67a",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "02fd36d6-cf54-46c4-9e9a-f19b9ce42418",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "58a8f61b-9e9f-4e98-b15c-820e9e0b8165",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "3e89e534-82dd-4f5e-ad30-2c92ff7c6088",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "8ada0b8d-7d6b-474d-a9a0-1fee437a389e",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "9f3a378c-7f1d-4ca7-86cb-763174ee8102",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "3facf13f-3762-4afb-9ef8-842e36e70293",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "999ca3c0-4916-4563-aea9-bef070418dc5",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "dc6a6a8b-9b4f-44c5-8c3b-ed64e2dfe5f9",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "27a8e5f4-32b4-4e3c-8bed-d8b8702c419e",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "805376cc-495d-4b44-a60b-69e57b5cafe0",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "a878f0d0-c711-43e8-a70c-73e969df6714",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "9c8c3ea5-dd86-4f30-9ff3-dfb361a8b86e",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "859312da-8c48-43e4-bfe5-af5e64e64a18",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "ce70cacc-faa5-4cd4-b7ee-6d9593ccc9e4",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "040b1514-e653-4ec5-a292-64bb7add47ec",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "0e840721-e033-49f9-8dc8-9f7dc9bdb305",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "b5ba0152-df57-41a5-8db7-d7722cab41cb",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "e9a71e6b-cbe1-4974-8cf3-0c9589eaade0",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": null,
+    "error": "missing_content"
+  },
+  {
+    "id": "38c0cc5c-e46e-4524-811d-89076b68d00c",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "af9dbcd1-f615-4d10-adbc-2fe76247149c",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "a1786235-555f-40a6-89d5-731356a58098",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "cdb72b5e-ed7b-43c9-a26c-ce8c7851d1a5",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "e52ae55d-1d4b-4fdf-898e-b045beca7828",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "32d39e41-253c-4533-8b01-c84514382518",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "56a98a27-d8f3-4cf8-a051-727cdd001d5a",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "c423b0fd-d1e2-4a35-aa43-a5c23197dd1e",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "eff22eec-0e25-4ed3-acaa-b81ef618d6f4",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "4e6cbaed-4fb3-431e-a937-a69ab9f8a448",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "16492458-81eb-418a-860d-64b5dfda104d",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "1ba18b63-6315-435f-b86c-da7a0f6a10e8",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "371f8723-a0a6-4abb-8c2c-9b7099e91bab",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "14160771-d39e-4644-ac82-95ef6a92ff2f",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "f309688c-ea85-4bba-b7fb-d0df22d408d9",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "64ba23ea-2297-4650-a3ba-c05a0d3001b1",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "9ca9d514-9d0a-40d9-a5ba-41afc60e5e32",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "a73d18e8-a4d4-4c74-b072-5a2e6175f7e8",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "b09d2677-d7d0-46b8-a261-82f91ade035d",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "f9443b16-3f6e-48cd-90ca-d88969eef80a",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "7d4874e0-3e04-4b0a-9ef0-98cf6a79d18b",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "1de589a2-8b54-4677-890d-8dc6b429e1aa",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "09c5b43e-f548-4d75-856d-63065977d87a",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "06d09059-c996-4617-a309-cb7d9410d174",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "04140618-33f2-47a4-bd7d-082a42cb7952",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "db318a9f-7baf-4d1e-885e-cf6a3fc6b728",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "7a29ce04-4288-4918-8a76-783f8b05b52d",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "af0eb828-3801-41e2-8a22-4746b48adcfd",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "c3473b38-1acd-4b54-af6a-084f68d0774e",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "dd34078c-59d6-4e9e-bb6e-68692d23de37",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "d696ce4f-74ab-4b93-b1a7-dbc260e1622d",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "39d14a1a-e743-45ca-8b03-48cdd927f1ea",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "f012f986-5f46-4e44-b441-960408fb3aaa",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "34973d03-ecce-4144-8da5-07b22effc94c",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "df293ee0-a15e-433e-9a38-2a4dee97b35e",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "facafccc-5c39-4a24-b7cb-75cb08fdff40",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "05ebe5f3-2599-4e05-b1c6-dbc215a768e5",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "e4e28c47-8eab-4f9c-873e-fa0d1792c9e9",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "5de52d8b-7915-40d0-a02f-a4ff06883104",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "002b4b07-96e2-4b1b-bea6-36caf638deab",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "8b839e7e-d866-4442-8adf-cf66ce328846",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "81742a4c-ba6c-4279-93cb-ff11ad0ceeaa",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "868ed0cc-e930-40f2-91e2-ee83ef2be368",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "73915e03-07b4-4f62-820f-91fa616747e0",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "34950c20-7a40-4e53-9e3f-8523742b2519",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "3d2f3f87-f398-478d-b619-af70af279438",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "d79e5fd8-cb2e-4f1b-a633-294cbb580af4",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "c8b3b91e-1f5b-459f-b8a7-05039997a5d7",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "95ff648c-d9d2-486a-b04f-23091e935179",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "daf1fbdc-1b56-4a7d-8629-e7b9f34fb08f",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "76dd38fd-f157-42d1-98f4-fdc9cbc15fe7",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "3fedf566-ef2c-472e-b557-ce723d0a51a6",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "35d337e7-31df-4c5a-84cd-6c25195a24e4",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "b8179373-8b45-46db-a4f2-5839b52bd0c8",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "619b8db4-536d-4547-83e6-6f81aa7d30cc",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "0835d8e5-2c88-47f7-af5f-8b2cf4e4549c",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "6cfe8a62-ab33-43b4-a34d-0532ed2c105b",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "f7e7eb95-aaf9-416c-b1fd-4257f4afc18c",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "37aeeb84-81b8-4d24-9037-279764d70a7f",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "6d5c3f3f-94c6-4e17-bd30-76fb77b0d140",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "2fb51322-6ee0-4e01-a951-bb5032f180eb",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "f0b0fca6-61a3-4023-a6d5-932d40a6de11",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "6f82e7fb-a21d-4eae-b34b-f4357f95dac0",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "gemini-2.5-pro",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "65c290fa-35a1-48fe-9080-ff3d1b331361",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "f576b7a9-341a-4c81-97fc-91e6b8ba675a",
+    "model_a": "gemini-2.5-pro",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  }
+]

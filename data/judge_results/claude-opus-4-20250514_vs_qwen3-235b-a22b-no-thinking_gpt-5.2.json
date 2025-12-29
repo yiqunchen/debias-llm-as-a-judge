@@ -1,0 +1,1927 @@
+[
+  {
+    "id": "70190b99-2f0e-4992-a30b-359d30a97438",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "88427c78-5c85-4be9-a5e7-77431d41cc1e",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "4fe38f9d-7d83-4f3f-8da2-b15c56c8a3b2",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "cbc9f1f8-e4fa-48f9-8f5a-e452226fa98e",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "c7d64510-5676-4c23-ab81-f4070f12fd76",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "ec17faea-a9be-45ad-907e-df180555da11",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "2bded352-3da0-487c-8828-410309821b63",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "c6c52788-63c2-4758-9635-1dacd46a4ac6",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "c1009495-fa17-4bce-ab12-74a5058f5888",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "621c0222-4d1c-4c96-a4ac-48c187bc4b36",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "c30b759d-c295-40e1-a458-171cff5b3b1d",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "a7abc06c-f928-4809-85a9-50f345e03753",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "876dc5ef-bf87-4871-bd2d-b44d72630c6c",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "cff03ad7-d6d5-42ad-bfde-d8b416922df5",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "c43ea3ca-d052-4488-aaeb-98c19c526c6e",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "2993ff2f-619c-4a47-8667-50f9bec07786",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "88ec9b3b-481f-45c2-8351-f16d426ec6c4",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "6cb4b654-1752-440c-90dd-4832f2030323",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "2abdaff3-8807-4dc1-a10e-2556e61ae365",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "c72788f3-66ea-4f7e-979d-6e001c39919e",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "a80c6f57-2b08-41c0-be43-97261779aa52",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "aadad6a0-ad89-4601-ac2c-7b05f530d731",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "d90b0510-72aa-4953-a72e-a822fcf2cd25",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "d1c826bc-f7ae-456e-bf88-5f74ff0c1a2a",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "c74eb626-c353-41d3-bd6a-0f6bff48aa82",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "87c79a62-41c4-44f7-a595-fb132bd3b0b9",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "917722a1-54f4-481d-bad0-8d436453a610",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "ce689057-7021-401d-83ce-6c72e1365cea",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "d72ca89d-6608-409d-aadf-07adaf9c64c0",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "69373989-c08c-4b8a-85f9-d189e389869d",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "f4802547-7083-4e09-a879-7f1ac6090611",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "b7fb97e7-ad9a-4847-92bb-1668d1beeb10",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "5dd11261-56ba-45ad-a6e3-7e52366db48f",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "01653df6-7429-4c97-98ec-23c071419212",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "d22310b7-7306-4836-8b74-5d6834954fab",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "0be41b0d-3f21-4a55-89d8-97276bf9f286",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "19716c4f-18ca-44f5-a094-db20e0e1b376",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "38201c13-db37-4db6-9859-5497fdc7439e",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "ec6247b1-4b51-44f9-9c26-203acc94daf3",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "14101d59-9796-4ca3-a8a1-b559b94ec482",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "926ace74-5b61-4a59-8cdc-ad1670230fc4",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "7190ebcc-090e-4189-9a7d-6cef606aeba7",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "8e8eb752-394f-476c-a6d3-040533e3c9ff",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "bcb7ad19-c172-4e5a-92b3-2dc999c4cb90",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "038f544e-3289-46b4-b84f-0651614a9823",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "27d83712-851d-40e9-ae0e-e442628843d3",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "9dbd0c62-943e-44f0-9224-7c0f964e2e1d",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "24d19320-baf1-49f8-bbec-70868298b175",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "5009fe26-1c15-4b57-ab3e-3941540b0849",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "c2c85a74-e159-424a-80ae-ddeb4e7298fb",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "1fa224bc-f433-4a72-a053-0a561b1bd6b6",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "5b39d465-620c-4706-92cd-9ae3dd6ef8ce",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "248a3b85-b3ad-42b5-ba96-d7ebf11831f5",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "6ef279bc-5eb6-4939-b4a5-c57223901166",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "dc0fbb6d-b0f5-441c-8381-0045ba4b819b",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "7c307eb8-affc-4e25-8279-d13764e7544a",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "8bce4417-6acf-4986-b561-95cce95499cb",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "5349045f-f84a-41fc-b147-c4bb5ac5d7c9",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "d6e2019a-59da-45ba-93b9-0643dc17519f",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "279b7df7-1bca-4ee3-a3a7-72b022ad0319",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "f32e27ed-6e19-4739-908c-3a496229d861",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "7202088e-af89-4876-8525-feb2495b22a2",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "d6ea8794-5b23-48ee-a3e8-931c399af430",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "f1261cec-d0b2-4672-9371-6d6ce0e04002",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "2be86c68-890b-40e7-b2fa-c1d7333abe4d",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "148eb3b3-a9bc-4bbd-bacd-b21b8240933e",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "0b6a48a9-8204-46e8-b116-a16773f14bcc",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "39c2cd5a-aa71-4c50-8462-44f39a687be4",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "5500ead3-4751-4cb4-9466-5ae7a1c05a8c",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "374d36b6-6c28-42b2-a4e3-66ea1efefaca",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "15e01e1d-d163-49ce-af1c-0688257623af",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "a3340424-4cea-4ad2-aa70-e5b772f9f10a",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "cd302026-62d7-41ff-8c53-f0cbd31beb2f",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "408720ea-94c9-4311-963f-88f8f7c1375d",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "b7c98379-873e-4f51-81b5-02d0d934a1ba",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "a0473797-c974-490f-810a-1a4b48ed8f6c",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "1c4e0612-196d-4a79-9e98-1677b4e63e40",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "8cec8508-17c3-46a9-8e4f-bd5ac6aade0c",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "3593fa23-c06a-4704-ae6d-42fdee5a12e0",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "1e09830c-72b7-4cb5-9fe4-19c3a8321fc3",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "892b82b2-4998-491f-b54a-e82ae19db6ac",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "556c9722-f92e-4fb8-a8fa-54f2e245d482",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "e104550f-966b-4101-9d0f-198157031d93",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "7f803ce4-588d-4136-9635-7febb757bea1",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "a0033de4-5cfd-45fd-8583-ed0803b00070",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "0ca1d55b-2d03-4a50-9634-b5a392ef6eda",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "14489f3e-7b8b-41f3-9b05-aafef3c13ba6",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "5b816550-5e6d-4b6a-83cd-461e06d29148",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "96b0938a-f7a2-4103-a1bb-7cd7729ac904",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "f46a4407-3314-462a-b668-00ddf2b393a2",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "a6444962-3413-4d93-9764-9ecaac16c4bb",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "708528f4-d480-4a69-9633-e92de5608299",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "1fd0511f-bdcc-4753-b9e5-1344c874e03b",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "39dbc45d-11c0-4aaa-a4c5-d8708d1bfebf",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "44114edf-5e87-4c08-8d40-3fcbe59fcce8",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "c5f5458a-a337-4a66-959a-9114b19ba9d4",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "faa633b4-fabd-4180-a40a-09b3e2df4ca0",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "6ce812e0-10bb-4a12-b6dd-7a4beb0f8e02",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "164e58d8-55f9-419f-8dd7-e816a7c1150f",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "5b0000b8-1c22-4c6d-9e56-535d71bcd908",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "570762b4-4351-40d1-87a7-055d845bab1d",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "889d6ce6-40ee-45a7-9973-78113fb98253",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "6e7bfb05-6814-49c9-a1d2-b1f0066aec05",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "5e8d18be-63c1-4791-bd09-824d1012bc88",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "ed9e2cb2-229a-4a16-8d27-465e1e2e6d7e",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "56b49b50-407f-4084-b532-018612fe393d",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "94fa88b1-d231-4b8c-ab08-b85d65be2cd4",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "e6e00039-aff8-4279-a1b9-711dcae63293",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "309d8fa0-8d12-4089-9f1d-9cb25a4ee273",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "519785ae-f5ee-4054-a551-7f8c971a0e96",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "4868737d-c3c5-4188-820b-f725a2404042",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "74f6e1b6-ac0d-4962-adf7-b9c3f49f6470",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "fe78cc1b-89c7-478c-8376-31fd4b3c4dbd",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "a12a85f3-eee9-4c66-9bac-8df7d232e3ba",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "46b02774-b30e-4826-84c7-9eb11e4bdae7",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "39a8d1c5-97f1-4557-9d5a-2ff2b2d569fd",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "5f2627d8-aba5-41ab-b5c7-e7c305169448",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "8a98346d-4afb-405e-b9b7-92704a515cb6",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "cfb81377-b269-4396-ab94-adaa6782919f",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "faf58470-1e5a-4fb6-8ce9-3cf216521471",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "3ffc6275-5738-4a3f-aa7b-a0bb91384fef",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "c4ab243e-ffd1-4111-a174-ec5e52a25b9f",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "125ddc27-9278-4574-9088-3fe1614b8234",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "de535095-c01f-4c23-8b3f-d0976a52fc63",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "6d4f67a6-1b67-4d34-8ac6-c404cf286614",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "30d5484b-d9dc-4e03-953d-06e78b055ee7",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "16d87344-0096-4279-9e7f-b4c7e87744c7",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "a5dcc694-97f8-4541-a2e3-5edc26073092",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "c2ada1b1-fc8f-4174-bc22-88ea416bef75",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "8758f333-f748-4489-890a-11bb5f8c71e0",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "3f250f6d-788b-4496-861f-0a43b3b117a5",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "2a28eedb-0f0b-4247-a65c-8b6073970e43",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "b070e136-fba6-4605-84db-34887475cdfb",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "6ce71e81-7375-4ffb-ac92-515a0944e8e6",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "a7082e30-1438-4720-8ad8-1bfa739f262a",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "a9143624-f998-4476-847d-c20f42cc07f1",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "10e27684-2724-4ee9-a8bb-28cd0cfbab86",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "3d51c07c-078a-4c26-9dec-65323c6e92b5",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "1ee4d7e0-a6a6-4f39-a4ce-017d225d2dd5",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "19055339-d92d-45de-bbdd-e862e7b5559d",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "bc661e9e-981e-4950-be63-a33eb27d2ce1",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "ece237d3-524f-490f-b57b-f8d2833ebe33",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "fdfea793-00b2-463d-a69f-249d6a5fa6ec",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "f856fd85-7a93-4878-8b17-5b9a39115061",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "5d21f8e6-63b4-4b91-a660-0bec2f589105",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "7e9b458a-0209-4d23-a964-3e8871281412",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "fdc7d35a-61ef-4d8a-9857-0fc3cfede7e4",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "d721efa3-efa2-4e57-ab9b-40556ec649b8",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "cbe42d94-ffa2-4007-8067-8d8fe8c7cd13",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "8f130e87-8185-486d-994c-ae70b775ef97",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "2bf54e00-a069-481e-a4cc-c4f0f7c1c12b",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "2fd3296b-ddc4-4230-a805-5ca02733beca",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "71e239ab-5bc6-4fc0-bce3-2fafbb5f50c3",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "ba49a892-2915-44e0-ae16-ffae5ae3f186",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "3b8acdd1-90ea-46a8-bba4-b45e62bd207e",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "45fa25a9-c4ca-4589-804f-2f06ec691773",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "80533c70-d37b-4382-8e33-512d66e2309f",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "9bab5693-f788-4118-86f0-7533b03c4620",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "5972dda8-d2e2-4575-b848-1cc905c99518",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "d3c71b57-fdab-4ae9-982c-8af8e1533a0f",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "d136b641-d8b6-479c-9ee7-f503657c1342",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "9970b914-756b-473d-a3ae-008e91a4b249",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "852b7d21-8be6-483f-965c-46926270a859",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "3fc44d2f-2d30-494d-9380-1813b5d7e9d1",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "04967d5f-a8c2-4262-927e-094993243e2e",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "ec8811eb-5ca1-4e27-8c15-6dbb2180c2dd",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "c057e476-d4a3-454a-b8f6-e57f68a992ac",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "2fbc8694-5c05-419f-95df-0c11984329db",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "22ae06a9-3f67-4b96-a631-e2967f745e1e",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "d30db360-bbb9-441b-bfee-dd7a7f20618b",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "af196675-e4f2-49af-8f75-a06c398ab6b4",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "c9265d01-0b3b-47c8-8dec-3d1e1bf88009",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "3fc7a30c-d896-48ac-b203-084870796418",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "574cd285-e824-46b4-a69f-6395eca9c2ea",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "831bd9c7-9110-40ad-b2af-0a4afff3f854",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "93d2eda0-fe94-431e-b08f-ccccc94c2f7c",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "b6ea88a8-7401-4758-8cbe-3ca30d9775f3",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "ed1508a2-372f-4b95-bd07-a9bcac527a85",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "c4b36bb0-33b7-4e14-9267-5b9ff4f02f67",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "e28fd0e7-9e35-4af5-b05f-8321b092d93d",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "80988414-5f3f-4fb0-ae6b-d396d5ad2881",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "932f42d6-03b6-46d8-8e56-0cd492208ded",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "2e0229be-ef68-4d80-a5e3-3d5904ab5a13",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "0f23fa33-ffb4-4850-958c-0c1b59ee4e82",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "9d936271-da01-4833-9591-9469bf85425c",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "baf3936c-8f1f-4cf4-a2fb-188de1b9059d",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "ddab05f8-1a7e-43e3-8816-24ac34c6b8e3",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "889e7142-b1f3-46a2-810d-82a4970fbb5a",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "de93c615-89d4-4b81-ba05-27075775a605",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "0f7b55ee-10fb-46ca-9720-4cbb35b45938",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "b1606478-4340-4372-96fe-5d7fb236b0dd",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "25f3d17e-5ac7-4ed8-9aa8-d37e3574fa4a",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "a0671d3c-f1e7-41f7-b6c3-d117dd6264e3",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "89837248-70b3-47a8-86ef-ff6d46ecce3b",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "4dd74afc-88bd-4d52-9990-c76652c821e8",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "c3dc8dff-e68a-415b-813a-20fea1ef59d7",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "efb7e8c3-f061-4cec-9939-207fbc9f07c3",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "4f14e271-5785-4f49-9576-cc9613e867f6",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "877406bd-4929-40fc-81ce-5f957b1deae2",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "ff67a1b6-a5e6-4998-bc27-85c12cff8cbe",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "94b1a844-14f0-4245-b429-5b00c8d53e05",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "7c932c66-1ba1-4368-91bb-1f8a8074c18e",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "ac92ea5a-14a1-4c35-b078-77529fc99da5",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "a5d164df-2474-47f8-8b46-37c4b9840b77",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "05fa0afc-f2c7-436b-928c-11bacac17f6a",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "0148033f-0197-4d14-985b-33f3dd1f7115",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "3f80c69d-ecbe-4944-802f-e01416785484",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "bf6b53a9-89bb-4b84-bad6-9214cdd7bcbe",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "bf4fcf19-3da4-4a2b-88f9-be2320d85e7d",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "e393a3f6-e18b-4263-903a-cc786b22238b",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "880c7288-88ef-4d1b-879b-c4a47f3eb71d",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "ce91f4f7-6d9b-4305-8655-f89fcb275b82",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "f7a81be6-3c6f-429e-b617-2690abd0695b",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "05f507c2-d568-4554-8e49-b7ff7bc6ef4e",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "354268f4-6bd7-44be-9096-91ab4cfbb45f",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "84fb7c44-bf0d-4a13-996e-6a288fd8d8ab",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "df5de329-32fc-43b2-9dd4-431efed29c21",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "767e8b01-30ae-45b9-8950-5f402748ca42",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "034327e2-9a05-4a9d-9cca-fc2a72b1f3fd",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "71a0a19b-e0c3-4926-81b7-d442ed83f2b6",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "fabc1746-b931-4545-b39c-bde5d8813997",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "1577fdfe-ec9e-4328-ab43-5902329c4339",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "9b3b8dd3-164b-4e95-a861-5761957a6e35",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "1dade954-f026-4f04-ad12-839de6431d43",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "33fb22fa-f9b8-4555-9d1e-bc9bd3e12dfb",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "b52f241c-e153-4d5b-a5b8-41c52ffef06b",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "3ee6cf1b-99cf-4459-ae1f-f2314499bc14",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "9ac27e96-ab2f-4243-9552-b891fda888b6",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "f485686b-59ef-4873-b135-cf9f1df64b64",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "feabb6b5-6da9-4209-884f-f650292c5959",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "824af80f-51fe-4221-9405-cbc1df85a4ad",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "2a2867a0-df38-4122-92c5-6c72a16b085d",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "19b21fbf-46a8-404c-8150-6678fcd69482",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "7139d5f1-d02b-4fe4-be4c-3a62916479b5",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "3d5aa250-3570-46b1-84a6-b403171d4a58",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "1645a823-99f8-4313-a7ee-1a84dd8f5796",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "d4827938-9e4d-4352-81f5-3a56b40dbec1",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "b43807b7-3c15-4acc-a627-22a419caedcd",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "38bb1587-8449-43f2-a7d4-90dd680784ce",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "101abb4f-adf2-4ac8-93f5-7538a9c1d1bb",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "fff52ccf-6c2d-4c24-9ef3-92f97dbe4188",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "c1d2962c-76af-412f-8fc6-0ea0194ead91",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "2aa34b50-df53-40cf-8248-9c6cce6eab7a",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "54e9f973-3615-4c45-813c-0e510dc7b2f2",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "6f8f94fe-b892-4d82-8ab8-2eeef6dd287e",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "b7212dd0-c0b5-4ff6-be65-6b6a7f74c857",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "3fe9e6d1-2631-47f0-96de-a6d0c15049f4",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "a1c91098-16a6-4536-ae27-7e262929e78e",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "c183f675-5cd6-4c58-9a25-630efc4801e9",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "61b053cb-15be-4bf2-8290-ca71ff346d40",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "615b22d4-8782-4921-92f6-dc93a2107b06",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "80b500c2-b369-4f8d-8e67-60cfda202b69",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "88036af7-a553-446a-8053-ddd56bc14d0d",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "f5a631eb-4205-4e12-ac20-42e02a838301",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "3130e986-0271-42f1-a26c-5c91bb490511",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "4168aef1-dc47-4979-a4cc-732cbf141dd4",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "5bb00d71-9858-43df-a4fe-d1c282159c82",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "1f6bceb4-afe9-4cc7-89ff-2b71f99441c4",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "2475cd76-8a04-4f3c-aa91-38172f648a54",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "2f773cda-584a-4ddc-ac77-da99298520c3",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "c05e0730-ac01-4855-9913-0232a2da6a0c",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "22a14e3e-6950-4594-8c49-c3e7dc3407dd",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "8a3d8c08-3b7c-432e-96b2-3ead972e8036",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "086fd165-d616-40db-b925-9d745efcff76",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "6ad042a5-bef1-494a-b136-b0f57a7fe4dc",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "acb31bc6-92dd-4d12-8c95-2eaee1f4ec7a",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "d1e83890-d653-4414-a29c-17ff285e10c7",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "54a054c9-cb2a-45ee-9992-8a3204141ce3",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "786e90fe-d80a-489e-82d3-4ae76d13d110",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "A"
+  },
+  {
+    "id": "b5a5054f-fdeb-473f-a6a2-4f71fa6eab42",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "7fc9f43c-837a-4f6b-bf00-95cb1866671c",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_a",
+    "judge_pick": "B"
+  },
+  {
+    "id": "eea5ff6f-2de5-4d60-8a6d-a626fc5ef48c",
+    "model_a": "claude-opus-4-20250514",
+    "model_b": "qwen3-235b-a22b-no-thinking",
+    "human_winner": "model_a",
+    "judge_pick": "A"
+  },
+  {
+    "id": "9da9224a-2fec-41a6-84f6-0db9c6a71194",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "d4c4fb8b-4c10-4eec-ab53-9ebf0ce0557e",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  },
+  {
+    "id": "2412190b-e152-478f-af13-013226ceafba",
+    "model_a": "qwen3-235b-a22b-no-thinking",
+    "model_b": "claude-opus-4-20250514",
+    "human_winner": "model_b",
+    "judge_pick": "B"
+  }
+]

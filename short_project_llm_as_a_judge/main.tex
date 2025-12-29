@@ -1,0 +1,893 @@
+\documentclass[11pt]{article}
+
+\usepackage{amsmath, amssymb, amsthm, bm}
+\usepackage{fullpage}
+\usepackage{natbib}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{subcaption}
+\usepackage{xcolor}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue,
+  citecolor=blue,
+  urlcolor=blue
+}
+\newcommand{\yiqun}[1]{{\noindent\bf\color{teal}(From Yiqun: #1)}}
+
+% ==========================
+% Macros
+% ==========================
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Var}{\mathrm{Var}}
+\newcommand{\Cov}{\mathrm{Cov}}
+\newcommand{\Prb}{\mathbb{P}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\1}{\mathbf{1}}
+\newcommand{\ind}[1]{\mathbf{1}\{#1\}}
+
+\newcommand{\Zhat}{\hat{Z}}
+\newcommand{\Yhat}{\hat{Y}}
+\newcommand{\thetahat}{\hat\theta}
+\newcommand{\thetabar}{\bar{\theta}}
+\newcommand{\pihat}{\hat{\bm{\pi}}}
+\newcommand{\Mhat}{\hat{M}}
+
+\usepackage{amsthm}
+\newtheorem{proposition}{Proposition}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{prop}{Proposition}
+\newtheorem{corollary}{Corollary}
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}
+\begin{document}
+
+\title{Unifying Calibrations for LLM-as-a-Judge Evaluations}
+\author{
+    Yiqun T. Chen\thanks{Department of Biostatistics, Johns Hopkins University, Baltimore, MD 21205, USA; e-mail: \texttt{yiqunc@jhu.edu}}
+    \and Moran Guo\thanks{Department of Biostatistics, Johns Hopkins University, Baltimore, MD 21205, USA}
+    \and Shengyi Li\thanks{Department of Biostatistics, Johns Hopkins University, Baltimore, MD 21205, USA}
+    \and Sizhu Lu\thanks{Department of Statistics, University of California, Berkeley, CA 94720--3860, USA}
+    \and Sijia Li\thanks{Department of Biostatistics, University of California, Los Angeles, CA 90095, USA}
+}
+\date{\today}
+\maketitle
+
+\begin{abstract}
+Large language models (LLMs) are increasingly used as automatic evaluators of generative AI outputs, a paradigm often referred to as ``LLM-as-a-judge.'' In practice, LLM judges are imperfect predictions for the underlying truth and can exhibit systematic, non-random errors. Two main approaches have recently been proposed to address this issue: (i) \emph{direct measurement-error correction} based on misclassification models such as Rogan--Gladen-style estimators, and (ii) \emph{surrogate-outcome approaches} such as prediction-powered inference (PPI), which correct bias by calibrating prediction residuals on a small set of gold-standard human labels. In this paper, we systematically study the performance of these two approaches for estimating \emph{mean parameters} (e.g., average benchmark scores or pairwise win rates). Leveraging tools from semiparametric efficiency theory, we unify the two classes of estimators by deriving explicit forms of \emph{efficient influence function} (EIF)-based efficient estimators and characterize conditions under which PPI-style estimators attain strictly smaller asymptotic variance than measurement-error corrections. We verify our theoretical results in simulations and demonstrate the methods on a real-data example. We provide an implementation of the benchmarked methods and comparison utilities at \texttt{https://github.com/yiqunchen/debias-llm-as-a-judge}.
+
+\end{abstract}
+
+\section{Introduction}
+\label{sec:intro}
+
+Automated model evaluation is an essential yet challenging task in machine learning (ML), especially in the era of generative artificial intelligence (AI), where scalability produces large volumes of outputs to be labeled and introduces diverse output formats ranging from numerical predictions and categorical labels to open-ended paragraphs such as reasoning traces and mathematical proofs, all of which are not adequately captured by traditional metrics such as mean squared error or misclassification rates. Moreover, an increasing number of studies now leverage large language models (LLMs) to generate both substantial quantities of new questions and their corresponding answers, for which running every question-answer pair through human verification is infeasible.
+
+Motivated by recent advances in LLMs, a growing body of work proposes using LLMs as automatic ``judges'' to evaluate the outputs of other models---for example, by determining whether a model's answer is correct, assigning a quality score, or selecting the preferred response between two candidates, a practice known as ``LLM-as-a-judge.'' This approach promises scalable and low-cost evaluation, but it also introduces a new source of error: the LLM judge is an imperfect proxy for human judgment. 
+At a high level, LLM-as-a-judge workflows typically rely on:
+\begin{itemize}
+  \item a large \emph{evaluation set} on which \emph{only} LLM judgments are available, and
+  \item a smaller \emph{calibration set} on which both human labels and LLM judgments are observed.
+\end{itemize}
+This setup presents a challenge: relying solely on the calibration set leads to high-variance evaluation, whereas relying on the evaluation set labels leads to biased evaluation, as LLMs are known to produce homogenized judgments and to avoid extreme categories. Recent work has therefore asked the key question: \emph{How can we optimally combine these two datasets to construct valid, efficient estimates with calibrated uncertainties (e.g., confidence intervals) for evaluation metrics?}
+
+Statistically, LLM-as-a-judge evaluation can be framed as a classical measurement-error problem. Consider the binary-outcome setting where the human label $Y$ represents the latent truth and the LLM judgment $\hat{Y}$ is a noisy surrogate. We observe paired data $(Y_i, \hat{Y}_i)$ for a small calibration subset, while for most of the evaluation set only $\hat{Y}_i$ is available. A long-standing approach in this literature is to model the misclassification mechanism $\Pr(\hat{Y}\mid Y)$ and estimate the true accuracy using \emph{direct measurement-error correction}, such as Rogan--Gladen estimators or confusion-matrix inversion~\citep{rogan1978estimating, fuller2009measurement}.  Another school of thought, including \emph{prediction-powered inference} (PPI)~\citep{angelopoulos2023prediction} and related work~\citep{wang2020methods, miao2025assumption, salerno2025ipd}, treats the LLM judgment as a generic surrogate outcome for $Y$ and uses the calibration set to correct the average bias of $\hat{Y}$. This approach yields valid inference without explicitly estimating the parameters of the misclassification model.
+
+Despite progress in both methodological traditions, there has been little direct comparison of their statistical validity and efficiency. This gap likely reflects the distinct cultures and communities in which these approaches are typically applied: measurement-error models have recently been used primarily in medical settings, such as estimating COVID-19 and cause-of-death prevalence under imperfect measurements~\citep{rosin2023estimating,gonzalez2017review,fiksel2022generalized}, whereas PPI-style estimators are more commonly motivated by modern ML/AI applications. A recent exception is \citet{lee2025correctly}, which provides a recipe for applying measurement-error corrections to LLM-as-a-judge settings (see details in Section~\ref{subsec:RG}).
+
+In this paper, we systematically study the performance of these two approaches for estimating \emph{mean parameters} and unify them through the lens of semiparametric efficient estimation theory: From elementary efficient influence function (EIF) theory for mean estimation with a surrogate label $\widehat{Y}$, the optimal estimator depends on the regression function $\mathbb{E}[Y \mid \widehat{Y}]$. This perspective reveals that popular calibration-based estimators can be understood as approximations to $\mathbb{E}[Y \mid \widehat{Y}]$ using different functional forms: PPI implicitly uses the identity map $Y \approx \widehat{Y}$; \texttt{PPI++} uses a one-parameter linear map $Y \approx \lambda \widehat{Y}$ with a tuning parameter $\lambda$; and \texttt{RePPI} replaces these parametric forms with a flexible machine learning model to estimate $\mathbb{E}[Y \mid \widehat{Y}]$ directly~\citep{ji2025predictionssurrogatesrevisitingsurrogate}. In particular, in the binary-outcome setting, \texttt{PPI++} with the optimal $\lambda$ coincides with the EIF-efficient estimator, whereas for more general outcomes this coincidence need not hold.
+
+Empirically, we benchmark Rogan--Gladen (measurement-error models) versus PPI (surrogate-outcome models) for LLM-as-a-judge evaluation and find that across a wide range of parameters, PPI outperforms Rogan--Gladen in both finite-sample bias and the efficiency of its confidence intervals. We further explain these findings theoretically by proving that, if the calibration set contains an equal number of true positives and true negatives, \emph{the asymptotic variance of the PPI estimator is strictly smaller than that of the Rogan--Gladen estimator}. We hope this work helps connect the growing literature on EIF-based inference (and empirical EIF estimation) with the rapidly expanding AI/ML literature on LLM-as-a-judge and calibration. As LLMs increasingly become integral to data analysis, we believe this line of work will offer practical and much-needed guidance for reliable LLM-as-a-judge deployment.
+% We provide an implementation of the benchmarked methods and comparison utilities at \texttt{https://github.com/yiqunchen/debias-llm-as-a-judge}.
+% We plan to extend this comparative study to multi-class or categorical outcomes, as well as continuous surrogate outcomes, in future work. 
+\section{Review of Calibration Methods in the Binary Setting}
+\label{sec:method}
+
+\subsection{Problem setup}
+
+We stylize the LLM-as-a-judge evaluation as follows: for $i = 1,\dots, N$, we observe i.i.d.\ pairs
+\begin{equation}
+Y_i \sim \mathrm{Ber}(\theta)
+\quad\text{denoting the human label,}
+\qquad
+\hat Y_i \in \{0,1\}
+\quad\text{denoting the LLM-as-a-judge label.}
+\label{eq:model-gen}
+\end{equation}
+The target parameter is the \emph{mean human outcome}
+\begin{equation}
+\theta = \E[Y] = \Pr(Y=1).
+\label{eq:theta-def}
+\end{equation}
+As a concrete example, if the goal is to compare two responses $R_1$ and $R_2$ produced by different LLMs, let $Y_i=1$ indicate that a human annotator prefers $R_1$ over $R_2$ for prompt $i$ (0 otherwise). The estimand $\theta$ then represents the \emph{human win rate} of $R_1$ over $R_2$.
+
+The total sample of size $N$ is partitioned into a \textbf{test set} of size $n$, where only $\hat Y_i$ is observed, and a \textbf{calibration set} of size $m = N-n$, where both $Y_j$ and $\hat Y_j$ are available. Let
+\begin{equation}
+\hat\theta_{\mathrm{naive}}
+\;=\;
+\frac{1}{n}\sum_{i=1}^n \widehat Y_i
+\label{eq:theta-naive}
+\end{equation}
+denote the empirical proportion of LLM-judged positives in the test set. When the LLM judge is imperfect, $\E[\hat\theta_{\mathrm{naive}}] \neq \theta$, resulting in biased point estimates, incorrect variance estimates, and invalid inference. We therefore review several calibration-based/debiasing estimators: the Rogan--Gladen (RG) estimator~\citep{rogan1978estimating,lee2025correctly}, prediction-powered inference (PPI)~\citep{angelopoulos2023prediction}, and its power-tuned variant (\texttt{PPI++})~\citep{angelopoulos2023ppipp}.
+
+
+\subsection{Rogan--Gladen estimator}
+\label{subsec:RG}
+
+The Rogan--Gladen estimator accounts for the sensitivity and specificity of the LLM judge,
+\begin{equation}
+q_1 = \Pr(\hat Y = 1 \mid Y = 1),
+\qquad
+q_0 = \Pr(\hat Y = 0 \mid Y = 0).
+\label{eq:q-param}
+\end{equation}
+Let $p = \Pr(\hat Y = 1)$ denote the marginal probability that the LLM calls an instance positive. The classical misclassification relationship is
+\begin{equation}
+p = q_1 \theta + (1-q_0)(1-\theta)
+  = (q_0 + q_1 - 1)\theta + (1-q_0).
+\label{eq:misclass-eq}
+\end{equation}
+Solving \eqref{eq:misclass-eq} for $\theta$ yields
+\begin{equation}
+\theta = \frac{p + q_0 - 1}{q_0 + q_1 - 1}.
+\label{eq:RG-pop}
+\end{equation}
+
+In practice, $p$, $q_0$, and $q_1$ are unknown and estimated from the data: $
+\hat p = \frac{1}{n}\sum_{i=1}^n \hat Y_i$.
+On the calibration set, write $m_1 = \sum_{j=1}^m \mathbf{1}\{Y_j=1\}$ and $m_0 = m - m_1$ and define
+\[
+\hat q_1 = 
+\frac{\sum_{j=1}^m \mathbf{1}\{\hat Y_j=1,Y_j=1\}}{m_1},
+\qquad
+\hat q_0 = 
+\frac{\sum_{j=1}^m \mathbf{1}\{\hat Y_j=0,Y_j=0\}}{m_0}.
+\]
+The Rogan--Gladen estimator for $\theta$ is
+\begin{equation}
+\hat\theta_{\mathrm{RG}} = \frac{\hat p + \hat q_0 - 1}{\hat q_0 + \hat q_1 - 1}.
+\label{eq:theta-RG}
+\end{equation}
+
+This is the classic prevalence estimator under measurement error~\citep{rogan1978estimating,lang2014confidence} and the same estimator proposed in \citet{lee2025correctly}.
+
+\begin{proposition}[Asymptotic distribution of $\hat\theta_{\mathrm{RG}}$ in \eqref{eq:theta-RG}]
+\label{prop:var-RG}
+Assume the test and calibration samples are independent, and that $n,m_0,m_1 \to \infty$ with
+$n/m \to \gamma_1 \in (0,\infty)$.
+Let $q_0 := \Pr(\hat Y=0 \mid Y=0)$ and $q_1 := \Pr(\hat Y=1 \mid Y=1)$ with $q_0+q_1-1 \neq 0$. Then
+\[
+\sqrt{n}\,\bigl(\hat\theta_{\mathrm{RG}} - \theta\bigr)
+\;\xrightarrow{d}\;
+\mathcal{N}\bigl(0, V_{\mathrm{RG}}\bigr),
+\]
+where
+\begin{equation}
+V_{\mathrm{RG}}
+=
+\frac{1}{(q_0+q_1-1)^2}
+\left[
+p(1-p)
+\;+\;
+\gamma_1\left\{
+(1-\theta)\,q_0(1-q_0)
++
+\theta\,q_1(1-q_1)
+\right\}
+\right].
+\label{eq:RG-var}
+\end{equation}
+\end{proposition}
+
+
+
+\subsection{Prediction-powered inference (PPI)}
+\label{subsec:PPI}
+
+Prediction-powered inference treats the LLM label as a surrogate for $Y$ and corrects its bias using the calibration set without explicitly modeling the sensitivity and specificity. Following the setup in Section~\ref{subsec:RG}, we have that $\E[\hat Y] = p,\,
+\E[\hat Y - Y] = \Delta = p-\theta$, motivating the following estimator:
+\begin{equation}
+\hat\theta_{\mathrm{PPI}} = \hat p - \frac{1}{m}\sum_{j=1}^m (\hat Y_j - Y_j).
+\label{eq:theta-PPI}
+\end{equation}
+
+\begin{proposition}
+\label{prop:PPI-bias-var}
+Under the joint model \eqref{eq:model-gen} with independent test and calibration samples:
+\begin{enumerate}[label=(\roman*),leftmargin=1.5em]
+\item PPI is unbiased for all $n,m$:
+\[
+\E[\hat\theta_{\mathrm{PPI}}] = \theta.
+\]
+
+\item The finite-sample variance is
+\begin{equation}
+\Var(\hat\theta_{\mathrm{PPI}})
+=
+\frac{p(1-p)}{n}
++
+\frac{(1-\theta)(1-q_0)+\theta(1-q_1)-(\theta-p)^2}{m},
+\label{eq:ppi-var}
+\end{equation}
+where $p=\Pr(\hat Y=1)=(1-\theta)(1-q_0)+\theta q_1$.
+Moreover, if $n,m\to\infty$ with $n/m\to\gamma_1\in(0,\infty)$,
+\[
+\sqrt{n}\,(\hat\theta_{\mathrm{PPI}}-\theta)
+\xrightarrow{d}
+\mathcal{N}(0,V_{\mathrm{PPI}}),
+\qquad
+V_{\mathrm{PPI}}
+=
+p(1-p)
++
+\gamma_1\Bigl[(1-\theta)(1-q_0)+\theta(1-q_1)-(\theta-p)^2\Bigr].
+\]
+\end{enumerate}
+\end{proposition}
+
+
+\subsection{Power-tuned PPI (\texttt{PPI++})}
+\label{subsec:PPIplus}
+\texttt{PPI++} generalizes \eqref{eq:theta-PPI} by introducing a tuning parameter $\lambda\in\mathbb{R}$:
+\begin{equation}
+\hat\theta_{\mathrm{\texttt{PPI++}}}(\lambda)
+:=
+\frac{1}{m}\sum_{j=1}^m Y_j
+\;+\;
+\lambda\left(
+\frac{1}{n}\sum_{i=1}^n \hat Y_i
+\;-\;
+\frac{1}{m}\sum_{j=1}^m \hat Y_j
+\right).
+\label{eq:theta-PPIplus}
+\end{equation}
+It's easy to see that \eqref{eq:theta-PPIplus} remains unbiased for any choice of $\lambda$ that is independent of the $Y_i$'s, but different choices lead to different asymptotic variances (and therefore different power), as detailed in Proposition~\ref{prop:PPIplus-bias-var}.
+
+
+\begin{proposition}
+\label{prop:PPIplus-bias-var}
+Assume $\lambda$ is fixed (non-data-dependent), under the joint model \eqref{eq:model-gen} with independent test and calibration samples. Then:
+\begin{enumerate}[label=(\roman*),leftmargin=1.5em]
+\item (\emph{Unbiasedness}) For all $n,m$,
+\[
+\E\!\left[\hat\theta_{\mathrm{\texttt{PPI++}}}(\lambda)\right] = \theta.
+\]
+
+\item (\emph{Finite-sample variance})
+\begin{equation}
+\Var\!\left(\hat\theta_{\mathrm{\texttt{PPI++}}}(\lambda)\right)
+=
+\frac{\theta(1-\theta)}{m}
++
+\lambda^2\left(\frac{p(1-p)}{n}+\frac{p(1-p)}{m}\right)
+-
+\frac{2\lambda}{m}\,\theta\bigl(q_1-p\bigr).
+\label{eq:ppiplus-var-finite}
+\end{equation}
+
+\item (\emph{Asymptotic distribution})
+If $n,m\to\infty$ with $n/m\to\gamma_1\in(0,\infty)$, then
+\[
+\sqrt{n}\left(\hat\theta_{\mathrm{\texttt{PPI++}}}(\lambda)-\theta\right)
+\xrightarrow{d}
+\mathcal N\!\left(0,\,V_{\mathrm{\texttt{PPI++}}}(\lambda)\right),
+\]
+where
+\begin{equation}
+V_{\mathrm{\texttt{PPI++}}}(\lambda)
+=
+\gamma_1\,\theta(1-\theta)
++
+\lambda^2(1+\gamma_1)\,p(1-p)
+-
+2\lambda\,\gamma_1\,\theta\bigl(q_1-p\bigr).
+\label{eq:ppiplus-var-asymp}
+\end{equation}
+
+\item (\emph{Variance-minimizing tuning})
+$V_{\mathrm{\texttt{PPI++}}}(\lambda)$ is minimized over $\lambda\in\mathbb{R}$ at
+\[
+\lambda^\star
+=
+\frac{\gamma_1\,\theta\bigl(q_1-p\bigr)}{(1+\gamma_1)\,p(1-p)}.
+\]
+\end{enumerate}
+\end{proposition}
+
+\subsection{Maximum Likelihood Estimator}
+\label{subsec:full-mle}
+
+In addition to (moment-based) debiasing estimators such as PPI/\texttt{PPI++}, another natural
+candidate is the \emph{joint maximum likelihood estimator} under the full three-parameter
+misclassification model for $(Y,\hat Y)$. In contrast to RG (which uses plug-in estimators for sensitivity and specificity on the calibration sample), the MLE explicitly fits $(\theta,q_0,q_1)$ by maximizing the joint
+likelihood implied by the model across both the test and calibration samples.
+
+Under model \eqref{eq:model-gen}, we have that the test observations satisfy $\hat Y_i\sim\mathrm{Ber}(p)$,
+while the calibration observations satisfy
+\[
+\Pr(Y=1,\hat Y=1)=\theta q_1,\qquad
+\Pr(Y=1,\hat Y=0)=\theta(1-q_1),
+\]
+\[
+\Pr(Y=0,\hat Y=1)=(1-\theta)(1-q_0),\qquad
+\Pr(Y=0,\hat Y=0)=(1-\theta)q_0.
+\] 
+
+\paragraph{Likelihood and estimating equations.}
+Let $O_i=(R_i,Y_i,\hat Y_i)$ for $i=1,\dots,n+m$, where $R_i\in\{0,1\}$ indicates whether $Y_i$ is observed
+($R_i=1$ for calibration and $R_i=0$ for test). In this setup we assume $R_i$'s are simply i.i.d. draws with 
+$\Pr(R=1)=m/(n+m)$, and the observed-data likelihood factorizes into a calibration part (for $R=1$) and a
+test-only part (for $R=0$). Writing $p=(1-\theta)(1-q_0)+\theta q_1$, the per-observation contribution is
+\[
+f(O_i;\theta,q_0,q_1)
+=
+\Bigl[\Pr(Y_i,\hat Y_i)\Bigr]^{R_i}\Bigl[\Pr(\hat Y_i)\Bigr]^{1-R_i},
+\]
+so the full log-likelihood (up to constants) is
+\begin{align}
+\ell(\theta,q_0,q_1)
+&=
+\sum_{i=1}^{n+m}(1-R_i)\Bigl\{\hat Y_i\log p+(1-\hat Y_i)\log(1-p)\Bigr\} \nonumber\\
+&\quad+
+\sum_{i=1}^{n+m}R_i\Bigl\{
+\mathbf 1\{Y_i=1,\hat Y_i=1\}\log(\theta q_1)
++\mathbf 1\{Y_i=1,\hat Y_i=0\}\log(\theta(1-q_1)) \nonumber\\
+&\hspace{6.6em}\qquad
++\mathbf 1\{Y_i=0,\hat Y_i=1\}\log((1-\theta)(1-q_0))
++\mathbf 1\{Y_i=0,\hat Y_i=0\}\log((1-\theta)q_0)
+\Bigr\}.
+\label{eq:mle-loglik-R}
+\end{align}
+The joint MLE is defined as
+\[
+(\hat\theta_{\mathrm{MLE}},\hat q_{0,\mathrm{MLE}},\hat q_{1,\mathrm{MLE}})
+=
+\arg\max_{\theta,q_0,q_1\in(0,1)}\ \ell(\theta,q_0,q_1),
+\]
+equivalently as a solution to the score equations
+\[
+\frac{\partial}{\partial\theta}\ell(\theta,q_0,q_1)=0,\qquad
+\frac{\partial}{\partial q_0}\ell(\theta,q_0,q_1)=0,\qquad
+\frac{\partial}{\partial q_1}\ell(\theta,q_0,q_1)=0.
+\]
+
+In practice, these equations are solved numerically (e.g., by Newton--Raphson) subject to the
+constraint $q_0+q_1\neq 1$ (identifiability).
+
+\begin{proposition}[Asymptotic normality and efficiency of the joint MLE]
+\label{prop:mle-asymp}
+Assume the three-parameter misclassification model for $(Y,\hat Y, R)$ is correctly specified and standard
+regularity conditions hold. Suppose $n,m\to\infty$ with $n/m\to\gamma_1\in(0,\infty)$, and define
+\[
+p=(1-\theta)(1-q_0)+\theta q_1,
+\qquad
+\eta_0:=(\theta,q_0,q_1)^\top.
+\]
+Denote the joint MLE based on the combined test ($n$) and calibration ($m$) samples as
+\[
+\hat\eta_{\mathrm{MLE}}
+:=
+(\hat\theta_{\mathrm{MLE}},\hat q_{0,\mathrm{MLE}},\hat q_{1,\mathrm{MLE}})^\top.
+\]
+Then
+\[
+\sqrt{n+m}\,(\hat\eta_{\mathrm{MLE}}-\eta_0)\xrightarrow{d}\mathcal N\!\left(0,\ I_{\gamma_1}(\eta_0)^{-1}\right),
+\]
+where the limiting Fisher information is
+\[
+I_{\gamma_1}(\theta,q_0,q_1)
+=
+\frac{\gamma_1}{1+\gamma_1}\,I_{\mathrm{test}}(\theta,q_0,q_1)
++
+\frac{1}{1+\gamma_1}\,I_{\mathrm{cal}}(\theta,q_0,q_1),
+\]
+with
+\[
+I_{\mathrm{test}}(\theta,q_0,q_1)
+=
+\frac{1}{p(1-p)}
+\begin{pmatrix}
+(q_0+q_1-1)^2 & -(q_0+q_1-1)(1-\theta) & \theta(q_0+q_1-1)\\
+-(q_0+q_1-1)(1-\theta) & (1-\theta)^2 & -\theta(1-\theta)\\
+\theta(q_0+q_1-1) & -\theta(1-\theta) & \theta^2
+\end{pmatrix},
+\]
+\[
+I_{\mathrm{cal}}(\theta,q_0,q_1)
+=
+\mathrm{diag}\!\left(
+\frac{1}{\theta(1-\theta)},\ 
+\frac{1-\theta}{q_0(1-q_0)},\ 
+\frac{\theta}{q_1(1-q_1)}
+\right).
+\]
+Consequently,
+\[
+\sqrt{n+m}\,(\hat\theta_{\mathrm{MLE}}-\theta)\xrightarrow{d}\mathcal N\!\left(0,\ \bigl[I_{\gamma_1}(\eta_0)^{-1}\bigr]_{11}\right), \; \text{where}
+\]
+\[
+\bigl[I_{\gamma_1}(\eta_0)^{-1}\bigr]_{11}
+=
+(1+\gamma_1)\,\theta(1-\theta)\,
+\frac{\,p(1-p)+\gamma_1\Bigl[(1-\theta)q_0(1-q_0)+\theta q_1(1-q_1)\Bigr]\;}
+{\,p(1-p)+\gamma_1\Bigl[(q_0+q_1-1)^2\theta(1-\theta)+(1-\theta)q_0(1-q_0)+\theta q_1(1-q_1)\Bigr]\;}.
+\]
+\end{proposition}
+
+
+
+\section{A principled efficiency lens via efficient influence functions}
+\label{sec:eif}
+
+We now have multiple asymptotically unbiased estimators for $\theta=\E[Y]$ (RG, PPI,
+\texttt{PPI++}, and the joint MLE). This motivates the natural question:
+\begin{quote}
+    \emph{What is the smallest achievable asymptotic variance under a given statistical model, and which
+estimators attain it?}
+\end{quote}
+
+
+We answer this question using (efficient) influence function theory from asymptotic and semiparametric
+statistics (see~\citet{van2000asymptotic} and references therein for a detailed treatment). Let
+$Z_1,\dots,Z_N$ denote i.i.d.\ observations from a distribution $P$ and let $\theta=\theta(P)$ be the
+target parameter. An estimator $\hat\theta$ is \emph{regular and asymptotically linear} if there exists
+a mean-zero function $\phi_P(Z)$ such that $
+\hat\theta-\theta(P)
+=
+\frac{1}{N}\sum_{i=1}^N \phi_P(Z_i) + o_p(N^{-1/2})$.
+Any such $\phi_P$ is called an \emph{influence function} (IF) for $\hat\theta$, and its definition implies that
+\[
+\sqrt{N}\bigl(\hat\theta-\theta(P)\bigr)\ \xrightarrow{d}\ 
+\mathcal N\!\left(0,\ \Var_P\!\bigl(\phi_P(Z)\bigr)\right).
+\]
+Among all regular estimators within a given model, the \emph{efficient influence function} (EIF)---when it
+exists---is the IF with the smallest variance; its variance is the \emph{efficiency bound}. 
+
+Specifically, let's consider the general model for the joint distribution of $(Y,\hat Y)$, where
+$Y\in\{0,1\}$ is the human label and $\hat Y\in\{0,1\}$ is the LLM-judged label, with no additional constraints beyond the i.i.d. assumption across observations. Recall that we observe $n$ test points
+with $\hat Y$ only and $m$ calibration points with both $(Y,\hat Y)$. Let $R\in\{0,1\}$ indicate whether
+$Y$ is observed ($R=1$ for calibration and $R=0$ for test with $P(R=1)=\frac{m}{m+n}$), and define
+\[
+\mu(\hat y):=\E[Y\mid \hat Y=\hat y],\qquad \hat y\in\{0,1\}.
+\]
+
+A useful way to motivate the EIF is to observe that there are two natural sources of information about $\theta=\E[Y]$ in this design:
+(i) the large test sample provides a precise estimate of the distribution of $\hat Y$; and
+(ii) the calibration sample tells us how $Y$ relates to $\hat Y$.
+The function $\mu(\hat Y)$ is exactly the \emph{best} way to ``translate'' $\hat Y$ into an estimate of $Y$:
+by the law of iterated expectations, $\theta=\E[Y]=\E\{\E[Y\mid \hat Y]\}=\E[\mu(\hat Y)]$.
+Thus a natural ``impute-then-average'' estimator is to average $\mu(\hat Y)$ over the (large) test set.
+However, since $\mu(\cdot)$ is unknown, we need to learn it from the calibration sample.
+
+\begin{proposition}[Efficient influence function]
+\label{prop:eif-modelA}
+Assume the combined sample of size $n+m$ is i.i.d., with labels observed on a simple random subsample of $P(R=1)$. Then the efficient influence function for $\theta=\E[Y]$ is
+\begin{equation}
+\phi^\star(R,Y,\hat Y)
+=
+\mu(\hat Y)-\theta
++\,\frac{R}{P(R=1)}\bigl\{Y-\mu(\hat Y)\bigr\}.
+\label{eq:eif-modelA}
+\end{equation}
+\end{proposition}
+
+\begin{proposition}
+\label{cor:eif-estimator}
+Define
+\[
+\hat\mu(1):=\frac{\sum_{j=1}^m \mathbf 1\{\hat Y_j=1\}\,Y_j}{\sum_{j=1}^m \mathbf 1\{\hat Y_j=1\}},\;
+\hat\mu(0):=\frac{\sum_{j=1}^m \mathbf 1\{\hat Y_j=0\}\,Y_j}{\sum_{j=1}^m \mathbf 1\{\hat Y_j=0\}},\;
+\hat\mu(\hat Y)=\hat\mu(0)\mathbf 1\{\hat Y=0\}+\hat\mu(1)\mathbf 1\{\hat Y=1\}.
+\]
+Then the one-step EIF estimator for estimating $\theta$ under \eqref{eq:model-gen} can be written as
+\begin{equation}
+\hat\theta_{\mathrm{EIF}}
+=
+\frac{1}{n+m}\sum_{i=1}^{n+m}\hat\mu(\hat Y_i)
+\;+\;
+\frac{1}{m}\sum_{j=1}^m\Bigl(Y_j-\hat\mu(\hat Y_j)\Bigr).
+\label{eq:eif-est}
+\end{equation}
+\end{proposition}
+\paragraph{\textbf{PPI is not generally efficient.}}
+Corollary~\ref{cor:eif-estimator} implies that the EIF estimator $\hat\theta_{\mathrm{EIF}}$ in
+\eqref{eq:eif-est} is asymptotically efficient under the general i.i.d.\ model for $(Y,\hat Y)$, and thus
+serves as a natural efficiency benchmark (i.e., it attains the smallest possible asymptotic variance among
+regular estimators in this model). A simple rearrangement shows that \eqref{eq:eif-est} has the same
+``prediction + calibration correction'' structure as PPI and \texttt{PPI++}. In particular, PPI corresponds
+to the special choice $
+\mu(\hat Y)\equiv \hat Y$ 
+inside the EIF template \eqref{eq:eif-modelA}. This yields an unbiased estimator, but it is not
+generally efficient unless $\E[Y\mid \hat Y]=\hat Y$ (i.e., $\hat Y$ is a perfect surrogate for $Y$).
+
+\paragraph{\textbf{Optimally tuned \texttt{PPI++} matches the EIF in the binary case.}}
+Unlike PPI, \texttt{PPI++} searches over a one-parameter family of unbiased estimators and chooses
+$\lambda$ to minimize asymptotic variance. In general, \texttt{PPI++} does not coincide with the EIF,
+because $\E[Y\mid \hat Y]$ need not equal $\lambda \hat Y$ for a single scalar $\lambda$. However, when
+$Y,\hat Y\in\{0,1\}$, the regression function $\mu(\hat Y)=\E[Y\mid \hat Y]$ is \emph{always affine} in
+$\hat Y$, so the \texttt{PPI++} family is rich enough to match the EIF. Indeed, letting $\gamma_1=n/m$, the
+variance-minimizing choice from Proposition~\ref{prop:PPIplus-bias-var} can be written as
+\[
+\lambda^\star
+=
+\frac{\gamma_1\,\Cov(Y,\hat Y)}{(1+\gamma_1)\Var(\hat Y)}
+=
+\frac{\gamma_1\,\theta(1-\theta)\,(q_0+q_1-1)}{(1+\gamma_1)\,p(1-p)},
+\qquad
+p=(1-\theta)(1-q_0)+\theta q_1.
+\]
+On the other hand, by Bayes' rule,
+\begin{equation}
+\mu(1)=\Pr(Y=1\mid \hat Y=1)=\frac{\theta q_1}{p},
+\qquad
+\mu(0)=\Pr(Y=1\mid \hat Y=0)=\frac{\theta(1-q_1)}{1-p}.
+\label{eq:mu-bayes-binary}
+\end{equation}
+Therefore,
+\begin{align*}
+\mu(1)-\mu(0)
+&=
+\frac{\theta q_1}{p}-\frac{\theta(1-q_1)}{1-p}
+=\theta\,\frac{q_1-p}{p(1-p)}\\
+&=
+\theta\,\frac{q_1-\bigl[(1-\theta)(1-q_0)+\theta q_1\bigr]}{p(1-p)}
+=
+\frac{\theta(1-\theta)(q_0+q_1-1)}{p(1-p)}.
+\end{align*}
+Thus, $\lambda^\star=\frac{\gamma_1}{1+\gamma_1}\bigl\{\mu(1)-\mu(0)\bigr\}$, which is exactly the slope for the affine form of $\mu(\hat Y)$, showing that optimally tuned \texttt{PPI++} is
+asymptotically equivalent to the EIF estimator in the binary setting.
+
+\paragraph{\textbf{RG and MLE.}}
+RG uses plug-in estimates of $(q_0,q_1)$ rather than jointly maximizing the full likelihood over
+$(\theta,q_0,q_1)$. Under the correctly specified parametric misclassification model, classical likelihood
+theory implies that the joint MLE is asymptotically efficient for $\theta$
+(Proposition~\ref{prop:mle-asymp}) and therefore attains, within that parametric family, the smallest
+possible asymptotic variance. In contrast, $\hat\theta_{\mathrm{RG}}$ is generally less efficient than the
+joint MLE. Although the MLE may look different from \eqref{eq:eif-est}, they are asymptotically equivalent:
+in parametric models, the efficient influence function can be written as an efficient-score form
+$e_1^\top I_{\gamma_1}(\eta_0)^{-1}\nabla_{\eta}l(O;\eta_0)$, and one can show the asymptotic equivalence using algebra.
+
+Finally, it is instructive to compare \eqref{eq:theta-RG} and \eqref{eq:theta-PPI}, which yields the
+somewhat surprising result in Proposition~\ref{prop:PPI-dominates-RG}.
+
+\begin{proposition}
+\label{prop:PPI-dominates-RG}
+Fix $\theta\in(0,1)$ and $q_0,q_1\in(0,1)$ with $q_0+q_1-1>0$, and assume $n,m\to\infty$ with $n/m\to\gamma_1\in(0,\infty)$. Then
+\[
+V_{\mathrm{PPI}} \;\le\; V_{\mathrm{RG}},
+\]
+where
+\[
+V_{\mathrm{PPI}} = p(1-p)
++
+\gamma_1\Bigl[(1-\theta)(1-q_0)+\theta(1-q_1)-(\theta-p)^2\Bigr]
+\]
+and 
+\[
+V_{\mathrm{RG}} =\frac{1}{(q_0+q_1-1)^2}
+\left[
+p(1-p)
+\;+\;
+\gamma_1\left\{
+(1-\theta)\,q_0(1-q_0)
++
+\theta\,q_1(1-q_1)
+\right\}
+\right]
+\]
+for all such parameters, with equality if and only if $q_0=q_1=1$ (i.e. $P(\hat{Y} = Y)=1$).
+\end{proposition}
+
+
+\paragraph{Asymptotic Efficiency Summary.}
+The relationships derived above imply a clear ordering of performance. Under the general i.i.d.\ model for $(Y,\hat Y)$, the EIF estimator $\hat\theta_{\mathrm{EIF}}$ attains the semiparametric efficiency bound. In the binary case, optimally tuned \texttt{PPI++} is asymptotically equivalent to $\hat\theta_{\mathrm{EIF}}$, and consequently to the joint MLE. Formally, for $n,m \to \infty$:
+\[
+\hat\theta_{\mathrm{EIF}} 
+\;=_{\mathrm{asymp}}\; 
+\hat\theta_{\mathrm{MLE}} 
+\;=_{\mathrm{asymp}}\; 
+\hat\theta_{\mathrm{\texttt{PPI++}}}(\lambda^\star) 
+\;\prec_{\mathrm{asymp}}\; 
+\hat\theta_{\mathrm{PPI}} 
+\;\prec_{\mathrm{asymp}}\; 
+\hat\theta_{\mathrm{RG}},
+\]
+where $=_{\mathrm{asymp}}$ denotes equivalence up to $o_p(n^{-1/2})$ and $\prec_{\mathrm{asymp}}$ denotes smaller asymptotic variance.
+
+\section{Beyond binary: Nonparametric Estimation of $\mathbb{E}[Y\mid \hat Y]$}
+\label{subsec:eif-beyond}
+
+In the binary case, $\mu(\hat Y) = \mathbb{E}[Y\mid \hat Y]$ is necessarily affine, allowing optimally tuned \texttt{PPI++} to achieve the efficiency bound. Moreover, the nonparametric distribution on $(Y, \hat{Y})$ is equivalent to the three-parameter distribution used for the MLE in the binary case; this "saturated" property allows the MLE to attain the efficiency bound \emph{without} making any restrictive parametric assumptions.
+
+For richer surrogate outputs $\hat Y$ (e.g., continuous scores, ordinal ratings, or multi-class probabilities), the functional form of the EIF, and therefore $\hat\theta_{\mathrm{EIF}}$ in \eqref{eq:eif-est}, remains unchanged. However, the regression function $\mu(\cdot)$ may be nonlinear, and efficiency hinges on the quality of the estimate $\hat{\mu}(\cdot)$ learned from the calibration sample.
+
+When both $Y$ and $\hat Y$ are one-dimensional, estimating $\mu(\hat Y)$ reduces to a univariate regression problem, which can be addressed using models ranging from simple linear regression to flexible nonparametric smoothers. Given a consistent estimator $\hat{\mu}(\cdot)$, we can then construct the plug-in EIF estimator:
+\begin{equation}
+    \hat\theta_{\mathrm{EIF}} = \frac{1}{n+m} \sum_{i=1}^{n+m} \left( \hat{\mu}(\hat Y_i) + \frac{1}{\hat{\pi}} R_i \{Y_i - \hat{\mu}(\hat Y_i)\} \right).
+\end{equation}
+Provided $\hat{\mu}(\cdot)$ converges to $\mu(\cdot)$ at a rate faster than $(n+m)^{-1/4}$, $\hat\theta_{\mathrm{EIF}}$ is root-$N$ consistent and asymptotically efficient. When complex estimation methods are used, techniques such as cross-fitting can be leveraged, as is standard in the debiased/double machine learning literature~\citep{kennedy2024semiparametric,chernozhukov2018double}.
+
+\section{Simulation Study}
+\label{sec:simulation}
+
+Here, we compare the performance of six estimators in simulation:
+  the naive estimator in~\eqref{eq:theta-naive}, the Rogan--Gladen estimator in~\eqref{eq:theta-RG}, the
+  prediction-powered estimator in~\eqref{eq:theta-PPI}, the power-tuned \texttt{PPI++} estimator in~\eqref{eq:theta-PPIplus},
+  the Joint MLE, and the EIF estimator in~\eqref{eq:eif-est}.
+
+
+\subsection{Simulation Setup}
+\label{subsec:sim-setup}
+
+  \paragraph{Data-generating process.}
+  Each replicate consists of $N = 2{,}000$ i.i.d.\ samples.
+  The true binary label is generated as
+  \[
+  Y_i \stackrel{\text{i.i.d.}}{\sim} \mathrm{Ber}(\theta),
+  \]
+  where $\theta \in \{0.1, 0.2, \ldots, 0.9\}$ is the target prevalence.
+
+  The LLM-as-a-judge surrogate $\hat Y_i$ is generated from a misclassification model with constant sensitivity and specificity:
+  \begin{align*}
+  \Pr(\hat Y_i = 1 \mid Y_i = 1) &= q_1 \quad\text{(sensitivity)}, \\
+  \Pr(\hat Y_i = 0 \mid Y_i = 0) &= q_0 \quad\text{(specificity)}.
+  \end{align*}
+
+  \paragraph{Parameter grid.}
+  We vary the following parameters across a full factorial design:
+  \begin{itemize}
+      \item True prevalence: $\theta \in \{0.1, 0.2, \ldots, 0.9\}$.
+      \item Judge accuracy: $q_0, q_1 \in \{0.6, 0.7, 0.8\}$.
+      \item Labeling budget (calibration size): $\{1\%, 5\%, 10\%, 20\%\}$ of $N$
+            (i.e., $m \in \{20, 100, 200, 400\}$ human labels in expectation).
+  \end{itemize}
+  The calibration set is obtained by \emph{random sampling} from the full dataset; thus the class counts
+  $m_0$ and $m_1$ in the calibration set are random and depend on the underlying prevalence $\theta$.
+  For each configuration, we perform $B = 1{,}000$ Monte Carlo replicates to compute bias as well as coverage and average width of 90\% confidence intervals. 
+
+  \paragraph{Confidence interval construction.}
+  We apply a logit transformation to all confidence intervals to improve finite-sample coverage when $\theta$ is near the boundary~\citep{brown2001interval,stone1996course}. Given point estimate $\hat\theta$ and variance estimate $\widehat V$, we form
+  \[
+  \mathrm{CI}_{1-\alpha} = \mathrm{expit}\!\left(
+    \mathrm{logit}(\hat\theta) \pm z_{\alpha/2} \cdot \frac{\sqrt{\widehat V}}{\hat\theta(1 - \hat\theta)}
+  \right),
+  \]
+  where the standard error on the logit scale is obtained via the delta method. This ensures interval endpoints remain in $(0,1)$.
+
+
+\paragraph{Evaluation metrics.}
+For each estimator $\hat\theta$, let $\hat\theta^{(b)}$ denote its value in replicate 
+$b = 1,\dots,B$, and let $\mathrm{CI}^{(b)} = [L^{(b)}, U^{(b)}]$ denote its corresponding 
+95\% confidence interval. We compute:
+\begin{itemize}
+\item \textbf{Bias.}
+\begin{equation}
+\label{eq:sim-bias}
+\mathrm{Bias}(\hat\theta)
+= \frac{1}{B} \sum_{b=1}^B \bigl(\hat\theta^{(b)} - \theta\bigr).
+\end{equation}
+
+\item \textbf{Coverage probability.}
+\begin{equation}
+\label{eq:sim-coverage}
+\mathrm{Cov}(\hat\theta)
+= \frac{1}{B} \sum_{b=1}^B 
+   \mathbf{1}\!\left\{\, L^{(b)} \le \theta \le U^{(b)} \,\right\}.
+\end{equation}
+
+\item \textbf{Mean confidence interval width.}
+\begin{equation}
+\label{eq:sim-width}
+\mathrm{Width}(\hat\theta)
+= \frac{1}{B} \sum_{b=1}^B \bigl(U^{(b)} - L^{(b)}\bigr).
+\end{equation}
+\end{itemize}
+
+\subsection{Results under symmetric judge accuracy ($q_0 = q_1$)}
+\label{subsec:sim-results-diag}
+
+Figures~\ref{fig:bias-diag}--\ref{fig:ciwidth-diag} are organized with rows corresponding to accuracy levels
+$q_0 = q_1 \in \{0.6, 0.7, 0.8\}$ and columns corresponding to labeling budgets.
+
+\paragraph{Bias.}
+Figure~\ref{fig:bias-diag} shows that all except naive estimators achieve smaller bias on average than the naive sample-mean estimator.
+The improvement is particularly pronounced when the true proportion $\theta$ is far from $0.5$.
+Among the estimators $\hat\theta_{\mathrm{RG}}$ exhibits comparatively larger finite-sample bias when the labeled set is small
+(e.g., $m/n=1\%$), consistent with the nonlinear transformation amplifying noise in plug-in estimates.
+
+\begin{figure}[htbp!]
+    \centering
+\includegraphics[width=\textwidth]{results/bias_diag.png}
+    \caption{Estimator bias of $\hat\theta$. 
+    All debiased estimators achieve near-zero bias; the naive estimator (red) exhibits
+    large bias in many settings. When only 1\% of the data is labeled, $\hat\theta_{\mathrm{RG}}$ also exhibits considerable bias.}
+    \label{fig:bias-diag}
+\end{figure}
+
+\paragraph{Coverage.}
+Figure~\ref{fig:coverage-diag} reports empirical coverage rates.
+The naive estimator exhibits severe undercoverage, consistent with its asymptotic invalidity. In contrast, all other estimators maintain near-nominal coverage across settings. The RG estimator and its associated confidence intervals tend to overcover, particularly when the number of labeled observations is small (i.e., when the calibration set is limited).
+
+
+\begin{figure}[htbp!]
+    \centering
+    \includegraphics[width=0.95\textwidth]{results/coverage_diag.png}
+\caption{Empirical coverage rates under the symmetric case $q_0 = q_1$.
+The naive estimator exhibits severe undercoverage. RG, PPI, and \texttt{PPI++} generally achieve nominal coverage; however, RG tends to overcover when the labeled fraction $m/n$ is small and judge quality is low (i.e., smaller $q_0 + q_1$).}
+    \label{fig:coverage-diag}
+\end{figure}
+
+  \paragraph{Confidence interval width.}
+  Figure~\ref{fig:ciwidth-diag} compares interval widths among valid estimators (i.e., $\hat\theta_{\mathrm{naive}}$ excluded). As our theory predicted in Section~\ref{sec:eif}, \texttt{EIF} and \texttt{PPI++} produce nearly identical and consistently shortest intervals,
+  typically 35--55\% narrower than standard \texttt{PPI} ($\lambda = 1$). 
+  \texttt{Joint MLE} intervals are slightly wider  but overall comparable to \texttt{EIF} and \texttt{PPI++}. Rogan--Gladen intervals widen dramatically under low-accuracy judges due to
+  the $1/(q_0+q_1-1)^2$ amplification factor in its asymptotic variance---at $q_0 = q_1 = 0.6$,
+  RG intervals are roughly 10$\times$ wider than those of \texttt{EIF}/\texttt{PPI++}.
+  \begin{figure}[t]
+      \centering
+      \includegraphics[width=0.95\textwidth]{results/ci_width_no_naive_diag.png}
+      \caption{Mean confidence interval width for the symmetric case $q_0 = q_1$.
+      \texttt{EIF} and \texttt{PPI++} produce nearly identical and shortest intervals,
+      outperforming Rogan--Gladen by a factor of 3--15$\times$ depending on the labeling ratio.
+      The advantage is most pronounced when $q_0 + q_1 - 1$ is small (i.e., when the LLM-judge is closer to random guessing).
+      \texttt{Joint MLE} produces slightly wider intervals but achieves coverage closer to nominal. Naive confidence intervals are excluded since they are too narrow and do not achieve desired coverage.}
+      \label{fig:ciwidth-diag}
+  \end{figure}
+
+
+\subsection{Finite-sample variability in calibration estimates}
+  \label{subsec:sim-calibration-bias}
+The Rogan--Gladen estimator relies on plug-in estimates $\hat q_0$ and $\hat q_1$.
+Figure~\ref{fig:qbias-diag} illustrates their finite-sample variability across simulation settings.
+While these estimates are approximately unbiased, their variance can be substantial when the labeling budget is small.
+At $1\%$ labeling ($m = 20$), the positive class may contain only $m_1 \approx 3$ observations,
+yielding an RMSE of $0.3$ for $\hat q_1$, compared to $0.1$ for $\hat q_0$.
+
+Because the RG estimator divides by $\hat q_0 + \hat q_1 - 1$, the resulting confidence intervals can be wide when $m$ is small
+or when class imbalance leaves $m_1$ (or $m_0$) with few observations.
+
+In contrast, PPI-type estimators and EIF-based approaches do not require explicit estimation of $(q_0, q_1)$.
+Instead, they exploit unbiased correction to learn $\mathbb{E}[Y \mid \hat Y]$,
+making them more stable in small-calibration regimes.
+
+  \begin{figure}[t]
+      \centering
+      \includegraphics[width=0.95\textwidth]{results/q_bias_diag.png}
+      \caption{Finite-sample RMSE of calibration estimates $\hat q_0$ and $\hat q_1$.}
+      \label{fig:qbias-diag}
+  \end{figure}
+
+
+
+\section{Real Data Application}
+  \label{sec:real-data}
+
+  \subsection{Data and Experimental Setup}
+
+  We evaluate the estimators on real human preference data from the \texttt{arena-human-preference-140k} dataset, which is collected on Chatbot Arena~\citep{chiang2024chatbotarenaopenplatform}, an online platform where users compare responses from two AI models and select a winner.
+ We focus on three high-frequency model pairs, all with Claude Opus 4 as model A: 1. Claude Opus 4 vs.\ Gemini 2.5 Flash ($n = 493$); 2. Claude Opus 4 vs.\ Gemini 2.5 Pro ($n = 414$); 3. Claude Opus 4 vs.\ Qwen3-235B ($n = 494$).
+
+  For each battle, the ground truth $Y_i = 1$ if the human selected model A (Claude), and $Y_i = 0$ otherwise. We deploy two LLM judges, GPT-4o-mini and GPT-5.2, to produce surrogate labels $\widehat{Y}_i \in \{0, 1\}$ based on the same prompt-response pairs shown to human raters.
+
+  To mimic a real-world setting where we have only access to part of the preference data, we use a 10\% random sample of the data as a labeled calibration set to estimate either $\mathbb{E}[Y \mid \hat{Y}]$ or the misclassification probabilities $(q_0, q_1)$, and the remaining 90\% as an unlabeled test set. All confidence intervals are constructed at the 90\% nominal level.
+
+ \subsection{Results}
+
+\paragraph{Judge quality.}
+Table~\ref{tab:judge-quality} reports the estimated specificity ($\hat q_0$) and sensitivity ($\hat q_1$) for each judge--dataset combination, computed from a randomly sampled $10\%$ calibration set.
+The condition $q_0 + q_1 > 1$ indicates discriminative power beyond random guessing.
+
+Judge quality varies substantially across settings.
+GPT-4o-mini performs best when evaluating Claude~4 vs.\ Gemini~2.5 Flash, but worse on Claude~4 vs.\ Gemini~2.5 Pro.
+GPT-5.2 achieves the highest overall discrimination on Claude~4 vs.\ Gemini~2.5 Pro.
+Both judges perform poorly on Claude~4 vs.\ Qwen3-235B, exhibiting low specificity despite moderate sensitivity.
+These heterogeneous error rates further underscore the need for bias correction: naive estimation inherits the systematic errors of the judge.
+
+  \begin{table}[t]
+      \centering
+      \caption{Estimated judge quality metrics from calibration data. $\hat{q}_0$: specificity (correct model B calls); $\hat{q}_1$: sensitivity (correct model A calls). Values of $q_0 + q_1$ near 1 indicate near-random performance.}
+      \label{tab:judge-quality}
+      \begin{tabular}{llcccc}
+          \toprule
+          Model Pair & Judge & $\hat{q}_0$ & $\hat{q}_1$ & $\hat{q}_0 + \hat{q}_1$ \\
+          \midrule
+          Claude 4 vs. Gemini 2.5 Flash & GPT-4o-mini & 0.74 & 0.69 & 1.43 \\
+           Claude 4 vs. Gemini 2.5 Flash & GPT-5.2     & 0.47 & 0.67 & 1.14 \\
+          \midrule
+           Claude 4 vs. Gemini 2.5 Pro   & GPT-4o-mini & 0.50 & 0.81 & 1.31 \\
+          Claude 4 vs.  Gemini 2.5 Pro   & GPT-5.2     & 0.64 & 0.82 & 1.46 \\
+          \midrule
+           Claude 4 vs. Qwen3-235B       & GPT-4o-mini & 0.44 & 0.70 & 1.14 \\
+           Claude 4 vs. Qwen3-235B       & GPT-5.2     & 0.50 & 0.64 & 1.14 \\
+          \bottomrule
+      \end{tabular}
+  \end{table}
+
+\paragraph{Illustrative examples on one split.}
+Figure~\ref{fig:ci-examples} shows point estimates and $90\%$ confidence intervals for a single random calibration/test split across all three model pairs.
+The horizontal black line indicates the true win rate, computed from all human labels. We observe that: 
+(i) the naive estimator is consistently biased, overestimating the true win rate when using GPT-4o-mini as a judge for Claude~4 Opus;
+(ii) the Rogan--Gladen estimator produces extremely wide intervals that are largely uninformative in practice; and
+(iii) \texttt{PPI++}, EIF, and the joint MLE yield similar point estimates with moderate interval widths that cover the true value.
+
+  \begin{figure}[htbp!]
+      \centering
+      \begin{subfigure}[b]{0.6\textwidth}
+          \centering
+          \includegraphics[width=\textwidth]{results/claude-opus-4-20250514_vs_gemini-2.5-flash_ci_comparison.png}
+          \caption{Claude Opus 4 vs.\ Gemini 2.5 Flash (true win rate: 0.523)}
+      \end{subfigure}
+
+      \vspace{0.5em}
+
+      \begin{subfigure}[b]{0.6\textwidth}
+          \centering
+          \includegraphics[width=\textwidth]{results/claude-opus-4-20250514_vs_gemini-2.5-pro_ci_comparison.png}
+          \caption{Claude Opus 4 vs.\ Gemini 2.5 Pro (true win rate: 0.496)}
+      \end{subfigure}
+
+      \vspace{0.5em}
+
+      \begin{subfigure}[b]{0.6\textwidth}
+          \centering
+          \includegraphics[width=\textwidth]{results/claude-opus-4-20250514_vs_qwen3-235b-a22b-no-thinking_ci_comparison.png}
+          \caption{Claude Opus 4 vs.\ Qwen3-235B (true win rate: 0.451)}
+      \end{subfigure}
+
+      \caption{Point estimates and 90\% confidence intervals for win rate estimation across three model pairs, using two LLM judges (GPT-4o-mini and GPT-5.2). Horizontal black line shows the true win rate. Different estimators and CIs are displayed in different colors.}
+      \label{fig:ci-examples}
+  \end{figure}
+
+\paragraph{Coverage and efficiency.}
+To assess coverage properties, Figure~\ref{fig:real-data-coverage} plots empirical coverage against mean confidence interval width for each estimator across 1{,}000 random calibration/test splits. 
+The naive estimator is unreliable, exhibiting coverage that varies dramatically with the magnitude and direction of judge bias: it attains near-perfect coverage when systematic errors happen to align with the true prevalence (e.g., GPT-5.2 on Gemini~2.5 Pro), but collapses to $0\%$ coverage when bias is substantial, as observed for GPT-4o-mini on Gemini~2.5 Pro and for both judges on Qwen3-235B.
+
+In contrast, \texttt{PPI++}, EIF, and the joint MLE consistently achieve near-nominal ($\approx 90\%$) coverage across all judge--dataset combinations, with mean interval widths of $0.27$--$0.30$.
+PPI slightly overcovers  with wider intervals ($0.35$--$0.44$), while Rogan--Gladen is highly conservative, attaining $100\%$ coverage at the cost of very wide intervals ($0.76$--$0.96$).
+
+Among methods with valid coverage, \texttt{PPI++}, EIF, and the joint MLE offer the best coverage--width tradeoff, as predicted by our theory, achieving nominal coverage with intervals roughly three times narrower than Rogan--Gladen.
+
+  \begin{figure}[htbp!]
+      \centering
+      \includegraphics[width=\textwidth]{results/coverage_vs_width.png}
+      \caption{Empirical coverage versus mean CI width across 1{,}000 random 90/10 test/calibration splits. Dashed line indicates 90\% nominal coverage. Error bars show 95\% confidence intervals. Naive estimation (gray) achieves 0\% coverage when judge bias is substantial, while \texttt{PPI++}, EIF, and Joint MLE maintain nominal coverage with narrow intervals.}
+      \label{fig:real-data-coverage}
+  \end{figure}
+  
+\section{Discussion}
+\label{sec:discussion}
+
+We presented a unified lens for understanding calibration in LLM-as-a-judge evaluations via efficient influence functions.
+We compared, theoretically and through simulations, two complementary strategies: direct measurement-error correction via misclassification models and surrogate-based methods such as prediction-powered inference (PPI), which treat LLM judgments as surrogate outcomes.
+When the target is a mean outcome---as is common in LLM-as-a-judge settings---both Rogan--Gladen (RG) and PPI variants provide simple, reliable solutions, with \texttt{PPI++}/EIF-based approaches preferred for their variance advantages.
+In particular, for binary outcomes, optimally tuned \texttt{PPI++} is equivalent to the EIF-based strategy.
+
+Several extensions follow naturally.
+A key direction is instance-dependent misclassification, where LLM error rates vary with input features or example difficulty.
+Extending our framework to this setting parallels the semiparametric efficient inference literature: with
+$m(X,\hat Y) = \E[Y \mid X,\hat Y]$, our final estimator involves an influence function of the form
+\begin{equation}
+\label{eq:eif-instance-dependent}
+\phi^\star(O)
+= m(X,\hat Y) - \theta
++ \frac{R}{P(R=1 \mid X,\hat Y)}\{Y - m(X,\hat Y)\},
+\end{equation}
+
+Another direction is developing multi-judge ensemble methods that combine heterogeneous LLM evaluators to improve robustness.
+This would require a careful treatment of multiple judges with distinct error rates $(q_0, q_1)$ in \eqref{eq:q-param}, as well as principled ways to aggregate their surrogate labels $\hat Y$ (e.g., via optimal weighting or learned combination rules).
+
+Finally, robustness to distribution shift, including covariate shift (e.g., systematic differences in response styles between the calibration and test sets) and label shift (e.g., changes in the prevalence of ground-truth labels $Y$ between calibration and deployment, such as when rolling out models to new cultural or geographic contexts), warrants deeper methodological and empirical study, and we leave these theoretical and computational developments to future work.
+
+As LLM-as-a-judge evaluations become increasingly central to model development and scientific assessment, we hope our results provide a practical foundation for principled calibration, valid uncertainty quantification, and efficient use of limited human labels.
+
+
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\clearpage
+\appendix
+\input{appendix}
+\end{document}
