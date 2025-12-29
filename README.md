@@ -1,8 +1,8 @@
-# debiasLLMReporting
+## debiasLLMReporting
 
 R package for comparing methods that correct for measurement error when using LLM-as-a-judge (or any ML/AI/... classifiers) classifiers to estimate population prevalence.
 
-## Overview
+### Overview
 
 When using large language models (LLMs) as classifiers to estimate the prevalence of some outcome in a population, the LLM's imperfect accuracy introduces bias. This package provides simulation tools and estimators to study and correct for this measurement error.
 
@@ -16,7 +16,7 @@ We compare three main approaches:
 
 4. **EIF**: An estimator based on the semi-parametric efficiency theory, which coincides with PPI++ with optimal tuning parameter in the binary case
 
-## Installation
+### Installation
 
 ```r
 # Install from GitHub
@@ -28,7 +28,12 @@ remotes::install_github("yiqunchen/debias-llm-as-a-judge")
 
 Visit https://yiqunchen.github.io/debias-llm-as-a-judge/ for tutorials and examples. Please file an [issue](https://github.com/yiqunchen/debias-llm-as-a-judge/issues) if you have a request for a tutorial that is not currently included.
 
-## Quick Start
+### Citation
+
+If you use `debias-llm-as-a-judge` for your analysis, please cite our manuscript:
+TBA
+ 
+### Quick Start
 
 ```r
 library(debiasLLMReporting)
@@ -57,7 +62,7 @@ cat("Estimate:", round(result$theta, 3),
 ```
 
 
-## Package Functions
+### Package Functions
 
 Core estimators:
 
@@ -67,7 +72,7 @@ Core estimators:
 - `eif_point_and_ci()` - Efficient influence function estimator
 - `fit_misclass_mle()` - Joint MLE for misclassification model
 
-## Reproducibility
+### Reproducibility
 
 The `reproduce/` directory contains scripts to replicate our analyses:
 
@@ -76,6 +81,6 @@ The `reproduce/` directory contains scripts to replicate our analyses:
 
 Results are saved to timestamped directories under `results/`.
 
-## License
+### License
 
 MIT

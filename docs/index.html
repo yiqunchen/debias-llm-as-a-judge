@@ -46,13 +46,13 @@
   </div>
 </nav><div class="container template-home">
 <div class="row">
-  <main id="main" class="col-md-9"><div class="section level1">
-<div class="page-header"><h1 id="debiasllmreporting">debiasLLMReporting<a class="anchor" aria-label="anchor" href="#debiasllmreporting"></a>
-</h1></div>
-<p>R package for comparing methods that correct for measurement error when using LLM-as-a-judge (or any ML/AI/… classifiers) classifiers to estimate population prevalence.</p>
-<div class="section level2">
-<h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
+  <main id="main" class="col-md-9"><div class="section level2">
+<h2 id="debiasllmreporting">debiasLLMReporting<a class="anchor" aria-label="anchor" href="#debiasllmreporting"></a>
 </h2>
+<p>R package for comparing methods that correct for measurement error when using LLM-as-a-judge (or any ML/AI/… classifiers) classifiers to estimate population prevalence.</p>
+<div class="section level3">
+<h3 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
+</h3>
 <p>When using large language models (LLMs) as classifiers to estimate the prevalence of some outcome in a population, the LLM’s imperfect accuracy introduces bias. This package provides simulation tools and estimators to study and correct for this measurement error.</p>
 <p>We compare three main approaches:</p>
 <ol style="list-style-type: decimal">
@@ -62,22 +62,27 @@
 <li><p><strong>EIF</strong>: An estimator based on the semi-parametric efficiency theory, which coincides with PPI++ with optimal tuning parameter in the binary case</p></li>
 </ol>
 </div>
-<div class="section level2">
-<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
-</h2>
+<div class="section level3">
+<h3 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+</h3>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Install from GitHub</span></span>
 <span><span class="co"># install.packages("remotes")  # if needed</span></span>
 <span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"yiqunchen/debias-llm-as-a-judge"</span><span class="op">)</span></span></code></pre></div>
+</div>
 <div class="section level3">
 <h3 id="tutorials-and-use">Tutorials and Use<a class="anchor" aria-label="anchor" href="#tutorials-and-use"></a>
 </h3>
 <p>Visit <a href="https://yiqunchen.github.io/debias-llm-as-a-judge/" class="uri">https://yiqunchen.github.io/debias-llm-as-a-judge/</a> for tutorials and examples. Please file an <a href="https://github.com/yiqunchen/debias-llm-as-a-judge/issues" class="external-link">issue</a> if you have a request for a tutorial that is not currently included.</p>
 </div>
+<div class="section level3">
+<h3 id="citation">Citation<a class="anchor" aria-label="anchor" href="#citation"></a>
+</h3>
+<p>If you use <code>debias-llm-as-a-judge</code> for your analysis, please cite our manuscript: TBA</p>
 </div>
-<div class="section level2">
-<h2 id="quick-start">Quick Start<a class="anchor" aria-label="anchor" href="#quick-start"></a>
-</h2>
+<div class="section level3">
+<h3 id="quick-start">Quick Start<a class="anchor" aria-label="anchor" href="#quick-start"></a>
+</h3>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://yiqunchen.github.io/debias-llm-as-a-judge">debiasLLMReporting</a></span><span class="op">)</span></span>
 <span></span>
@@ -103,9 +108,9 @@
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Estimate:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">result</span><span class="op">$</span><span class="va">theta</span>, <span class="fl">3</span><span class="op">)</span>,</span>
 <span>    <span class="st">"95% CI: ["</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">result</span><span class="op">$</span><span class="va">ci_lower</span>, <span class="fl">3</span><span class="op">)</span>, <span class="st">","</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">result</span><span class="op">$</span><span class="va">ci_upper</span>, <span class="fl">3</span><span class="op">)</span>, <span class="st">"]\n"</span><span class="op">)</span></span></code></pre></div>
 </div>
-<div class="section level2">
-<h2 id="package-functions">Package Functions<a class="anchor" aria-label="anchor" href="#package-functions"></a>
-</h2>
+<div class="section level3">
+<h3 id="package-functions">Package Functions<a class="anchor" aria-label="anchor" href="#package-functions"></a>
+</h3>
 <p>Core estimators:</p>
 <ul>
 <li>
@@ -120,9 +125,9 @@
 <code>fit_misclass_mle()</code> - Joint MLE for misclassification model</li>
 </ul>
 </div>
-<div class="section level2">
-<h2 id="reproducibility">Reproducibility<a class="anchor" aria-label="anchor" href="#reproducibility"></a>
-</h2>
+<div class="section level3">
+<h3 id="reproducibility">Reproducibility<a class="anchor" aria-label="anchor" href="#reproducibility"></a>
+</h3>
 <p>The <code>reproduce/</code> directory contains scripts to replicate our analyses:</p>
 <ul>
 <li>
@@ -132,9 +137,9 @@
 </ul>
 <p>Results are saved to timestamped directories under <code>results/</code>.</p>
 </div>
-<div class="section level2">
-<h2 id="license">License<a class="anchor" aria-label="anchor" href="#license"></a>
-</h2>
+<div class="section level3">
+<h3 id="license">License<a class="anchor" aria-label="anchor" href="#license"></a>
+</h3>
 <p>MIT</p>
 </div>
 </div>
