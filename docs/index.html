@@ -49,7 +49,7 @@
   <main id="main" class="col-md-9"><div class="section level1">
 <div class="page-header"><h1 id="debiasllmreporting">debiasLLMReporting<a class="anchor" aria-label="anchor" href="#debiasllmreporting"></a>
 </h1></div>
-<p>R package for comparing methods that correct for measurement error when using LLM-as-a-judge classifiers to estimate population prevalence.</p>
+<p>R package for comparing methods that correct for measurement error when using LLM-as-a-judge (or any ML/AI/… classifiers) classifiers to estimate population prevalence.</p>
 <div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
@@ -59,6 +59,7 @@
 <li><p><strong>Measurement Error Correction</strong>: Classical approach using the Rogan-Gladen estimator, which corrects for misclassification using estimated sensitivity (q1) and specificity (q0) from a calibration sample.</p></li>
 <li><p><strong>Prediction-Powered Inference (PPI)</strong>: Uses a small labeled dataset to debias predictions from a larger unlabeled dataset, combining human labels with LLM predictions.</p></li>
 <li><p><strong>PPI++</strong>: An extension of PPI that optimizes a tuning parameter (lambda) to minimize variance while maintaining valid confidence intervals.</p></li>
+<li><p><strong>EIF</strong>: An estimator based on the semi-parametric efficiency theory, which coincides with PPI++ with optimal tuning parameter in the binary case</p></li>
 </ol>
 </div>
 <div class="section level2">
@@ -68,6 +69,11 @@
 <code class="sourceCode R"><span><span class="co"># Install from GitHub</span></span>
 <span><span class="co"># install.packages("remotes")  # if needed</span></span>
 <span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"yiqunchen/debias-llm-as-a-judge"</span><span class="op">)</span></span></code></pre></div>
+<div class="section level3">
+<h3 id="tutorials-and-use">Tutorials and Use<a class="anchor" aria-label="anchor" href="#tutorials-and-use"></a>
+</h3>
+<p>Visit <a href="https://yiqunchen.github.io/debias-llm-as-a-judge/" class="uri">https://yiqunchen.github.io/debias-llm-as-a-judge/</a> for tutorials and examples. Please file an <a href="https://github.com/yiqunchen/debias-llm-as-a-judge/issues" class="external-link">issue</a> if you have a request for a tutorial that is not currently included.</p>
+</div>
 </div>
 <div class="section level2">
 <h2 id="quick-start">Quick Start<a class="anchor" aria-label="anchor" href="#quick-start"></a>
@@ -98,29 +104,6 @@
 <span>    <span class="st">"95% CI: ["</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">result</span><span class="op">$</span><span class="va">ci_lower</span>, <span class="fl">3</span><span class="op">)</span>, <span class="st">","</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">result</span><span class="op">$</span><span class="va">ci_upper</span>, <span class="fl">3</span><span class="op">)</span>, <span class="st">"]\n"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="key-features">Key Features<a class="anchor" aria-label="anchor" href="#key-features"></a>
-</h2>
-<ul>
-<li>Simulation framework for comparing estimator performance across:
-<ul>
-<li>Varying true prevalence (theta)</li>
-<li>Different classifier accuracy levels (q0, q1)</li>
-<li>Multiple labeling budgets (1% to 50% labeled)</li>
-<li>Different calibration sample allocations (m0:m1 ratios)</li>
-</ul>
-</li>
-<li>Metrics evaluated:
-<ul>
-<li>Coverage of confidence intervals</li>
-<li>CI width</li>
-<li>Bias and percent bias</li>
-<li>Calibration estimate quality</li>
-</ul>
-</li>
-<li>Comprehensive visualization suite with faceted plots</li>
-</ul>
-</div>
-<div class="section level2">
 <h2 id="package-functions">Package Functions<a class="anchor" aria-label="anchor" href="#package-functions"></a>
 </h2>
 <p>Core estimators:</p>
@@ -135,17 +118,6 @@
 <code><a href="reference/eif_point_and_ci.html">eif_point_and_ci()</a></code> - Efficient influence function estimator</li>
 <li>
 <code>fit_misclass_mle()</code> - Joint MLE for misclassification model</li>
-</ul>
-</div>
-<div class="section level2">
-<h2 id="vignettes">Vignettes<a class="anchor" aria-label="anchor" href="#vignettes"></a>
-</h2>
-<p>See the package vignettes for detailed tutorials:</p>
-<ul>
-<li>
-<a href="articles/getting-started.html">Getting Started</a> - Basic usage with simulated data</li>
-<li>
-<a href="articles/real-data-example.html">Real Data Example</a> - Applying methods to LLM judge data</li>
 </ul>
 </div>
 <div class="section level2">

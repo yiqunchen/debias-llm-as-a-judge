@@ -4,7 +4,7 @@ pkgdown_sha: ~
 articles:
   getting-started: getting-started.html
   real-data-example: real-data-example.html
-last_built: 2025-12-29T21:40Z
+last_built: 2025-12-29T21:58Z
 urls:
   reference: https://yiqunchen.github.io/debias-llm-as-a-judge/reference
   article: https://yiqunchen.github.io/debias-llm-as-a-judge/articles

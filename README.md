@@ -1,6 +1,6 @@
 # debiasLLMReporting
 
-R package for comparing methods that correct for measurement error when using LLM-as-a-judge classifiers to estimate population prevalence.
+R package for comparing methods that correct for measurement error when using LLM-as-a-judge (or any ML/AI/... classifiers) classifiers to estimate population prevalence.
 
 ## Overview
 
@@ -14,6 +14,8 @@ We compare three main approaches:
 
 3. **PPI++**: An extension of PPI that optimizes a tuning parameter (lambda) to minimize variance while maintaining valid confidence intervals.
 
+4. **EIF**: An estimator based on the semi-parametric efficiency theory, which coincides with PPI++ with optimal tuning parameter in the binary case
+
 ## Installation
 
 ```r
@@ -21,6 +23,10 @@ We compare three main approaches:
 # install.packages("remotes")  # if needed
 remotes::install_github("yiqunchen/debias-llm-as-a-judge")
 ```
+
+### Tutorials and Use
+
+Visit https://yiqunchen.github.io/debias-llm-as-a-judge/ for tutorials and examples. Please file an [issue](https://github.com/yiqunchen/debias-llm-as-a-judge/issues) if you have a request for a tutorial that is not currently included.
 
 ## Quick Start
 
@@ -50,21 +56,6 @@ cat("Estimate:", round(result$theta, 3),
     "95% CI: [", round(result$ci_lower, 3), ",", round(result$ci_upper, 3), "]\n")
 ```
 
-## Key Features
-
-- Simulation framework for comparing estimator performance across:
-  - Varying true prevalence (theta)
-  - Different classifier accuracy levels (q0, q1)
-  - Multiple labeling budgets (1% to 50% labeled)
-  - Different calibration sample allocations (m0:m1 ratios)
-
-- Metrics evaluated:
-  - Coverage of confidence intervals
-  - CI width
-  - Bias and percent bias
-  - Calibration estimate quality
-
-- Comprehensive visualization suite with faceted plots
 
 ## Package Functions
 
@@ -75,13 +66,6 @@ Core estimators:
 - `ppi_pp_point_and_ci_general()` - PPI++ with optimized lambda
 - `eif_point_and_ci()` - Efficient influence function estimator
 - `fit_misclass_mle()` - Joint MLE for misclassification model
-
-## Vignettes
-
-See the package vignettes for detailed tutorials:
-
-- [Getting Started](articles/getting-started.html) - Basic usage with simulated data
-- [Real Data Example](articles/real-data-example.html) - Applying methods to LLM judge data
 
 ## Reproducibility
 
