@@ -17,7 +17,6 @@
 *.dll
 
 # Documentation
-docs/
 inst/doc/
 
 # macOS system files
