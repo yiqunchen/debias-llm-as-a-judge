@@ -56,7 +56,7 @@ From the calibration set, we estimate $q_0$ and $q_1$. Then we apply correction 
 
 ```{r setup}
 library(debiasLLMReporting)
-set.seed(42)
+set.seed(2026)
 ```
 
 ## Simulated Example
@@ -135,22 +135,41 @@ rg_result <- llm_point_and_ci(
   m1 = m1,
   alpha = 0.10
 )
+
+# 5. EIF (Efficient Influence Function)
+eif_result <- eif_point_and_ci(
+  Y_cal = Y_cal,
+  Yhat_cal = Yhat_cal,
+  Yhat_test = Yhat_test,
+  alpha = 0.10
+)
+
+# 6. MLE (Joint Maximum Likelihood)
+mle_result <- fit_misclass_mle(
+  y_cal = Y_cal,
+  yhat_cal = Yhat_cal,
+  yhat_test = Yhat_test
+)
 ```
 
 ### Compare Results
 
 ```{r compare-results}
 results <- data.frame(
-  Method = c("True", "Naive", "PPI", "PPI++", "Rogan-Gladen"),
+  Method = c("True", "Naive", "PPI", "PPI++", "Rogan-Gladen", "EIF", "MLE"),
   Estimate = c(
     theta_true,
     naive_est,
     ppi_result$theta,
     ppi_pp_result$theta,
-    rg_result$theta
+    rg_result$theta,
+    eif_result$theta,
+    mle_result$theta_hat
   ),
-  CI_Lower = c(NA, NA, ppi_result$ci_lower, ppi_pp_result$ci_lower, rg_result$ci_lower),
-  CI_Upper = c(NA, NA, ppi_result$ci_upper, ppi_pp_result$ci_upper, rg_result$ci_upper)
+  CI_Lower = c(NA, NA, ppi_result$ci_lower, ppi_pp_result$ci_lower, rg_result$ci_lower,
+               eif_result$ci_lower, mle_result$ci_theta_obs[1]),
+  CI_Upper = c(NA, NA, ppi_result$ci_upper, ppi_pp_result$ci_upper, rg_result$ci_upper,
+               eif_result$ci_upper, mle_result$ci_theta_obs[2])
 )
 
 results$Bias <- results$Estimate - theta_true
@@ -167,7 +186,7 @@ library(ggplot2)
 
 plot_df <- results[results$Method != "True", ]
 plot_df$Method <- factor(plot_df$Method,
-                         levels = c("Naive", "PPI", "PPI++", "Rogan-Gladen"))
+                         levels = c("Naive", "PPI", "PPI++", "Rogan-Gladen", "EIF", "MLE"))
 
 ggplot(plot_df, aes(x = Method, y = Estimate, color = Method)) +
 
@@ -181,7 +200,9 @@ ggplot(plot_df, aes(x = Method, y = Estimate, color = Method)) +
     "Naive" = "#525252",
     "PPI" = "#1B9E77",
     "PPI++" = "#D95F02",
-    "Rogan-Gladen" = "#7570B3"
+    "Rogan-Gladen" = "#7570B3",
+    "EIF" = "#E6AB02",
+    "MLE" = "#E7298A"
   )) +
   labs(
     title = "Win Rate Estimation with Measurement Error Correction",
@@ -200,6 +221,8 @@ ggplot(plot_df, aes(x = Method, y = Estimate, color = Method)) +
 2. **PPI** uses the calibration residuals to correct the bias
 3. **PPI++** adaptively weights the correction to minimize variance
 4. **Rogan-Gladen** uses the classical epidemiological approach based on sensitivity/specificity
+5. **EIF** achieves semiparametric efficiency using the efficient influence function
+6. **MLE** jointly estimates prevalence, sensitivity, and specificity via maximum likelihood
 
 All corrected methods aim to provide valid confidence intervals with nominal coverage, while the naive estimate's CI will not cover the true value when there's systematic bias.
 

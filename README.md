@@ -6,7 +6,7 @@ R package for comparing methods that correct for measurement error when using LL
 
 When using large language models (LLMs) as classifiers to estimate the prevalence of some outcome in a population, the LLM's imperfect accuracy introduces bias. This package provides simulation tools and estimators to study and correct for this measurement error.
 
-We compare three main approaches:
+We compare five main approaches:
 
 1. **Measurement Error Correction**: Classical approach using the Rogan-Gladen estimator, which corrects for misclassification using estimated sensitivity (q1) and specificity (q0) from a calibration sample.
 
@@ -14,7 +14,9 @@ We compare three main approaches:
 
 3. **PPI++**: An extension of PPI that optimizes a tuning parameter (lambda) to minimize variance while maintaining valid confidence intervals.
 
-4. **EIF**: An estimator based on the semi-parametric efficiency theory, which coincides with PPI++ with optimal tuning parameter in the binary case
+4. **EIF**: An estimator based on the semi-parametric efficiency theory, which coincides with PPI++ with optimal tuning parameter in the binary case.
+
+5. **MLE**: Joint maximum likelihood estimation for the misclassification model, simultaneously estimating prevalence, sensitivity, and specificity.
 
 ### Installation
 
@@ -39,7 +41,7 @@ TBA
 library(debiasLLMReporting)
 
 # Simulated example
-set.seed(42)
+set.seed(2026)
 N <- 500; m <- 50
 theta_true <- 0.6; q0 <- 0.85; q1 <- 0.80
 
@@ -54,11 +56,25 @@ Yhat_cal <- Yhat_all[idx_cal]
 Yhat_test <- Yhat_all[-idx_cal]
 
 # Apply PPI++
-result <- ppi_pp_point_and_ci_general(
+result_ppi <- ppi_pp_point_and_ci_general(
   Y_L = Y_cal, f_L = Yhat_cal, f_U = Yhat_test, alpha = 0.10
 )
-cat("Estimate:", round(result$theta, 3),
-    "95% CI: [", round(result$ci_lower, 3), ",", round(result$ci_upper, 3), "]\n")
+cat("PPI++ Estimate:", round(result_ppi$theta, 3),
+    "90% CI: [", round(result_ppi$ci_lower, 3), ",", round(result_ppi$ci_upper, 3), "]\n")
+
+# Apply EIF
+result_eif <- eif_point_and_ci(
+  Y_cal = Y_cal, Yhat_cal = Yhat_cal, Yhat_test = Yhat_test, alpha = 0.10
+)
+cat("EIF Estimate:", round(result_eif$theta, 3),
+    "90% CI: [", round(result_eif$ci_lower, 3), ",", round(result_eif$ci_upper, 3), "]\n")
+
+# Apply MLE
+result_mle <- fit_misclass_mle(
+  y_cal = Y_cal, yhat_cal = Yhat_cal, yhat_test = Yhat_test
+)
+cat("MLE Estimate:", round(result_mle$theta_hat, 3),
+    "90% CI: [", round(result_mle$ci_theta_obs[1], 3), ",", round(result_mle$ci_theta_obs[2], 3), "]\n")
 ```
 
 

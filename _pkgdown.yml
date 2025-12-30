@@ -37,17 +37,12 @@ reference:
       - ppi_pp_point_and_ci_general
       - llm_point_and_ci
       - eif_point_and_ci
-
-  - title: Bootstrap Methods
-    desc: Bootstrap-based confidence intervals
-    contents:
-      - ppi_bootstrap
-      - rg_bootstrap
+      - fit_misclass_mle
+      - grab_theta
 
   - title: Helper Functions
     desc: Utility functions
     contents:
-      - bootstrap_ci
       - logit_ci
 
   - title: Visualization

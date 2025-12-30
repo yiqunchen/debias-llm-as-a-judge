@@ -4,20 +4,22 @@ clamp01 <- function(x, eps = 1e-6) {
   pmin(pmax(x, eps), 1 - eps)
 }
 
-#' Bootstrap confidence interval using percentile method.
+#' Generate Bernoulli responses with controllable prevalence.
 #'
-#' @param theta_boots Vector of bootstrap estimates.
-#' @param alpha Miscoverage level for the interval.
+#' Draws i.i.d. binary outcomes with the specified prevalence. The simpler
+#' exchangeable design is appropriate when estimators do not condition on
+#' covariates.
 #'
-#' @return A list with `lower` and `upper` bounds.
+#' @param N Integer; number of observations to simulate.
+#' @param theta Target marginal prevalence for the Bernoulli outcome.
+#' @param signal Unused; retained for API compatibility.
+#'
+#' @return A list containing outcome vector `Y`.
+#' @keywords internal
 #' @export
-bootstrap_ci <- function(theta_boots, alpha = 0.10) {
-  theta_boots <- theta_boots[!is.na(theta_boots)]
-  if (length(theta_boots) < 2) {
-    return(list(lower = NA_real_, upper = NA_real_))
-  }
-  qs <- stats::quantile(theta_boots, probs = c(alpha / 2, 1 - alpha / 2))
-  list(lower = unname(qs[1]), upper = unname(qs[2]))
+generate_dgp_data <- function(N, theta, signal = 1) {
+  Y <- rbinom(N, 1, theta)
+  list(Y = Y)
 }
 
 #' Wald-style confidence interval via logit transform.
@@ -282,121 +284,3 @@ eif_point_and_ci <- function(Y_cal, Yhat_cal, Yhat_test, alpha = 0.10) {
   )
 }
 
-# =============================================================================
-# BOOTSTRAP VARIANCE ESTIMATORS
-# =============================================================================
-
-#' Bootstrap PPI estimator
-#'
-#' @param Y_L Vector of human labels on the calibration set.
-#' @param f_L Surrogate predictions on the calibration set.
-#' @param f_U Surrogate predictions on the unlabeled/test set.
-#' @param n_boot Number of bootstrap replicates.
-#' @param alpha Miscoverage level for the confidence interval.
-#'
-#' @return List with theta, var (bootstrap), and CI endpoints.
-#' @export
-ppi_bootstrap <- function(Y_L, f_L, f_U, n_boot = 500, alpha = 0.10) {
-  n_L <- length(Y_L)
-  n_U <- length(f_U)
-
-  # Point estimate
-  theta_hat <- mean(f_U) + mean(Y_L - f_L)
-
-  # Bootstrap
-  theta_boots <- numeric(n_boot)
-  for (b in seq_len(n_boot)) {
-    idx_L <- sample(n_L, n_L, replace = TRUE)
-    idx_U <- sample(n_U, n_U, replace = TRUE)
-    theta_boots[b] <- mean(f_U[idx_U]) + mean(Y_L[idx_L] - f_L[idx_L])
-  }
-
-  var_boot <- stats::var(theta_boots)
-  ci <- bootstrap_ci(theta_boots, alpha)
-
-  list(
-    theta = theta_hat,
-    var = var_boot,
-    ci_lower = ci$lower,
-    ci_upper = ci$upper
-  )
-}
-
-#' Bootstrap Rogan-Gladen (LLM) estimator
-#'
-#' @param Y_cal True labels on calibration set.
-#' @param Yhat_cal Surrogate predictions on calibration set.
-#' @param Yhat_test Surrogate predictions on test set.
-#' @param n_boot Number of bootstrap replicates.
-#' @param alpha Miscoverage level for the confidence interval.
-#'
-#' @return List with theta, var (bootstrap), and CI endpoints.
-#' @export
-rg_bootstrap <- function(Y_cal, Yhat_cal, Yhat_test, n_boot = 500, alpha = 0.10) {
-  m <- length(Y_cal)
-  n <- length(Yhat_test)
-
-  # Point estimate
-  idx0 <- which(Y_cal == 0)
-  idx1 <- which(Y_cal == 1)
-  m0 <- length(idx0)
-  m1 <- length(idx1)
-
-  if (m0 == 0 || m1 == 0) {
-    return(list(theta = NA_real_, var = NA_real_,
-                ci_lower = NA_real_, ci_upper = NA_real_))
-  }
-
-  q0_hat <- mean(Yhat_cal[idx0] == 0)
-  q1_hat <- mean(Yhat_cal[idx1] == 1)
-  p_hat <- mean(Yhat_test)
-  J <- q0_hat + q1_hat - 1
-
-  if (abs(J) < 1e-6) {
-    return(list(theta = NA_real_, var = NA_real_,
-                ci_lower = NA_real_, ci_upper = NA_real_))
-  }
-
-  theta_hat <- (p_hat + q0_hat - 1) / J
-  theta_hat <- pmin(pmax(theta_hat, 0), 1)
-
-  # Bootstrap
-  theta_boots <- numeric(n_boot)
-  for (b in seq_len(n_boot)) {
-    idx_cal_b <- sample(m, m, replace = TRUE)
-    idx_test_b <- sample(n, n, replace = TRUE)
-
-    Y_cal_b <- Y_cal[idx_cal_b]
-    Yhat_cal_b <- Yhat_cal[idx_cal_b]
-    Yhat_test_b <- Yhat_test[idx_test_b]
-
-    idx0_b <- which(Y_cal_b == 0)
-    idx1_b <- which(Y_cal_b == 1)
-
-    if (length(idx0_b) == 0 || length(idx1_b) == 0) {
-      theta_boots[b] <- NA_real_
-      next
-    }
-
-    q0_b <- mean(Yhat_cal_b[idx0_b] == 0)
-    q1_b <- mean(Yhat_cal_b[idx1_b] == 1)
-    p_b <- mean(Yhat_test_b)
-    J_b <- q0_b + q1_b - 1
-
-    if (abs(J_b) < 1e-6) {
-      theta_boots[b] <- NA_real_
-    } else {
-      theta_boots[b] <- pmin(pmax((p_b + q0_b - 1) / J_b, 0), 1)
-    }
-  }
-
-  var_boot <- stats::var(theta_boots, na.rm = TRUE)
-  ci <- bootstrap_ci(theta_boots, alpha)
-
-  list(
-    theta = theta_hat,
-    var = var_boot,
-    ci_lower = ci$lower,
-    ci_upper = ci$upper
-  )
-}

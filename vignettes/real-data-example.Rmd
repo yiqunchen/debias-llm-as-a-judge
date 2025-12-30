@@ -28,7 +28,7 @@ library(jsonlite)
 library(dplyr)
 library(ggplot2)
 
-set.seed(2024)
+set.seed(2026)
 ```
 
 ## Load Data
@@ -168,25 +168,33 @@ eif_result <- eif_point_and_ci(
   Yhat_test = Yhat_test,
   alpha = ALPHA
 )
+
+# 6. MLE (Joint Maximum Likelihood)
+mle_result <- fit_misclass_mle(
+  y_cal = Y_cal,
+  yhat_cal = Yhat_cal,
+  yhat_test = Yhat_test
+)
 ```
 
 ## Results Summary
 
 ```{r results-table}
 results <- tibble(
-  Method = c("True", "Naive", "PPI", "PPI++", "Rogan-Gladen", "EIF"),
+  Method = c("True", "Naive", "PPI", "PPI++", "Rogan-Gladen", "EIF", "MLE"),
   Estimate = c(
     theta_true,
     naive_theta,
     ppi_result$theta,
     ppi_pp_result$theta,
     rg_result$theta,
-    eif_result$theta
+    eif_result$theta,
+    mle_result$theta_hat
   ),
   CI_Lower = c(NA, naive_ci[1], ppi_result$ci_lower, ppi_pp_result$ci_lower,
-               rg_result$ci_lower, eif_result$ci_lower),
+               rg_result$ci_lower, eif_result$ci_lower, mle_result$ci_theta_obs[1]),
   CI_Upper = c(NA, naive_ci[2], ppi_result$ci_upper, ppi_pp_result$ci_upper,
-               rg_result$ci_upper, eif_result$ci_upper)
+               rg_result$ci_upper, eif_result$ci_upper, mle_result$ci_theta_obs[2])
 ) %>%
   mutate(
     Bias = round(Estimate - theta_true, 4),
@@ -205,7 +213,8 @@ METHOD_COLORS <- c(
   "PPI" = "#1B9E77",
   "PPI++" = "#D95F02",
   "Rogan-Gladen" = "#7570B3",
-  "EIF" = "#E6AB02"
+  "EIF" = "#E6AB02",
+  "MLE" = "#E7298A"
 )
 
 plot_df <- results %>%
@@ -249,31 +258,9 @@ ggplot(plot_df, aes(x = Method, y = Estimate, color = Method)) +
 
 - **EIF**: Efficient influence function estimator that achieves semiparametric efficiency.
 
+- **MLE**: Joint maximum likelihood estimation that simultaneously estimates prevalence, sensitivity, and specificity.
+
 The debiased estimates should be closer to the true human preference rate, with confidence intervals that provide valid coverage even when the judge is imperfect.
-
-## Bootstrap Confidence Intervals (Optional)
-
-For more robust inference with small calibration sets:
-
-```{r bootstrap, eval=FALSE}
-# PPI with bootstrap
-ppi_boot <- ppi_bootstrap(
-  Y_L = Y_cal,
-  f_L = Yhat_cal,
-  f_U = Yhat_test,
-  B = 500,
-  alpha = ALPHA
-)
-
-# Rogan-Gladen with bootstrap
-rg_boot <- rg_bootstrap(
-  Y_cal = Y_cal,
-  Yhat_cal = Yhat_cal,
-  Yhat_test = Yhat_test,
-  B = 500,
-  alpha = ALPHA
-)
-```
 
 ## Session Info
 
