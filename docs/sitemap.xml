@@ -8,9 +8,7 @@
 <url><loc>https://yiqunchen.github.io/debias-llm-as-a-judge/authors.html</loc></url>
 <url><loc>https://yiqunchen.github.io/debias-llm-as-a-judge/index.html</loc></url>
 <url><loc>https://yiqunchen.github.io/debias-llm-as-a-judge/methods-setup.html</loc></url>
-<url><loc>https://yiqunchen.github.io/debias-llm-as-a-judge/reference/bootstrap_ci.html</loc></url>
 <url><loc>https://yiqunchen.github.io/debias-llm-as-a-judge/reference/build_line_plot.html</loc></url>
-<url><loc>https://yiqunchen.github.io/debias-llm-as-a-judge/reference/eif_bootstrap.html</loc></url>
 <url><loc>https://yiqunchen.github.io/debias-llm-as-a-judge/reference/eif_point_and_ci.html</loc></url>
 <url><loc>https://yiqunchen.github.io/debias-llm-as-a-judge/reference/estimate_confusion_matrix.html</loc></url>
 <url><loc>https://yiqunchen.github.io/debias-llm-as-a-judge/reference/fit_misclass_mle.html</loc></url>
@@ -31,6 +29,7 @@
 <url><loc>https://yiqunchen.github.io/debias-llm-as-a-judge/reference/llm_point_and_ci.html</loc></url>
 <url><loc>https://yiqunchen.github.io/debias-llm-as-a-judge/reference/logit_ci.html</loc></url>
 <url><loc>https://yiqunchen.github.io/debias-llm-as-a-judge/reference/logit_ci_prob.html</loc></url>
+<url><loc>https://yiqunchen.github.io/debias-llm-as-a-judge/reference/mle_point_and_ci.html</loc></url>
 <url><loc>https://yiqunchen.github.io/debias-llm-as-a-judge/reference/plot_base_theme.html</loc></url>
 <url><loc>https://yiqunchen.github.io/debias-llm-as-a-judge/reference/plot_base_theme_aggregate.html</loc></url>
 <url><loc>https://yiqunchen.github.io/debias-llm-as-a-judge/reference/plot_bias.html</loc></url>
@@ -38,15 +37,14 @@
 <url><loc>https://yiqunchen.github.io/debias-llm-as-a-judge/reference/plot_ci_width.html</loc></url>
 <url><loc>https://yiqunchen.github.io/debias-llm-as-a-judge/reference/plot_coverage.html</loc></url>
 <url><loc>https://yiqunchen.github.io/debias-llm-as-a-judge/reference/plot_q_bias.html</loc></url>
-<url><loc>https://yiqunchen.github.io/debias-llm-as-a-judge/reference/ppi_bootstrap.html</loc></url>
 <url><loc>https://yiqunchen.github.io/debias-llm-as-a-judge/reference/ppi_multiclass.html</loc></url>
 <url><loc>https://yiqunchen.github.io/debias-llm-as-a-judge/reference/ppi_point_and_ci.html</loc></url>
-<url><loc>https://yiqunchen.github.io/debias-llm-as-a-judge/reference/ppi_pp_bootstrap.html</loc></url>
 <url><loc>https://yiqunchen.github.io/debias-llm-as-a-judge/reference/ppi_pp_multiclass.html</loc></url>
+<url><loc>https://yiqunchen.github.io/debias-llm-as-a-judge/reference/ppi_pp_point_and_ci.html</loc></url>
 <url><loc>https://yiqunchen.github.io/debias-llm-as-a-judge/reference/ppi_pp_point_and_ci_general.html</loc></url>
 <url><loc>https://yiqunchen.github.io/debias-llm-as-a-judge/reference/project_simplex.html</loc></url>
-<url><loc>https://yiqunchen.github.io/debias-llm-as-a-judge/reference/rg_bootstrap.html</loc></url>
 <url><loc>https://yiqunchen.github.io/debias-llm-as-a-judge/reference/rg_least_squares_simplex.html</loc></url>
+<url><loc>https://yiqunchen.github.io/debias-llm-as-a-judge/reference/rg_point_and_ci.html</loc></url>
 <url><loc>https://yiqunchen.github.io/debias-llm-as-a-judge/reference/sim_compare_info.html</loc></url>
 </urlset>
 

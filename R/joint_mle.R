@@ -247,6 +247,46 @@ fit_misclass_mle <- function(y_cal, yhat_cal, yhat_test, level = 0.90) {
   )
 }
 
+#' MLE estimator with consistent output format.
+#'
+#' Wrapper around [fit_misclass_mle()] that returns output in the same
+#' format as other estimators (ppi_point_and_ci, rg_point_and_ci, etc.).
+#'
+#' @param Y_cal Vector of human labels on the calibration set (0/1).
+#' @param Yhat_cal Vector of surrogate predictions on the calibration set (0/1).
+#' @param Yhat_test Vector of surrogate predictions on the test set (0/1).
+#' @param alpha Miscoverage level for the confidence interval.
+#'
+#' @return A list containing:
+#'   \describe{
+#'     \item{theta}{Point estimate of the prevalence.}
+#'     \item{var}{Estimated variance of theta (from observed information).}
+#'     \item{ci_lower}{Lower bound of the confidence interval.}
+#'     \item{ci_upper}{Upper bound of the confidence interval.}
+#'     \item{q0_hat}{Estimated specificity.}
+#'     \item{q1_hat}{Estimated sensitivity.}
+#'     \item{full_fit}{The full output from fit_misclass_mle for advanced use.}
+#'   }
+#' @export
+mle_point_and_ci <- function(Y_cal, Yhat_cal, Yhat_test, alpha = 0.10) {
+  level <- 1 - alpha
+  fit <- fit_misclass_mle(
+    y_cal = Y_cal,
+    yhat_cal = Yhat_cal,
+    yhat_test = Yhat_test,
+    level = level
+  )
+  list(
+    theta = fit$theta_hat,
+    var = fit$vcov_obs["theta", "theta"],
+    ci_lower = fit$ci_theta_obs[1],
+    ci_upper = fit$ci_theta_obs[2],
+    q0_hat = fit$q0_hat,
+    q1_hat = fit$q1_hat,
+    full_fit = fit
+  )
+}
+
 #' Grab the theta-specific summary from a joint MLE fit.
 #'
 #' @param fit Output from [fit_misclass_mle()].

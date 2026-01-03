@@ -91,8 +91,8 @@ apply_all_estimators <- function(judge_df, label_ratio = 0.10, alpha = 0.10) {
     )
 
     # 3. PPI++
-    ppi_pp_est <- ppi_pp_point_and_ci_general(Y_L = Y_cal, f_L = Yhat_cal,
-                                               f_U = Yhat_test, alpha = alpha)
+    ppi_pp_est <- ppi_pp_point_and_ci(Y_L = Y_cal, f_L = Yhat_cal,
+                                      f_U = Yhat_test, alpha = alpha)
     results$ppi_pp <- tibble(
       method = "PPI++",
       theta_hat = ppi_pp_est$theta,
@@ -101,7 +101,7 @@ apply_all_estimators <- function(judge_df, label_ratio = 0.10, alpha = 0.10) {
     )
 
     # 4. Rogan-Gladen
-    rg_est <- llm_point_and_ci(
+    rg_est <- rg_point_and_ci(
       p_hat = p_hat,
       q0_hat = q0_hat,
       q1_hat = q1_hat,
@@ -133,16 +133,17 @@ apply_all_estimators <- function(judge_df, label_ratio = 0.10, alpha = 0.10) {
 
     # 6. Joint MLE
     mle_result <- tryCatch({
-      mle_fit <- fit_misclass_mle(
-        y_cal = Y_cal,
-        yhat_cal = Yhat_cal,
-        yhat_test = Yhat_test
+      mle_fit <- mle_point_and_ci(
+        Y_cal = Y_cal,
+        Yhat_cal = Yhat_cal,
+        Yhat_test = Yhat_test,
+        alpha = alpha
       )
       tibble(
         method = "Joint MLE",
-        theta_hat = mle_fit$theta_hat,
-        ci_lower = mle_fit$ci_theta_obs[1],
-        ci_upper = mle_fit$ci_theta_obs[2]
+        theta_hat = mle_fit$theta,
+        ci_lower = mle_fit$ci_lower,
+        ci_upper = mle_fit$ci_upper
       )
     }, error = function(e) {
       tibble(
@@ -224,28 +225,27 @@ main <- function() {
     # Get true value
     theta_true <- ds_data$theta_true[1]
 
-    # Plot
+    # Plot with large fonts, no subtitle
     p <- ggplot(ds_data, aes(x = method, y = theta_hat, color = method)) +
-      geom_point(size = 3) +
-      geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper), width = 0.2, linewidth = 1) +
+      geom_point(size = 4) +
+      geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper), width = 0.2, linewidth = 1.2) +
       geom_hline(yintercept = theta_true, linetype = "solid", color = "black", linewidth = 1) +
       facet_wrap(~judge, nrow = 1) +
       scale_color_manual(values = METHOD_COLORS) +
       labs(
         title = paste("Win Rate Estimation:", gsub("_", " ", ds)),
-        subtitle = paste0("True win rate: ", round(theta_true, 3),
-                          " | ", 100*LABEL_RATIO, "% labeled | ",
-                          100*(1-ALPHA), "% CI"),
         x = "Method",
         y = "Estimated Win Rate (Model A)",
         color = "Method"
       ) +
-      theme_bw(base_size = 12) +
+      theme_bw(base_size = 18) +
       theme(
-        axis.text.x = element_text(angle = 45, hjust = 1),
+        axis.title = element_text(size = 20),
+        axis.text = element_text(size = 16),
+        axis.text.x = element_text(angle = 45, hjust = 1, size = 16),
+        strip.text = element_text(size = 16),
         legend.position = "none",
-        plot.title = element_text(hjust = 0.5, face = "bold"),
-        plot.subtitle = element_text(hjust = 0.5)
+        plot.title = element_text(hjust = 0.5, face = "bold", size = 20)
       ) +
       coord_cartesian(ylim = c(0, 1))
 
@@ -344,15 +344,15 @@ run_coverage_simulation <- function(n_sims = 100) {
 
       # PPI++
       tryCatch({
-        ppi_pp_est <- ppi_pp_point_and_ci_general(Y_L = Y_cal, f_L = Yhat_cal, f_U = Yhat_test, alpha = ALPHA)
+        ppi_pp_est <- ppi_pp_point_and_ci(Y_L = Y_cal, f_L = Yhat_cal, f_U = Yhat_test, alpha = ALPHA)
         results$ppi_pp <- tibble(method = "PPI++", theta_hat = ppi_pp_est$theta,
                                   ci_lower = ppi_pp_est$ci_lower, ci_upper = ppi_pp_est$ci_upper)
       }, error = function(e) NULL)
 
       # Rogan-Gladen
       tryCatch({
-        rg_est <- llm_point_and_ci(p_hat = p_hat, q0_hat = q0_hat, q1_hat = q1_hat,
-                                    n = n, m0 = m0, m1 = m1, alpha = ALPHA)
+        rg_est <- rg_point_and_ci(p_hat = p_hat, q0_hat = q0_hat, q1_hat = q1_hat,
+                                  n = n, m0 = m0, m1 = m1, alpha = ALPHA)
         results$rg <- tibble(method = "Rogan-Gladen", theta_hat = rg_est$theta,
                              ci_lower = rg_est$ci_lower, ci_upper = rg_est$ci_upper)
       }, error = function(e) NULL)
@@ -366,10 +366,10 @@ run_coverage_simulation <- function(n_sims = 100) {
 
       # Joint MLE
       tryCatch({
-        mle_fit <- fit_misclass_mle(y_cal = Y_cal, yhat_cal = Yhat_cal, yhat_test = Yhat_test)
-        if (!is.na(mle_fit$ci_theta_obs[1])) {
-          results$mle <- tibble(method = "Joint MLE", theta_hat = mle_fit$theta_hat,
-                                ci_lower = mle_fit$ci_theta_obs[1], ci_upper = mle_fit$ci_theta_obs[2])
+        mle_fit <- mle_point_and_ci(Y_cal = Y_cal, Yhat_cal = Yhat_cal, Yhat_test = Yhat_test, alpha = ALPHA)
+        if (!is.na(mle_fit$ci_lower)) {
+          results$mle <- tibble(method = "Joint MLE", theta_hat = mle_fit$theta,
+                                ci_lower = mle_fit$ci_lower, ci_upper = mle_fit$ci_upper)
         }
       }, error = function(e) NULL)
 

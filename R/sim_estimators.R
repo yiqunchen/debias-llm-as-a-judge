@@ -65,7 +65,10 @@ ppi_point_and_ci <- function(Y_L, f_L, f_U, alpha = 0.10) {
        ci_upper = ci$upper)
 }
 
-#' LLM-as-a-judge corrected estimator with finite-sample adjustment.
+#' Rogan-Gladen corrected estimator with finite-sample adjustment.
+#'
+#' Classical misclassification correction using sensitivity/specificity,
+#' also known as the Rogan-Gladen estimator.
 #'
 #' @param p_hat Average LLM score on the test set.
 #' @param q0_hat Calibration specificity estimate.
@@ -77,8 +80,8 @@ ppi_point_and_ci <- function(Y_L, f_L, f_U, alpha = 0.10) {
 #'
 #' @return List with `theta`, `var`, and CI endpoints.
 #' @export
-llm_point_and_ci <- function(p_hat, q0_hat, q1_hat, n, m0, m1,
-                             alpha = 0.10, eps_J = 1e-4) {
+rg_point_and_ci <- function(p_hat, q0_hat, q1_hat, n, m0, m1,
+                            alpha = 0.10, eps_J = 1e-4) {
   z <- qnorm(1 - alpha / 2)
   p_tilde <- (n * p_hat + z^2 / 2) / (n + z^2)
   q0_tilde <- (m0 * q0_hat + 1) / (m0 + 2)
@@ -113,6 +116,13 @@ llm_point_and_ci <- function(p_hat, q0_hat, q1_hat, n, m0, m1,
        ci_upper = ci_upper)
 }
 
+#' Compute PPI++ variance at a given lambda.
+#'
+#' @param lambda Tuning parameter.
+#' @param Y_L,f_L,f_U Observed labels and surrogate scores.
+#'
+#' @return Estimated variance.
+#' @keywords internal
 ppi_pp_var_hat <- function(lambda, Y_L, f_L, f_U) {
   n <- length(Y_L)
   N <- length(f_U)
@@ -122,33 +132,61 @@ ppi_pp_var_hat <- function(lambda, Y_L, f_L, f_U) {
   var_Z_L / n + lambda^2 * var_f_U / N
 }
 
-lambda_hat_ppi_pp_numeric <- function(Y_L, f_L, f_U,
-                                      lambda_range = c(0, 1)) {
-  optimize(
-    f = ppi_pp_var_hat,
-    interval = lambda_range,
-    Y_L = Y_L,
-    f_L = f_L,
-    f_U = f_U
-  )
-}
-
-#' Tuned PPI++ estimator using numeric lambda search.
+#' Compute optimal lambda for PPI++ using closed-form solution.
+#'
+#' The optimal lambda minimizes the asymptotic variance and has the closed form:
+#' \deqn{\lambda^* = \frac{\text{Cov}(Y, f)}{\text{Var}(f_L) + (m/n) \text{Var}(f_U)}}
+#'
+#' This equals the regression coefficient of Y on f when n >> m.
 #'
 #' @param Y_L,f_L,f_U Observed labels and surrogate scores.
-#' @param alpha Miscoverage level.
-#' @param lambda_range Interval to constrain lambda.
+#'
+#' @return Optimal lambda (unconstrained).
+#' @keywords internal
+lambda_hat_ppi_pp_optimal <- function(Y_L, f_L, f_U) {
+  m <- length(Y_L)
+  n <- length(f_U)
+
+  cov_Yf <- cov(Y_L, f_L)
+  var_f_L <- var(f_L)
+  var_f_U <- var(f_U)
+
+  # Closed-form optimal lambda (no constraints)
+  denom <- var_f_L + (m / n) * var_f_U
+  if (is.na(denom) || denom < 1e-10) {
+    return(1)  # Fallback to PPI
+
+  }
+  cov_Yf / denom
+}
+
+#' PPI++ estimator with optimal unconstrained lambda.
+#'
+#' Uses the closed-form optimal lambda:
+#' \deqn{\lambda^* = \frac{\text{Cov}(Y, f)}{\text{Var}(f_L) + (m/n) \text{Var}(f_U)}}
+#'
+#' This is equivalent to using the regression coefficient when n >> m,
+#' and provides optimal variance reduction without artificial constraints.
+#'
+#' @param Y_L Vector of true labels on the calibration set.
+#' @param f_L Vector of surrogate predictions on the calibration set.
+#' @param f_U Vector of surrogate predictions on the test set.
+#' @param alpha Miscoverage level for the confidence interval.
 #'
 #' @return List containing `theta`, `lambda`, variance, and CI limits.
 #' @export
-ppi_pp_point_and_ci_general <- function(Y_L, f_L, f_U,
-                                        alpha = 0.10,
-                                        lambda_range = c(0, 1)) {
-  lam_fit <- lambda_hat_ppi_pp_numeric(Y_L, f_L, f_U, lambda_range)
-  lambda_hat <- lam_fit$minimum
+ppi_pp_point_and_ci <- function(Y_L, f_L, f_U, alpha = 0.10) {
+  # Compute optimal lambda (closed-form, unconstrained)
+  lambda_hat <- lambda_hat_ppi_pp_optimal(Y_L, f_L, f_U)
+
+  # Point estimate
   theta_hat <- mean(Y_L) + lambda_hat * (mean(f_U) - mean(f_L))
+
+  # Variance at optimal lambda
   var_hat <- ppi_pp_var_hat(lambda_hat, Y_L, f_L, f_U)
   var_hat <- max(var_hat, 0)
+
+  # Confidence interval using logit transform
   theta_tilde <- clamp01(theta_hat)
   var_logit <- var_hat / (theta_tilde^2 * (1 - theta_tilde)^2)
   se_logit <- sqrt(max(var_logit, 0))
@@ -157,12 +195,17 @@ ppi_pp_point_and_ci_general <- function(Y_L, f_L, f_U,
   logit_hi <- qlogis(theta_tilde) + z * se_logit
   ci_lower <- plogis(logit_lo)
   ci_upper <- plogis(logit_hi)
+
+  # Clamp point estimate to [0, 1]
   theta_hat <- pmin(pmax(theta_hat, 0), 1)
-  list(theta = theta_hat,
-       lambda = lambda_hat,
-       var = var_hat,
-       ci_lower = ci_lower,
-       ci_upper = ci_upper)
+
+  list(
+    theta = theta_hat,
+    lambda = lambda_hat,
+    var = var_hat,
+    ci_lower = ci_lower,
+    ci_upper = ci_upper
+  )
 }
 
 #' EIF (Efficient Influence Function) estimator for binary surrogates.

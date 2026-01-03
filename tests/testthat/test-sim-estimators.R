@@ -100,9 +100,9 @@ test_that("ppi_point_and_ci basic sanity", {
   expect_true(est$ci_lower >= 0 && est$ci_upper <= 1)
 })
 
-test_that("llm_point_and_ci returns NA when judge nearly random (J ~ 0)", {
+test_that("rg_point_and_ci returns NA when judge nearly random (J ~ 0)", {
   # q0 + q1 - 1 ~ 0
-  out <- llm_point_and_ci(
+  out <- rg_point_and_ci(
     p_hat = 0.5, q0_hat = 0.5, q1_hat = 0.5,
     n = 1000, m0 = 50, m1 = 50,
     alpha = 0.05, eps_J = 1e-4
@@ -111,8 +111,8 @@ test_that("llm_point_and_ci returns NA when judge nearly random (J ~ 0)", {
   expect_true(is.na(out$var))
 })
 
-test_that("llm_point_and_ci returns bounded estimate and CI when J is safe", {
-  out <- llm_point_and_ci(
+test_that("rg_point_and_ci returns bounded estimate and CI when J is safe", {
+  out <- rg_point_and_ci(
     p_hat = 0.4, q0_hat = 0.9, q1_hat = 0.8,
     n = 1000, m0 = 200, m1 = 200,
     alpha = 0.05
@@ -123,7 +123,7 @@ test_that("llm_point_and_ci returns bounded estimate and CI when J is safe", {
   expect_true(out$ci_lower >= 0 && out$ci_upper <= 1)
 })
 
-test_that("ppi_pp_point_and_ci_general returns lambda within range and bounded theta", {
+test_that("ppi_pp_point_and_ci returns lambda within range and bounded theta", {
   set.seed(2)
   n <- 300
   N <- 3000
@@ -131,16 +131,17 @@ test_that("ppi_pp_point_and_ci_general returns lambda within range and bounded t
   f_L <- rbinom(n, 1, 0.7)
   f_U <- rbinom(N, 1, 0.6)
 
-  est <- ppi_pp_point_and_ci_general(Y_L, f_L, f_U, alpha = 0.05, lambda_range = c(0, 1))
+  est <- ppi_pp_point_and_ci(Y_L, f_L, f_U, alpha = 0.05)
 
-  expect_true(est$lambda >= 0 && est$lambda <= 1)
+  # Lambda is now unconstrained (closed-form optimal)
+  expect_true(is.numeric(est$lambda))
   expect_true(est$theta >= 0 && est$theta <= 1)
   expect_true(est$var >= 0)
   expect_true(est$ci_lower <= est$ci_upper)
   expect_true(est$ci_lower >= 0 && est$ci_upper <= 1)
 })
 
-test_that("lambda_hat_ppi_pp_numeric finds near-global minimizer", {
+test_that("lambda_hat_ppi_pp_optimal finds variance-minimizing lambda", {
   set.seed(3)
   n <- 200
   N <- 2000
@@ -148,13 +149,11 @@ test_that("lambda_hat_ppi_pp_numeric finds near-global minimizer", {
   f_L <- rbinom(n, 1, 0.6)
   f_U <- rbinom(N, 1, 0.5)
 
-  opt <- lambda_hat_ppi_pp_numeric(
-    Y_L, f_L, f_U, lambda_range = c(0, 1)
-  )
-  lam_hat <- opt$minimum
+  # Get optimal lambda from closed-form solution
+  lam_hat <- lambda_hat_ppi_pp_optimal(Y_L, f_L, f_U)
 
-  # Evaluate variance on a grid
-  grid <- seq(0, 1, length.out = 101)
+  # Evaluate variance on a wide grid (lambda is now unconstrained)
+  grid <- seq(-1, 3, length.out = 201)
   vars <- vapply(
     grid,
     function(l) ppi_pp_var_hat(l, Y_L, f_L, f_U),
@@ -163,7 +162,7 @@ test_that("lambda_hat_ppi_pp_numeric finds near-global minimizer", {
 
   v_hat <- ppi_pp_var_hat(lam_hat, Y_L, f_L, f_U)
 
-  # λ_hat should be near the global minimum
+ # λ_hat should be near the global minimum
   expect_true(
     v_hat <= min(vars) + 1e-6
   )

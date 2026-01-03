@@ -131,7 +131,7 @@ intervals.</p>
 </h2>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://yiqunchen.github.io/debias-llm-as-a-judge">debiasLLMReporting</a></span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">42</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">2026</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="simulated-example">Simulated Example<a class="anchor" aria-label="anchor" href="#simulated-example"></a>
@@ -178,7 +178,7 @@ intervals.</p>
 <code class="sourceCode R"><span><span class="co"># 1. Naive estimate (no correction)</span></span>
 <span><span class="va">naive_est</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">Yhat_test</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Naive estimate:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">naive_est</span>, <span class="fl">3</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Naive estimate: 0.56</span></span>
+<span><span class="co">#&gt; Naive estimate: 0.496</span></span>
 <span></span>
 <span><span class="co"># 2. PPI (Prediction-Powered Inference)</span></span>
 <span><span class="va">ppi_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ppi_point_and_ci.html">ppi_point_and_ci</a></span><span class="op">(</span></span>
@@ -189,7 +189,7 @@ intervals.</p>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># 3. PPI++ (with optimized lambda)</span></span>
-<span><span class="va">ppi_pp_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ppi_pp_point_and_ci_general.html">ppi_pp_point_and_ci_general</a></span><span class="op">(</span></span>
+<span><span class="va">ppi_pp_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ppi_pp_point_and_ci.html">ppi_pp_point_and_ci</a></span><span class="op">(</span></span>
 <span>  Y_L <span class="op">=</span> <span class="va">Y_cal</span>,</span>
 <span>  f_L <span class="op">=</span> <span class="va">Yhat_cal</span>,</span>
 <span>  f_U <span class="op">=</span> <span class="va">Yhat_test</span>,</span>
@@ -203,13 +203,29 @@ intervals.</p>
 <span><span class="va">q1_hat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">Yhat_cal</span><span class="op">[</span><span class="va">Y_cal</span> <span class="op">==</span> <span class="fl">1</span><span class="op">]</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="va">p_hat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">Yhat_test</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">rg_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/llm_point_and_ci.html">llm_point_and_ci</a></span><span class="op">(</span></span>
+<span><span class="va">rg_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/rg_point_and_ci.html">rg_point_and_ci</a></span><span class="op">(</span></span>
 <span>  p_hat <span class="op">=</span> <span class="va">p_hat</span>,</span>
 <span>  q0_hat <span class="op">=</span> <span class="va">q0_hat</span>,</span>
 <span>  q1_hat <span class="op">=</span> <span class="va">q1_hat</span>,</span>
 <span>  n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">Yhat_test</span><span class="op">)</span>,</span>
 <span>  m0 <span class="op">=</span> <span class="va">m0</span>,</span>
 <span>  m1 <span class="op">=</span> <span class="va">m1</span>,</span>
+<span>  alpha <span class="op">=</span> <span class="fl">0.10</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># 5. EIF (Efficient Influence Function)</span></span>
+<span><span class="va">eif_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/eif_point_and_ci.html">eif_point_and_ci</a></span><span class="op">(</span></span>
+<span>  Y_cal <span class="op">=</span> <span class="va">Y_cal</span>,</span>
+<span>  Yhat_cal <span class="op">=</span> <span class="va">Yhat_cal</span>,</span>
+<span>  Yhat_test <span class="op">=</span> <span class="va">Yhat_test</span>,</span>
+<span>  alpha <span class="op">=</span> <span class="fl">0.10</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># 6. MLE (Joint Maximum Likelihood)</span></span>
+<span><span class="va">mle_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mle_point_and_ci.html">mle_point_and_ci</a></span><span class="op">(</span></span>
+<span>  Y_cal <span class="op">=</span> <span class="va">Y_cal</span>,</span>
+<span>  Yhat_cal <span class="op">=</span> <span class="va">Yhat_cal</span>,</span>
+<span>  Yhat_test <span class="op">=</span> <span class="va">Yhat_test</span>,</span>
 <span>  alpha <span class="op">=</span> <span class="fl">0.10</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -218,16 +234,20 @@ intervals.</p>
 </h3>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">results</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
-<span>  Method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"True"</span>, <span class="st">"Naive"</span>, <span class="st">"PPI"</span>, <span class="st">"PPI++"</span>, <span class="st">"Rogan-Gladen"</span><span class="op">)</span>,</span>
+<span>  Method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"True"</span>, <span class="st">"Naive"</span>, <span class="st">"PPI"</span>, <span class="st">"PPI++"</span>, <span class="st">"Rogan-Gladen"</span>, <span class="st">"EIF"</span>, <span class="st">"MLE"</span><span class="op">)</span>,</span>
 <span>  Estimate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
 <span>    <span class="va">theta_true</span>,</span>
 <span>    <span class="va">naive_est</span>,</span>
 <span>    <span class="va">ppi_result</span><span class="op">$</span><span class="va">theta</span>,</span>
 <span>    <span class="va">ppi_pp_result</span><span class="op">$</span><span class="va">theta</span>,</span>
-<span>    <span class="va">rg_result</span><span class="op">$</span><span class="va">theta</span></span>
+<span>    <span class="va">rg_result</span><span class="op">$</span><span class="va">theta</span>,</span>
+<span>    <span class="va">eif_result</span><span class="op">$</span><span class="va">theta</span>,</span>
+<span>    <span class="va">mle_result</span><span class="op">$</span><span class="va">theta</span></span>
 <span>  <span class="op">)</span>,</span>
-<span>  CI_Lower <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="cn">NA</span>, <span class="va">ppi_result</span><span class="op">$</span><span class="va">ci_lower</span>, <span class="va">ppi_pp_result</span><span class="op">$</span><span class="va">ci_lower</span>, <span class="va">rg_result</span><span class="op">$</span><span class="va">ci_lower</span><span class="op">)</span>,</span>
-<span>  CI_Upper <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="cn">NA</span>, <span class="va">ppi_result</span><span class="op">$</span><span class="va">ci_upper</span>, <span class="va">ppi_pp_result</span><span class="op">$</span><span class="va">ci_upper</span>, <span class="va">rg_result</span><span class="op">$</span><span class="va">ci_upper</span><span class="op">)</span></span>
+<span>  CI_Lower <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="cn">NA</span>, <span class="va">ppi_result</span><span class="op">$</span><span class="va">ci_lower</span>, <span class="va">ppi_pp_result</span><span class="op">$</span><span class="va">ci_lower</span>, <span class="va">rg_result</span><span class="op">$</span><span class="va">ci_lower</span>,</span>
+<span>               <span class="va">eif_result</span><span class="op">$</span><span class="va">ci_lower</span>, <span class="va">mle_result</span><span class="op">$</span><span class="va">ci_lower</span><span class="op">)</span>,</span>
+<span>  CI_Upper <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="cn">NA</span>, <span class="va">ppi_result</span><span class="op">$</span><span class="va">ci_upper</span>, <span class="va">ppi_pp_result</span><span class="op">$</span><span class="va">ci_upper</span>, <span class="va">rg_result</span><span class="op">$</span><span class="va">ci_upper</span>,</span>
+<span>               <span class="va">eif_result</span><span class="op">$</span><span class="va">ci_upper</span>, <span class="va">mle_result</span><span class="op">$</span><span class="va">ci_upper</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">results</span><span class="op">$</span><span class="va">Bias</span> <span class="op">&lt;-</span> <span class="va">results</span><span class="op">$</span><span class="va">Estimate</span> <span class="op">-</span> <span class="va">theta_true</span></span>
@@ -266,38 +286,56 @@ intervals.</p>
 </tr>
 <tr class="even">
 <td align="left">Naive</td>
-<td align="right">0.560</td>
+<td align="right">0.496</td>
 <td align="right">NA</td>
 <td align="right">NA</td>
-<td align="right">-0.040</td>
+<td align="right">-0.104</td>
 <td align="right">NA</td>
 <td align="left">NA</td>
 </tr>
 <tr class="odd">
 <td align="left">PPI</td>
-<td align="right">0.640</td>
-<td align="right">0.563</td>
-<td align="right">0.711</td>
-<td align="right">0.040</td>
-<td align="right">0.148</td>
+<td align="right">0.576</td>
+<td align="right">0.486</td>
+<td align="right">0.661</td>
+<td align="right">-0.024</td>
+<td align="right">0.175</td>
 <td align="left">TRUE</td>
 </tr>
 <tr class="even">
 <td align="left">PPI++</td>
-<td align="right">0.613</td>
-<td align="right">0.542</td>
-<td align="right">0.679</td>
-<td align="right">0.013</td>
-<td align="right">0.137</td>
+<td align="right">0.631</td>
+<td align="right">0.553</td>
+<td align="right">0.703</td>
+<td align="right">0.031</td>
+<td align="right">0.150</td>
 <td align="left">TRUE</td>
 </tr>
 <tr class="odd">
 <td align="left">Rogan-Gladen</td>
-<td align="right">0.666</td>
-<td align="right">0.542</td>
-<td align="right">0.770</td>
-<td align="right">0.066</td>
-<td align="right">0.228</td>
+<td align="right">0.517</td>
+<td align="right">0.391</td>
+<td align="right">0.640</td>
+<td align="right">-0.083</td>
+<td align="right">0.249</td>
+<td align="left">TRUE</td>
+</tr>
+<tr class="even">
+<td align="left">EIF</td>
+<td align="right">0.620</td>
+<td align="right">0.522</td>
+<td align="right">0.710</td>
+<td align="right">0.020</td>
+<td align="right">0.188</td>
+<td align="left">TRUE</td>
+</tr>
+<tr class="odd">
+<td align="left">MLE</td>
+<td align="right">0.630</td>
+<td align="right">0.534</td>
+<td align="right">0.717</td>
+<td align="right">0.030</td>
+<td align="right">0.183</td>
 <td align="left">TRUE</td>
 </tr>
 </tbody>
@@ -312,7 +350,7 @@ intervals.</p>
 <span></span>
 <span><span class="va">plot_df</span> <span class="op">&lt;-</span> <span class="va">results</span><span class="op">[</span><span class="va">results</span><span class="op">$</span><span class="va">Method</span> <span class="op">!=</span> <span class="st">"True"</span>, <span class="op">]</span></span>
 <span><span class="va">plot_df</span><span class="op">$</span><span class="va">Method</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">plot_df</span><span class="op">$</span><span class="va">Method</span>,</span>
-<span>                         levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Naive"</span>, <span class="st">"PPI"</span>, <span class="st">"PPI++"</span>, <span class="st">"Rogan-Gladen"</span><span class="op">)</span><span class="op">)</span></span>
+<span>                         levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Naive"</span>, <span class="st">"PPI"</span>, <span class="st">"PPI++"</span>, <span class="st">"Rogan-Gladen"</span>, <span class="st">"EIF"</span>, <span class="st">"MLE"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">plot_df</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Method</span>, y <span class="op">=</span> <span class="va">Estimate</span>, color <span class="op">=</span> <span class="va">Method</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span></span>
@@ -326,7 +364,9 @@ intervals.</p>
 <span>    <span class="st">"Naive"</span> <span class="op">=</span> <span class="st">"#525252"</span>,</span>
 <span>    <span class="st">"PPI"</span> <span class="op">=</span> <span class="st">"#1B9E77"</span>,</span>
 <span>    <span class="st">"PPI++"</span> <span class="op">=</span> <span class="st">"#D95F02"</span>,</span>
-<span>    <span class="st">"Rogan-Gladen"</span> <span class="op">=</span> <span class="st">"#7570B3"</span></span>
+<span>    <span class="st">"Rogan-Gladen"</span> <span class="op">=</span> <span class="st">"#7570B3"</span>,</span>
+<span>    <span class="st">"EIF"</span> <span class="op">=</span> <span class="st">"#E6AB02"</span>,</span>
+<span>    <span class="st">"MLE"</span> <span class="op">=</span> <span class="st">"#E7298A"</span></span>
 <span>  <span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span></span>
 <span>    title <span class="op">=</span> <span class="st">"Win Rate Estimation with Measurement Error Correction"</span>,</span>
@@ -356,6 +396,12 @@ variance</li>
 <li>
 <strong>Rogan-Gladen</strong> uses the classical epidemiological
 approach based on sensitivity/specificity</li>
+<li>
+<strong>EIF</strong> achieves semiparametric efficiency using the
+efficient influence function</li>
+<li>
+<strong>MLE</strong> jointly estimates prevalence, sensitivity, and
+specificity via maximum likelihood</li>
 </ol>
 <p>All corrected methods aim to provide valid confidence intervals with
 nominal coverage, while the naive estimate’s CI will not cover the true

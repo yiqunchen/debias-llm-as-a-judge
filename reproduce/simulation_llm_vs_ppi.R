@@ -139,8 +139,8 @@ idx_test <- setdiff(seq_len(N), idx_cal)
   )
 
   # 2. PPI++ estimator
-  ppi_pp_est <- ppi_pp_point_and_ci_general(Y_L = Y_cal, f_L = Yhat_cal,
-                                             f_U = Yhat_test, alpha = 1 - nominal)
+  ppi_pp_est <- ppi_pp_point_and_ci(Y_L = Y_cal, f_L = Yhat_cal,
+                                    f_U = Yhat_test, alpha = 1 - nominal)
   results$ppi_pp <- tibble(
     method = "PPI++",
     theta_hat = ppi_pp_est$theta,
@@ -151,7 +151,7 @@ idx_test <- setdiff(seq_len(N), idx_cal)
   )
 
   # 3. Rogan-Gladen estimator
-  rg_est <- llm_point_and_ci(
+  rg_est <- rg_point_and_ci(
     p_hat = p_hat,
     q0_hat = q0_hat,
     q1_hat = q1_hat,

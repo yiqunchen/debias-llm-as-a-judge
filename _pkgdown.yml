@@ -34,9 +34,10 @@ reference:
     desc: Main functions for debiased prevalence estimation
     contents:
       - ppi_point_and_ci
-      - ppi_pp_point_and_ci_general
-      - llm_point_and_ci
+      - ppi_pp_point_and_ci
+      - rg_point_and_ci
       - eif_point_and_ci
+      - mle_point_and_ci
       - fit_misclass_mle
       - grab_theta
 

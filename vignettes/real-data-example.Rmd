@@ -143,7 +143,7 @@ ppi_result <- ppi_point_and_ci(
 )
 
 # 3. PPI++
-ppi_pp_result <- ppi_pp_point_and_ci_general(
+ppi_pp_result <- ppi_pp_point_and_ci(
   Y_L = Y_cal,
   f_L = Yhat_cal,
   f_U = Yhat_test,
@@ -151,7 +151,7 @@ ppi_pp_result <- ppi_pp_point_and_ci_general(
 )
 
 # 4. Rogan-Gladen
-rg_result <- llm_point_and_ci(
+rg_result <- rg_point_and_ci(
   p_hat = p_hat,
   q0_hat = q0_hat,
   q1_hat = q1_hat,
@@ -170,10 +170,11 @@ eif_result <- eif_point_and_ci(
 )
 
 # 6. MLE (Joint Maximum Likelihood)
-mle_result <- fit_misclass_mle(
-  y_cal = Y_cal,
-  yhat_cal = Yhat_cal,
-  yhat_test = Yhat_test
+mle_result <- mle_point_and_ci(
+  Y_cal = Y_cal,
+  Yhat_cal = Yhat_cal,
+  Yhat_test = Yhat_test,
+  alpha = ALPHA
 )
 ```
 
@@ -189,12 +190,12 @@ results <- tibble(
     ppi_pp_result$theta,
     rg_result$theta,
     eif_result$theta,
-    mle_result$theta_hat
+    mle_result$theta
   ),
   CI_Lower = c(NA, naive_ci[1], ppi_result$ci_lower, ppi_pp_result$ci_lower,
-               rg_result$ci_lower, eif_result$ci_lower, mle_result$ci_theta_obs[1]),
+               rg_result$ci_lower, eif_result$ci_lower, mle_result$ci_lower),
   CI_Upper = c(NA, naive_ci[2], ppi_result$ci_upper, ppi_pp_result$ci_upper,
-               rg_result$ci_upper, eif_result$ci_upper, mle_result$ci_theta_obs[2])
+               rg_result$ci_upper, eif_result$ci_upper, mle_result$ci_upper)
 ) %>%
   mutate(
     Bias = round(Estimate - theta_true, 4),

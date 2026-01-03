@@ -77,7 +77,7 @@ decisions against human preferences from Chatbot Arena.</p>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
 <span><span class="co">#&gt; Warning: package 'ggplot2' was built under R version 4.4.3</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">2024</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">2026</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="load-data">Load Data<a class="anchor" aria-label="anchor" href="#load-data"></a>
@@ -183,11 +183,11 @@ specificity:</p>
 <span><span class="va">p_hat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">Yhat_test</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Estimated specificity (q0):"</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">q0_hat</span>, <span class="fl">3</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Estimated specificity (q0): 0.783</span></span>
+<span><span class="co">#&gt; Estimated specificity (q0): 0.875</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Estimated sensitivity (q1):"</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">q1_hat</span>, <span class="fl">3</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Estimated sensitivity (q1): 0.4</span></span>
+<span><span class="co">#&gt; Estimated sensitivity (q1): 0.25</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Test set positive rate:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">p_hat</span>, <span class="fl">3</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Test set positive rate: 0.149</span></span></code></pre></div>
+<span><span class="co">#&gt; Test set positive rate: 0.161</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="apply-all-estimators">Apply All Estimators<a class="anchor" aria-label="anchor" href="#apply-all-estimators"></a>
@@ -216,7 +216,7 @@ specificity:</p>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># 3. PPI++</span></span>
-<span><span class="va">ppi_pp_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ppi_pp_point_and_ci_general.html">ppi_pp_point_and_ci_general</a></span><span class="op">(</span></span>
+<span><span class="va">ppi_pp_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ppi_pp_point_and_ci.html">ppi_pp_point_and_ci</a></span><span class="op">(</span></span>
 <span>  Y_L <span class="op">=</span> <span class="va">Y_cal</span>,</span>
 <span>  f_L <span class="op">=</span> <span class="va">Yhat_cal</span>,</span>
 <span>  f_U <span class="op">=</span> <span class="va">Yhat_test</span>,</span>
@@ -224,7 +224,7 @@ specificity:</p>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># 4. Rogan-Gladen</span></span>
-<span><span class="va">rg_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/llm_point_and_ci.html">llm_point_and_ci</a></span><span class="op">(</span></span>
+<span><span class="va">rg_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/rg_point_and_ci.html">rg_point_and_ci</a></span><span class="op">(</span></span>
 <span>  p_hat <span class="op">=</span> <span class="va">p_hat</span>,</span>
 <span>  q0_hat <span class="op">=</span> <span class="va">q0_hat</span>,</span>
 <span>  q1_hat <span class="op">=</span> <span class="va">q1_hat</span>,</span>
@@ -240,6 +240,14 @@ specificity:</p>
 <span>  Yhat_cal <span class="op">=</span> <span class="va">Yhat_cal</span>,</span>
 <span>  Yhat_test <span class="op">=</span> <span class="va">Yhat_test</span>,</span>
 <span>  alpha <span class="op">=</span> <span class="va">ALPHA</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># 6. MLE (Joint Maximum Likelihood)</span></span>
+<span><span class="va">mle_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mle_point_and_ci.html">mle_point_and_ci</a></span><span class="op">(</span></span>
+<span>  Y_cal <span class="op">=</span> <span class="va">Y_cal</span>,</span>
+<span>  Yhat_cal <span class="op">=</span> <span class="va">Yhat_cal</span>,</span>
+<span>  Yhat_test <span class="op">=</span> <span class="va">Yhat_test</span>,</span>
+<span>  alpha <span class="op">=</span> <span class="va">ALPHA</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -247,19 +255,20 @@ specificity:</p>
 </h2>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">results</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span></span>
-<span>  Method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"True"</span>, <span class="st">"Naive"</span>, <span class="st">"PPI"</span>, <span class="st">"PPI++"</span>, <span class="st">"Rogan-Gladen"</span>, <span class="st">"EIF"</span><span class="op">)</span>,</span>
+<span>  Method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"True"</span>, <span class="st">"Naive"</span>, <span class="st">"PPI"</span>, <span class="st">"PPI++"</span>, <span class="st">"Rogan-Gladen"</span>, <span class="st">"EIF"</span>, <span class="st">"MLE"</span><span class="op">)</span>,</span>
 <span>  Estimate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
 <span>    <span class="va">theta_true</span>,</span>
 <span>    <span class="va">naive_theta</span>,</span>
 <span>    <span class="va">ppi_result</span><span class="op">$</span><span class="va">theta</span>,</span>
 <span>    <span class="va">ppi_pp_result</span><span class="op">$</span><span class="va">theta</span>,</span>
 <span>    <span class="va">rg_result</span><span class="op">$</span><span class="va">theta</span>,</span>
-<span>    <span class="va">eif_result</span><span class="op">$</span><span class="va">theta</span></span>
+<span>    <span class="va">eif_result</span><span class="op">$</span><span class="va">theta</span>,</span>
+<span>    <span class="va">mle_result</span><span class="op">$</span><span class="va">theta</span></span>
 <span>  <span class="op">)</span>,</span>
 <span>  CI_Lower <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="va">naive_ci</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, <span class="va">ppi_result</span><span class="op">$</span><span class="va">ci_lower</span>, <span class="va">ppi_pp_result</span><span class="op">$</span><span class="va">ci_lower</span>,</span>
-<span>               <span class="va">rg_result</span><span class="op">$</span><span class="va">ci_lower</span>, <span class="va">eif_result</span><span class="op">$</span><span class="va">ci_lower</span><span class="op">)</span>,</span>
+<span>               <span class="va">rg_result</span><span class="op">$</span><span class="va">ci_lower</span>, <span class="va">eif_result</span><span class="op">$</span><span class="va">ci_lower</span>, <span class="va">mle_result</span><span class="op">$</span><span class="va">ci_lower</span><span class="op">)</span>,</span>
 <span>  CI_Upper <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="va">naive_ci</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>, <span class="va">ppi_result</span><span class="op">$</span><span class="va">ci_upper</span>, <span class="va">ppi_pp_result</span><span class="op">$</span><span class="va">ci_upper</span>,</span>
-<span>               <span class="va">rg_result</span><span class="op">$</span><span class="va">ci_upper</span>, <span class="va">eif_result</span><span class="op">$</span><span class="va">ci_upper</span><span class="op">)</span></span>
+<span>               <span class="va">rg_result</span><span class="op">$</span><span class="va">ci_upper</span>, <span class="va">eif_result</span><span class="op">$</span><span class="va">ci_upper</span>, <span class="va">mle_result</span><span class="op">$</span><span class="va">ci_upper</span><span class="op">)</span></span>
 <span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
 <span>    Bias <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">Estimate</span> <span class="op">-</span> <span class="va">theta_true</span>, <span class="fl">4</span><span class="op">)</span>,</span>
@@ -291,47 +300,56 @@ specificity:</p>
 </tr>
 <tr class="even">
 <td align="left">Naive</td>
-<td align="right">0.149</td>
-<td align="right">0.112</td>
-<td align="right">0.186</td>
-<td align="right">-0.086</td>
-<td align="right">0.074</td>
+<td align="right">0.161</td>
+<td align="right">0.123</td>
+<td align="right">0.200</td>
+<td align="right">-0.074</td>
+<td align="right">0.077</td>
 <td align="left">FALSE</td>
 </tr>
 <tr class="odd">
 <td align="left">PPI</td>
-<td align="right">0.078</td>
-<td align="right">0.008</td>
-<td align="right">0.481</td>
-<td align="right">-0.158</td>
-<td align="right">0.473</td>
+<td align="right">0.161</td>
+<td align="right">0.059</td>
+<td align="right">0.371</td>
+<td align="right">-0.074</td>
+<td align="right">0.312</td>
 <td align="left">TRUE</td>
 </tr>
 <tr class="even">
 <td align="left">PPI++</td>
-<td align="right">0.165</td>
-<td align="right">0.077</td>
-<td align="right">0.320</td>
-<td align="right">-0.070</td>
-<td align="right">0.244</td>
+<td align="right">0.145</td>
+<td align="right">0.065</td>
+<td align="right">0.292</td>
+<td align="right">-0.091</td>
+<td align="right">0.226</td>
 <td align="left">TRUE</td>
 </tr>
 <tr class="odd">
 <td align="left">Rogan-Gladen</td>
-<td align="right">0.000</td>
+<td align="right">0.062</td>
 <td align="right">0.000</td>
 <td align="right">1.000</td>
-<td align="right">-0.236</td>
+<td align="right">-0.174</td>
 <td align="right">1.000</td>
 <td align="left">TRUE</td>
 </tr>
 <tr class="even">
 <td align="left">EIF</td>
-<td align="right">0.164</td>
-<td align="right">0.078</td>
-<td align="right">0.312</td>
-<td align="right">-0.071</td>
-<td align="right">0.234</td>
+<td align="right">0.145</td>
+<td align="right">0.066</td>
+<td align="right">0.291</td>
+<td align="right">-0.090</td>
+<td align="right">0.225</td>
+<td align="left">TRUE</td>
+</tr>
+<tr class="odd">
+<td align="left">MLE</td>
+<td align="right">0.145</td>
+<td align="right">0.066</td>
+<td align="right">0.291</td>
+<td align="right">-0.091</td>
+<td align="right">0.225</td>
 <td align="left">TRUE</td>
 </tr>
 </tbody>
@@ -346,7 +364,8 @@ specificity:</p>
 <span>  <span class="st">"PPI"</span> <span class="op">=</span> <span class="st">"#1B9E77"</span>,</span>
 <span>  <span class="st">"PPI++"</span> <span class="op">=</span> <span class="st">"#D95F02"</span>,</span>
 <span>  <span class="st">"Rogan-Gladen"</span> <span class="op">=</span> <span class="st">"#7570B3"</span>,</span>
-<span>  <span class="st">"EIF"</span> <span class="op">=</span> <span class="st">"#E6AB02"</span></span>
+<span>  <span class="st">"EIF"</span> <span class="op">=</span> <span class="st">"#E6AB02"</span>,</span>
+<span>  <span class="st">"MLE"</span> <span class="op">=</span> <span class="st">"#E7298A"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">plot_df</span> <span class="op">&lt;-</span> <span class="va">results</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
@@ -394,38 +413,18 @@ preferences.</p></li>
 correction using estimated sensitivity/specificity.</p></li>
 <li><p><strong>EIF</strong>: Efficient influence function estimator that
 achieves semiparametric efficiency.</p></li>
+<li><p><strong>MLE</strong>: Joint maximum likelihood estimation that
+simultaneously estimates prevalence, sensitivity, and
+specificity.</p></li>
 </ul>
 <p>The debiased estimates should be closer to the true human preference
 rate, with confidence intervals that provide valid coverage even when
 the judge is imperfect.</p>
 </div>
 <div class="section level2">
-<h2 id="bootstrap-confidence-intervals-optional">Bootstrap Confidence Intervals (Optional)<a class="anchor" aria-label="anchor" href="#bootstrap-confidence-intervals-optional"></a>
-</h2>
-<p>For more robust inference with small calibration sets:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># PPI with bootstrap</span></span>
-<span><span class="va">ppi_boot</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ppi_bootstrap.html">ppi_bootstrap</a></span><span class="op">(</span></span>
-<span>  Y_L <span class="op">=</span> <span class="va">Y_cal</span>,</span>
-<span>  f_L <span class="op">=</span> <span class="va">Yhat_cal</span>,</span>
-<span>  f_U <span class="op">=</span> <span class="va">Yhat_test</span>,</span>
-<span>  B <span class="op">=</span> <span class="fl">500</span>,</span>
-<span>  alpha <span class="op">=</span> <span class="va">ALPHA</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Rogan-Gladen with bootstrap</span></span>
-<span><span class="va">rg_boot</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/rg_bootstrap.html">rg_bootstrap</a></span><span class="op">(</span></span>
-<span>  Y_cal <span class="op">=</span> <span class="va">Y_cal</span>,</span>
-<span>  Yhat_cal <span class="op">=</span> <span class="va">Yhat_cal</span>,</span>
-<span>  Yhat_test <span class="op">=</span> <span class="va">Yhat_test</span>,</span>
-<span>  B <span class="op">=</span> <span class="fl">500</span>,</span>
-<span>  alpha <span class="op">=</span> <span class="va">ALPHA</span></span>
-<span><span class="op">)</span></span></code></pre></div>
-</div>
-<div class="section level2">
 <h2 id="session-info">Session Info<a class="anchor" aria-label="anchor" href="#session-info"></a>
 </h2>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; R version 4.4.1 (2024-06-14)</span></span>
 <span><span class="co">#&gt; Platform: aarch64-apple-darwin20</span></span>
@@ -449,17 +448,21 @@ the judge is imperfect.</p>
 <span><span class="co">#&gt; [4] debiasLLMReporting_0.0.1</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
-<span><span class="co">#&gt;  [1] gtable_0.3.6       compiler_4.4.1     highr_0.11         tidyselect_1.2.1  </span></span>
-<span><span class="co">#&gt;  [5] jquerylib_0.1.4    systemfonts_1.1.0  scales_1.4.0       textshaping_0.4.0 </span></span>
-<span><span class="co">#&gt;  [9] yaml_2.3.10        fastmap_1.2.0      R6_2.6.1           labeling_0.4.3    </span></span>
-<span><span class="co">#&gt; [13] generics_0.1.4     knitr_1.48         htmlwidgets_1.6.4  tibble_3.3.0      </span></span>
-<span><span class="co">#&gt; [17] desc_1.4.3         bslib_0.9.0        pillar_1.11.1      RColorBrewer_1.1-3</span></span>
-<span><span class="co">#&gt; [21] rlang_1.1.6        cachem_1.1.0       xfun_0.48          fs_1.6.6          </span></span>
-<span><span class="co">#&gt; [25] sass_0.4.10        S7_0.2.1           cli_3.6.5          pkgdown_2.1.1     </span></span>
-<span><span class="co">#&gt; [29] withr_3.0.2        magrittr_2.0.4     digest_0.6.37      grid_4.4.1        </span></span>
-<span><span class="co">#&gt; [33] rstudioapi_0.17.0  lifecycle_1.0.4    vctrs_0.6.5        evaluate_1.0.1    </span></span>
-<span><span class="co">#&gt; [37] glue_1.8.0         farver_2.1.2       ragg_1.3.3         rmarkdown_2.28    </span></span>
-<span><span class="co">#&gt; [41] tools_4.4.1        pkgconfig_2.0.3    htmltools_0.5.8.1</span></span></code></pre></div>
+<span><span class="co">#&gt;  [1] gtable_0.3.6        highr_0.11          compiler_4.4.1     </span></span>
+<span><span class="co">#&gt;  [4] tidyselect_1.2.1    jquerylib_0.1.4     systemfonts_1.1.0  </span></span>
+<span><span class="co">#&gt;  [7] scales_1.4.0        textshaping_0.4.0   yaml_2.3.10        </span></span>
+<span><span class="co">#&gt; [10] fastmap_1.2.0       R6_2.6.1            labeling_0.4.3     </span></span>
+<span><span class="co">#&gt; [13] generics_0.1.4      knitr_1.48          htmlwidgets_1.6.4  </span></span>
+<span><span class="co">#&gt; [16] tibble_3.3.0        desc_1.4.3          bslib_0.9.0        </span></span>
+<span><span class="co">#&gt; [19] pillar_1.11.1       RColorBrewer_1.1-3  rlang_1.1.6        </span></span>
+<span><span class="co">#&gt; [22] cachem_1.1.0        xfun_0.48           fs_1.6.6           </span></span>
+<span><span class="co">#&gt; [25] sass_0.4.10         S7_0.2.1            cli_3.6.5          </span></span>
+<span><span class="co">#&gt; [28] pkgdown_2.1.1       withr_3.0.2         magrittr_2.0.4     </span></span>
+<span><span class="co">#&gt; [31] digest_0.6.37       grid_4.4.1          rstudioapi_0.17.0  </span></span>
+<span><span class="co">#&gt; [34] lifecycle_1.0.4     vctrs_0.6.5         evaluate_1.0.1     </span></span>
+<span><span class="co">#&gt; [37] glue_1.8.0          farver_2.1.2        numDeriv_2016.8-1.1</span></span>
+<span><span class="co">#&gt; [40] ragg_1.3.3          rmarkdown_2.28      tools_4.4.1        </span></span>
+<span><span class="co">#&gt; [43] pkgconfig_2.0.3     htmltools_0.5.8.1</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

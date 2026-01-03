@@ -56,7 +56,7 @@ Yhat_cal <- Yhat_all[idx_cal]
 Yhat_test <- Yhat_all[-idx_cal]
 
 # Apply PPI++
-result_ppi <- ppi_pp_point_and_ci_general(
+result_ppi <- ppi_pp_point_and_ci(
   Y_L = Y_cal, f_L = Yhat_cal, f_U = Yhat_test, alpha = 0.10
 )
 cat("PPI++ Estimate:", round(result_ppi$theta, 3),
@@ -70,11 +70,11 @@ cat("EIF Estimate:", round(result_eif$theta, 3),
     "90% CI: [", round(result_eif$ci_lower, 3), ",", round(result_eif$ci_upper, 3), "]\n")
 
 # Apply MLE
-result_mle <- fit_misclass_mle(
-  y_cal = Y_cal, yhat_cal = Yhat_cal, yhat_test = Yhat_test
+result_mle <- mle_point_and_ci(
+  Y_cal = Y_cal, Yhat_cal = Yhat_cal, Yhat_test = Yhat_test, alpha = 0.10
 )
-cat("MLE Estimate:", round(result_mle$theta_hat, 3),
-    "90% CI: [", round(result_mle$ci_theta_obs[1], 3), ",", round(result_mle$ci_theta_obs[2], 3), "]\n")
+cat("MLE Estimate:", round(result_mle$theta, 3),
+    "90% CI: [", round(result_mle$ci_lower, 3), ",", round(result_mle$ci_upper, 3), "]\n")
 ```
 
 
@@ -82,11 +82,11 @@ cat("MLE Estimate:", round(result_mle$theta_hat, 3),
 
 Core estimators:
 
-- `llm_point_and_ci()` - Rogan-Gladen estimator with delta method CI
+- `rg_point_and_ci()` - Rogan-Gladen estimator with delta method CI
 - `ppi_point_and_ci()` - Standard PPI estimator
-- `ppi_pp_point_and_ci_general()` - PPI++ with optimized lambda
+- `ppi_pp_point_and_ci()` - PPI++ with optimized lambda
 - `eif_point_and_ci()` - Efficient influence function estimator
-- `fit_misclass_mle()` - Joint MLE for misclassification model
+- `mle_point_and_ci()` - Joint MLE for misclassification model
 
 ### Reproducibility
 
