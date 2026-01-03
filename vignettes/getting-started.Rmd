@@ -228,4 +228,6 @@ ggplot(plot_df, aes(x = Method, y = Estimate, color = Method)) +
 All corrected methods aim to provide valid confidence intervals with nominal coverage, while the naive estimate's CI will not cover the true value when there's systematic bias.
 
 ## Next Steps
-See the [Real Data Example](real-data-example.html) vignette for applying these methods to actual LLM judge evaluations.
+
+- See the [Continuous Outcomes](continuous-outcomes.html) vignette for handling continuous scores instead of binary outcomes
+- See the [Real Data Example](real-data-example.html) vignette for applying these methods to actual LLM judge evaluations

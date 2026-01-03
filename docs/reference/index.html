@@ -16,6 +16,7 @@
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../articles/getting-started.html">Getting Started</a></li>
+<li class="nav-item"><a class="nav-link" href="../articles/continuous-outcomes.html">Continuous Outcomes</a></li>
 <li class="nav-item"><a class="nav-link" href="../articles/real-data-example.html">Real Data Example</a></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
@@ -53,7 +54,7 @@
           <code><a href="ppi_pp_point_and_ci.html">ppi_pp_point_and_ci()</a></code>
 
         </dt>
-        <dd>Tuned PPI++ estimator using numeric lambda search.</dd>
+        <dd>PPI++ estimator with optimal unconstrained lambda.</dd>
       </dl><dl><dt>
 
           <code><a href="rg_point_and_ci.html">rg_point_and_ci()</a></code>
@@ -84,6 +85,152 @@
 
         </dt>
         <dd>Grab the theta-specific summary from a joint MLE fit.</dd>
+      </dl></div><div class="section level2">
+      <h2 id="discrete-estimators">Discrete Estimators<a class="anchor" aria-label="anchor" href="#discrete-estimators"></a></h2>
+
+      <div class="section-desc"><p>Estimators for discrete outcomes</p></div>
+
+
+    </div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="eif_discrete_point_and_ci.html">eif_discrete_point_and_ci()</a></code>
+
+        </dt>
+        <dd>EIF estimator with per-category calibration (optimal for discrete)</dd>
+      </dl><dl><dt>
+
+          <code><a href="eif_gam_discrete_point_and_ci.html">eif_gam_discrete_point_and_ci()</a></code>
+
+        </dt>
+        <dd>EIF estimator with GAM calibration</dd>
+      </dl><dl><dt>
+
+          <code><a href="eif_linear_discrete_point_and_ci.html">eif_linear_discrete_point_and_ci()</a></code>
+
+        </dt>
+        <dd>EIF estimator with linear calibration (suboptimal for discrete)</dd>
+      </dl><dl><dt>
+
+          <code><a href="eif_spline_discrete_point_and_ci.html">eif_spline_discrete_point_and_ci()</a></code>
+
+        </dt>
+        <dd>EIF estimator with spline calibration</dd>
+      </dl><dl><dt>
+
+          <code><a href="naive_discrete_point_and_ci.html">naive_discrete_point_and_ci()</a></code>
+
+        </dt>
+        <dd>Naive estimator: just use mean of discrete predictions</dd>
+      </dl><dl><dt>
+
+          <code><a href="oracle_discrete_point_and_ci.html">oracle_discrete_point_and_ci()</a></code>
+
+        </dt>
+        <dd>Oracle estimator (knows true mu values)</dd>
+      </dl><dl><dt>
+
+          <code><a href="ppi_discrete_point_and_ci.html">ppi_discrete_point_and_ci()</a></code>
+
+        </dt>
+        <dd>PPI estimator for discrete predictions theta_hat = mean(Yhat_test) + (mean(Y_cal) - mean(Yhat_cal))</dd>
+      </dl><dl><dt>
+
+          <code><a href="ppi_pp_discrete_point_and_ci.html">ppi_pp_discrete_point_and_ci()</a></code>
+
+        </dt>
+        <dd>PPI++ estimator for discrete predictions</dd>
+      </dl></div><div class="section level2">
+      <h2 id="continuous-estimators">Continuous Estimators<a class="anchor" aria-label="anchor" href="#continuous-estimators"></a></h2>
+
+      <div class="section-desc"><p>Estimators for continuous outcomes</p></div>
+
+
+    </div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="eif_continuous_point_and_ci.html">eif_continuous_point_and_ci()</a></code>
+
+        </dt>
+        <dd>EIF estimator for continuous surrogates with calibration</dd>
+      </dl><dl><dt>
+
+          <code><a href="naive_continuous_point_and_ci.html">naive_continuous_point_and_ci()</a></code>
+
+        </dt>
+        <dd>Naive estimator (just use model predictions)</dd>
+      </dl><dl><dt>
+
+          <code><a href="ppi_continuous_point_and_ci.html">ppi_continuous_point_and_ci()</a></code>
+
+        </dt>
+        <dd>PPI estimator for continuous scores</dd>
+      </dl><dl><dt>
+
+          <code><a href="ppi_pp_continuous_point_and_ci.html">ppi_pp_continuous_point_and_ci()</a></code>
+
+        </dt>
+        <dd>PPI++ estimator for continuous scores</dd>
+      </dl></div><div class="section level2">
+      <h2 id="calibration-functions">Calibration Functions<a class="anchor" aria-label="anchor" href="#calibration-functions"></a></h2>
+
+      <div class="section-desc"><p>Functions for fitting calibration models</p></div>
+
+
+    </div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="fit_calibration_gam.html">fit_calibration_gam()</a></code>
+
+        </dt>
+        <dd>Fit calibration model using GAM</dd>
+      </dl><dl><dt>
+
+          <code><a href="fit_calibration_isotonic.html">fit_calibration_isotonic()</a></code>
+
+        </dt>
+        <dd>Fit calibration model using isotonic regression</dd>
+      </dl><dl><dt>
+
+          <code><a href="fit_calibration_linear.html">fit_calibration_linear()</a></code>
+
+        </dt>
+        <dd>Fit calibration model using linear regression</dd>
+      </dl><dl><dt>
+
+          <code><a href="fit_calibration_spline.html">fit_calibration_spline()</a></code>
+
+        </dt>
+        <dd>Fit calibration model using cubic spline</dd>
+      </dl></div><div class="section level2">
+      <h2 id="data-generation">Data Generation<a class="anchor" aria-label="anchor" href="#data-generation"></a></h2>
+
+      <div class="section-desc"><p>Functions for generating simulated data</p></div>
+
+
+    </div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="generate_discrete_dgp.html">generate_discrete_dgp()</a></code>
+
+        </dt>
+        <dd>Generate discrete prediction data</dd>
       </dl></div><div class="section level2">
       <h2 id="helper-functions">Helper Functions<a class="anchor" aria-label="anchor" href="#helper-functions"></a></h2>
 

@@ -12,12 +12,15 @@ authors:
 
 navbar:
   structure:
-    left: [intro, getting-started, real-data-example, reference]
+    left: [intro, getting-started, continuous-outcomes, real-data-example, reference]
     right: [search, github]
   components:
     getting-started:
       text: Getting Started
       href: articles/getting-started.html
+    continuous-outcomes:
+      text: Continuous Outcomes
+      href: articles/continuous-outcomes.html
     real-data-example:
       text: Real Data Example
       href: articles/real-data-example.html
@@ -27,6 +30,7 @@ articles:
     navbar: ~
     contents:
       - getting-started
+      - continuous-outcomes
       - real-data-example
 
 reference:
@@ -40,6 +44,39 @@ reference:
       - mle_point_and_ci
       - fit_misclass_mle
       - grab_theta
+
+  - title: Discrete Estimators
+    desc: Estimators for discrete outcomes
+    contents:
+      - eif_discrete_point_and_ci
+      - eif_gam_discrete_point_and_ci
+      - eif_linear_discrete_point_and_ci
+      - eif_spline_discrete_point_and_ci
+      - naive_discrete_point_and_ci
+      - oracle_discrete_point_and_ci
+      - ppi_discrete_point_and_ci
+      - ppi_pp_discrete_point_and_ci
+
+  - title: Continuous Estimators
+    desc: Estimators for continuous outcomes
+    contents:
+      - eif_continuous_point_and_ci
+      - naive_continuous_point_and_ci
+      - ppi_continuous_point_and_ci
+      - ppi_pp_continuous_point_and_ci
+
+  - title: Calibration Functions
+    desc: Functions for fitting calibration models
+    contents:
+      - fit_calibration_gam
+      - fit_calibration_isotonic
+      - fit_calibration_linear
+      - fit_calibration_spline
+
+  - title: Data Generation
+    desc: Functions for generating simulated data
+    contents:
+      - generate_discrete_dgp
 
   - title: Helper Functions
     desc: Utility functions
