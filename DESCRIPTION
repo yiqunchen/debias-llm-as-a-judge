@@ -27,7 +27,9 @@ Suggests:
     rmarkdown,
     jsonlite,
     dplyr,
-    ggplot2
+    mgcv,
+    randomForest,
+    rpart
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 RoxygenNote: 7.3.2

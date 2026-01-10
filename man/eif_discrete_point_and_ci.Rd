@@ -6,7 +6,17 @@
 \usage{
 eif_discrete_point_and_ci(Y_cal, Yhat_cal, Yhat_test, alpha = 0.1)
 }
+\arguments{
+\item{Y_cal}{Vector of true labels on the calibration set.}
+
+\item{Yhat_cal}{Vector of surrogate predictions on the calibration set.}
+
+\item{Yhat_test}{Vector of surrogate predictions on the test set.}
+
+\item{alpha}{Miscoverage level for the confidence interval.}
+}
 \description{
-Learns g: {1,...,K} -> R such that g(z) = E\link{Y | Yhat = z}
-For discrete Yhat, this is just the conditional mean per category
+Learns \eqn{g: \{1,\ldots,K\} \to \mathbb{R}} such that
+\eqn{g(z) = E[Y \mid \hat{Y} = z]}.
+For discrete Yhat, this is just the conditional mean per category.
 }

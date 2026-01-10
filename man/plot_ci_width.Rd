@@ -38,6 +38,8 @@ aggregate plots with many legend entries.}
 \code{theta_true} space).}
 
 \item{point_size}{Point size for the scatter overlay.}
+
+\item{y_limits}{Optional numeric vector of length 2 giving y-axis limits.}
 }
 \value{
 A \code{ggplot} object showing mean confidence interval width

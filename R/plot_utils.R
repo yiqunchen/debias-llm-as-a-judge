@@ -264,6 +264,7 @@ plot_coverage <- function(data, facet_formula, title = "Coverage", subtitle = ""
 #' @param x_breaks Optional numeric vector of breaks for the x-axis (in
 #'   \code{theta_true} space).
 #' @param point_size Point size for the scatter overlay.
+#' @param y_limits Optional numeric vector of length 2 giving y-axis limits.
 #'
 #' @return A \code{ggplot} object showing mean confidence interval width
 #'   as a function of \code{theta_true}.

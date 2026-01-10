@@ -6,6 +6,16 @@
 \usage{
 fit_calibration_spline(Y_cal, Yhat_cal, df = 4)
 }
+\arguments{
+\item{Y_cal}{Vector of true labels on the calibration set.}
+
+\item{Yhat_cal}{Vector of surrogate predictions on the calibration set.}
+
+\item{df}{Degrees of freedom for the spline basis.}
+}
+\value{
+A function that maps new surrogate values to calibrated predictions.
+}
 \description{
 Fit calibration model using cubic spline
 }

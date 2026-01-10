@@ -6,7 +6,16 @@
 \usage{
 ppi_pp_discrete_point_and_ci(Y_cal, Yhat_cal, Yhat_test, alpha = 0.1)
 }
+\arguments{
+\item{Y_cal}{Vector of true labels on the calibration set.}
+
+\item{Yhat_cal}{Vector of surrogate predictions on the calibration set.}
+
+\item{Yhat_test}{Vector of surrogate predictions on the test set.}
+
+\item{alpha}{Miscoverage level for the confidence interval.}
+}
 \description{
 Uses closed-form optimal lambda (no constraints):
-lambda* = Cov(Y,Yhat) / \link{Var(Yhat_cal) + (m/n) * Var(Yhat_test)}
+\eqn{\lambda^* = \frac{\mathrm{Cov}(Y,\hat{Y})}{\mathrm{Var}(\hat{Y}_{cal}) + (m/n)\mathrm{Var}(\hat{Y}_{test})}}
 }

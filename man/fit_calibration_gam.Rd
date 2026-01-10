@@ -6,6 +6,16 @@
 \usage{
 fit_calibration_gam(Y_cal, Yhat_cal, k = 10)
 }
+\arguments{
+\item{Y_cal}{Vector of true labels on the calibration set.}
+
+\item{Yhat_cal}{Vector of surrogate predictions on the calibration set.}
+
+\item{k}{Maximum basis dimension for the smooth term.}
+}
+\value{
+A function that maps new surrogate values to calibrated predictions.
+}
 \description{
 Fit calibration model using GAM
 }

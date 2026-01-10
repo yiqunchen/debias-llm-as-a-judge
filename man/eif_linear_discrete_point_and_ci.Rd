@@ -6,7 +6,16 @@
 \usage{
 eif_linear_discrete_point_and_ci(Y_cal, Yhat_cal, Yhat_test, alpha = 0.1)
 }
+\arguments{
+\item{Y_cal}{Vector of true labels on the calibration set.}
+
+\item{Yhat_cal}{Vector of surrogate predictions on the calibration set.}
+
+\item{Yhat_test}{Vector of surrogate predictions on the test set.}
+
+\item{alpha}{Miscoverage level for the confidence interval.}
+}
 \description{
-Fits g(Yhat) = a + b*Yhat using linear regression
-This is suboptimal when Yhat is discrete but shows importance of proper calibration
+Fits g(Yhat) = a + b*Yhat using linear regression.
+This is suboptimal when Yhat is discrete but shows importance of proper calibration.
 }
