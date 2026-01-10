@@ -12,6 +12,18 @@ eif_continuous_point_and_ci(
   alpha = 0.1
 )
 }
+\arguments{
+\item{Y_cal}{Vector of true labels on the calibration set.}
+
+\item{Yhat_cal}{Vector of surrogate predictions on the calibration set.}
+
+\item{Yhat_test}{Vector of surrogate predictions on the test set.}
+
+\item{calibration_method}{Calibration method; one of "linear", "gam",
+"spline", or "isotonic".}
+
+\item{alpha}{Miscoverage level for the confidence interval.}
+}
 \description{
 EIF estimator for continuous surrogates with calibration
 }

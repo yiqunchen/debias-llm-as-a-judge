@@ -12,6 +12,17 @@ ppi_pp_continuous_point_and_ci(
   lambda_range = c(0, 1)
 )
 }
+\arguments{
+\item{Y_cal}{Vector of true labels on the calibration set.}
+
+\item{Yhat_cal}{Vector of surrogate predictions on the calibration set.}
+
+\item{Yhat_test}{Vector of surrogate predictions on the test set.}
+
+\item{alpha}{Miscoverage level for the confidence interval.}
+
+\item{lambda_range}{Numeric length-2 vector giving the optimization interval.}
+}
 \description{
 PPI++ estimator for continuous scores
 }

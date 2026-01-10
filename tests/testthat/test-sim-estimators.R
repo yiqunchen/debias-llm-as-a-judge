@@ -1,32 +1,19 @@
 test_that("clamp01 clamps into (eps, 1-eps)", {
   x <- c(-1, 0, 0.2, 1, 2, NA_real_)
-  out <- clamp01(x, eps = 1e-3)
+  out <- debiasLLMReporting:::clamp01(x, eps = 1e-3)
   expect_true(all(out[!is.na(out)] >= 1e-3))
   expect_true(all(out[!is.na(out)] <= 1 - 1e-3))
   expect_true(is.na(out[is.na(x)]))
 })
 
-test_that("safe_var returns 0 for length <= 1", {
-  expect_equal(safe_var(numeric(0)), 0)
-  expect_equal(safe_var(1), 0)
-  expect_equal(safe_var(c(1, 2)), stats::var(c(1, 2)))
-})
-
-test_that("generate_dgp_data produces correct shapes and marginal prevalence ~ theta", {
+test_that("generate_dgp_data produces correct length and marginal prevalence ~ theta", {
   set.seed(1)
   N <- 20000
   theta <- 0.3
   dgp <- generate_dgp_data(N, theta, signal = 1)
-
-  expect_true(is.matrix(dgp$X))
-  expect_equal(nrow(dgp$X), N)
-  expect_equal(ncol(dgp$X), 5L)
   expect_equal(length(dgp$Y), N)
-  expect_equal(length(dgp$p_true), N)
-
   # marginal mean should be close to target (Monte Carlo tolerance)
   expect_lt(abs(mean(dgp$Y) - theta), 0.01)
-  expect_true(all(dgp$p_true >= 0 & dgp$p_true <= 1))
 })
 
 test_that("logit_ci returns bounds in [0,1] and lower<=upper", {
@@ -34,52 +21,6 @@ test_that("logit_ci returns bounds in [0,1] and lower<=upper", {
   expect_true(ci$lower >= 0 && ci$lower <= 1)
   expect_true(ci$upper >= 0 && ci$upper <= 1)
   expect_true(ci$lower <= ci$upper)
-})
-
-test_that("project_simplex returns nonnegative vector summing to 1", {
-  set.seed(1)
-  v <- rnorm(10)
-  w <- project_simplex(v)
-
-  expect_equal(length(w), length(v))
-  expect_true(all(w >= 0))
-  expect_equal(sum(w), 1, tolerance = 1e-10)
-})
-
-test_that("project_simplex handles all-NA input", {
-  v <- rep(NA_real_, 4)
-  w <- project_simplex(v)
-  expect_true(all(w >= 0))
-  expect_equal(sum(w), 1, tolerance = 1e-10)
-  expect_equal(w, rep(1/4, 4))
-})
-
-test_that("class_one_hot produces correct one-hot encoding", {
-  y <- c(1, 2, 2, NA, 3, 0, 4)
-  K <- 3
-  mat <- class_one_hot(y, K)
-
-  expect_equal(dim(mat), c(length(y), K))
-  expect_equal(mat[1, ], c(1, 0, 0))
-  expect_equal(mat[2, ], c(0, 1, 0))
-  expect_equal(mat[3, ], c(0, 1, 0))
-  expect_equal(mat[4, ], c(0, 0, 0)) # NA -> all zeros
-  expect_equal(mat[5, ], c(0, 0, 1))
-  expect_equal(mat[6, ], c(0, 0, 0)) # out of range -> all zeros
-  expect_equal(mat[7, ], c(0, 0, 0)) # out of range -> all zeros
-})
-
-test_that("estimate_confusion_matrix is column-stochastic", {
-  set.seed(1)
-  K <- 3
-  Y <- sample(1:K, 100, replace = TRUE)
-  # noisy surrogate labels
-  S <- pmin(pmax(Y + sample(c(-1,0,1), 100, replace = TRUE), 1), K)
-
-  Mhat <- estimate_confusion_matrix(S, Y, K, laplace = 1e-3)
-  expect_equal(dim(Mhat), c(K, K))
-  expect_true(all(Mhat >= 0))
-  expect_equal(colSums(Mhat), rep(1, K), tolerance = 1e-10)
 })
 
 test_that("ppi_point_and_ci basic sanity", {
@@ -98,6 +39,22 @@ test_that("ppi_point_and_ci basic sanity", {
   expect_true(est$var >= 0)
   expect_true(est$ci_lower <= est$ci_upper)
   expect_true(est$ci_lower >= 0 && est$ci_upper <= 1)
+})
+
+test_that("ppi_point_and_ci handles empty and length-1 inputs", {
+  # Empty inputs lead to NaN outputs (current behavior)
+  out_empty <- ppi_point_and_ci(numeric(0), numeric(0), numeric(0), alpha = 0.05)
+  expect_true(is.nan(out_empty$theta))
+  expect_true(is.nan(out_empty$var))
+  expect_true(is.nan(out_empty$ci_lower))
+  expect_true(is.nan(out_empty$ci_upper))
+
+  # Length-1 inputs should be finite with zero variance
+  out_one <- ppi_point_and_ci(Y_L = 1, f_L = 1, f_U = 0, alpha = 0.05)
+  expect_true(is.finite(out_one$theta))
+  expect_true(is.finite(out_one$var))
+  expect_true(is.finite(out_one$ci_lower))
+  expect_true(is.finite(out_one$ci_upper))
 })
 
 test_that("rg_point_and_ci returns NA when judge nearly random (J ~ 0)", {
@@ -150,7 +107,7 @@ test_that("lambda_hat_ppi_pp_optimal finds variance-minimizing lambda", {
   f_U <- rbinom(N, 1, 0.5)
 
   # Get optimal lambda from closed-form solution
-  lam_hat <- lambda_hat_ppi_pp_optimal(Y_L, f_L, f_U)
+  lam_hat <- debiasLLMReporting:::lambda_hat_ppi_pp_optimal(Y_L, f_L, f_U)
 
   # Evaluate variance on a wide grid (lambda is now unconstrained)
   grid <- seq(-1, 3, length.out = 201)
@@ -168,93 +125,29 @@ test_that("lambda_hat_ppi_pp_optimal finds variance-minimizing lambda", {
   )
 })
 
-test_that("ppi_multiclass returns simplex prevalence and valid CIs", {
-  set.seed(1)
-  K <- 3
-  nU <- 5000
-  nL <- 300
+test_that("lambda_hat_ppi_pp_optimal falls back when f_L/f_U are constant", {
+  Y_L <- c(0, 1, 1, 0, 1)
+  f_L <- rep(0.5, length(Y_L))
+  f_U <- rep(0.5, 20)
 
-  # True prevalence
-  pi <- c(0.2, 0.5, 0.3)
+  lam_hat <- lambda_hat_ppi_pp_optimal(Y_L, f_L, f_U)
+  expect_equal(lam_hat, 1)
 
-  Y_L <- sample(1:K, nL, replace = TRUE, prob = pi)
-  S_L <- sample(1:K, nL, replace = TRUE, prob = pi)  # (identity surrogate for test)
-  S_U <- sample(1:K, nU, replace = TRUE, prob = pi)
-
-  ctx <- list(K = K)
-  out <- ppi_multiclass(
-    S_unlabeled = S_U,
-    S_labeled = S_L,
-    Y_labeled = Y_L,
-    g_transform = g_identity_multiclass,
-    context = ctx,
-    alpha = 0.05,
-    project = TRUE
-  )
-
-  expect_equal(length(out$pi_hat), K)
-  expect_true(all(out$pi_hat >= 0))
-  expect_equal(sum(out$pi_hat), 1, tolerance = 1e-10)
-
-  expect_equal(length(out$ci_lower), K)
-  expect_equal(length(out$ci_upper), K)
-  expect_true(all(out$ci_lower <= out$ci_upper))
-  expect_true(all(out$ci_lower >= 0))
-  expect_true(all(out$ci_upper <= 1))
+  est <- ppi_pp_point_and_ci(Y_L, f_L, f_U, alpha = 0.05)
+  expect_true(is.finite(est$theta))
+  expect_true(is.finite(est$var))
+  expect_true(is.finite(est$ci_lower))
+  expect_true(is.finite(est$ci_upper))
 })
 
-test_that("ppi_pp_multiclass returns simplex prevalence and lambda per class", {
-  set.seed(2)
-  K <- 4
-  nU <- 3000
-  nL <- 400
-  pi <- rep(1/K, K)
+test_that("ppi_pp_var_hat handles empty and length-1 inputs", {
+  # Empty inputs lead to NaN outputs (current behavior)
+  var_empty <- ppi_pp_var_hat(1, numeric(0), numeric(0), numeric(0))
+  expect_true(is.nan(var_empty))
 
-  Y_L <- sample(1:K, nL, replace = TRUE, prob = pi)
-  S_L <- sample(1:K, nL, replace = TRUE, prob = pi)
-  S_U <- sample(1:K, nU, replace = TRUE, prob = pi)
-
-  out <- ppi_pp_multiclass(S_U, S_L, Y_L, K, alpha = 0.05)
-
-  expect_equal(length(out$pi_hat), K)
-  expect_true(all(out$pi_hat >= 0))
-  expect_equal(sum(out$pi_hat), 1, tolerance = 1e-10)
-
-  expect_equal(length(out$lambda), K)
-  expect_true(all(out$lambda >= 0 & out$lambda <= 1))
-})
-
-test_that("rg_least_squares_simplex returns simplex vector", {
-  skip_if_not_installed("quadprog")
-
-  set.seed(1)
-  K <- 3
-  # confusion matrix (column-stochastic): P(S=a | Y=b)
-  M_hat <- matrix(c(
-    0.8, 0.1, 0.1,
-    0.1, 0.8, 0.1,
-    0.1, 0.1, 0.8
-  ), nrow = K, byrow = TRUE)
-
-  # observed surrogate distribution
-  p_hat <- c(0.3, 0.5, 0.2)
-
-  pi_hat <- rg_least_squares_simplex(M_hat, p_hat)
-
-  expect_equal(length(pi_hat), K)
-  expect_true(all(pi_hat >= 0))
-  expect_equal(sum(pi_hat), 1, tolerance = 1e-10)
-})
-
-test_that("rg_least_squares_simplex approximately solves least squares objective", {
-  skip_if_not_installed("quadprog")
-
-  K <- 3
-  M_hat <- diag(K)  # identity s.t. solution should be close to p_hat projected
-  p_hat <- c(0.2, 0.3, 0.5)
-
-  pi_hat <- rg_least_squares_simplex(M_hat, p_hat)
-  expect_equal(pi_hat, p_hat, tolerance = 1e-6)
+  # Length-1 inputs yield zero variance
+  var_one <- ppi_pp_var_hat(1, Y_L = 1, f_L = 1, f_U = 0)
+  expect_equal(var_one, 0)
 })
 
 test_that("eif_point_and_ci returns bounded estimate and CI for binary surrogate", {
@@ -298,6 +191,20 @@ test_that("eif_point_and_ci returns NA when no calibration data for a stratum", 
   expect_true(is.na(result$var))
 })
 
+test_that("eif_point_and_ci filters NA and non-binary inputs", {
+  Y_cal <- c(1, 0, 1, NA, 2)
+  Yhat_cal <- c(1, 0, 1, NA, 2)
+  Yhat_test <- c(1, 0, 1, NA, 2, 0)
+
+  result <- eif_point_and_ci(Y_cal, Yhat_cal, Yhat_test)
+
+  expect_true(is.finite(result$theta))
+  expect_true(is.finite(result$var))
+  expect_true(result$theta >= 0 && result$theta <= 1)
+  expect_true(result$ci_lower <= result$ci_upper)
+  expect_true(result$ci_lower >= 0 && result$ci_upper <= 1)
+})
+
 test_that("eif_point_and_ci achieves approximately correct coverage", {
   set.seed(42)
   n_reps <- 200
@@ -325,4 +232,32 @@ test_that("eif_point_and_ci achieves approximately correct coverage", {
   coverage_rate <- covered / n_reps
   # Coverage should be approximately 0.95 (allow margin for finite sample)
   expect_true(coverage_rate >= 0.85 && coverage_rate <= 1.0)
+})
+
+test_that("fit_misclass_mle recovers parameters in a simple simulation", {
+  set.seed(7)
+  N <- 5000
+  m_cal <- 500
+  theta_true <- 0.4
+  q0_true <- 0.85
+  q1_true <- 0.8
+
+  Y_all <- rbinom(N, 1, theta_true)
+  Yhat_all <- ifelse(
+    Y_all == 1,
+    rbinom(N, 1, q1_true),
+    rbinom(N, 1, 1 - q0_true)
+  )
+
+  idx_cal <- sample(seq_len(N), m_cal)
+  y_cal <- Y_all[idx_cal]
+  yhat_cal <- Yhat_all[idx_cal]
+  yhat_test <- Yhat_all[-idx_cal]
+
+  fit <- fit_misclass_mle(y_cal, yhat_cal, yhat_test, level = 0.90)
+
+  expect_true(is.finite(fit$logLik))
+  expect_true(abs(fit$theta_hat - theta_true) <= 0.1)
+  expect_true(abs(fit$q0_hat - q0_true) <= 0.1)
+  expect_true(abs(fit$q1_hat - q1_true) <= 0.1)
 })

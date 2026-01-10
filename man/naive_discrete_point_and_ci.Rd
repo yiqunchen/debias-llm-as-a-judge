@@ -6,6 +6,11 @@
 \usage{
 naive_discrete_point_and_ci(Yhat_test, alpha = 0.1)
 }
+\arguments{
+\item{Yhat_test}{Vector of discrete surrogate predictions on the test set.}
+
+\item{alpha}{Miscoverage level for the confidence interval.}
+}
 \description{
 Naive estimator: just use mean of discrete predictions
 }

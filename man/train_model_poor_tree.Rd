@@ -8,7 +8,7 @@ train_model_poor_tree(X, Y)
 }
 \description{
 Uses only X1 (relevant) and X6 (noise) - severely misspecified
-KEY: NOT OLS, so no guarantee that E\link{Yhat} = E\link{Y} even on training data!
+KEY: NOT OLS, so no guarantee that \eqn{E[\hat{Y}] = E[Y]} even on training data!
 This should show bias even without distribution shift.
 }
 \keyword{internal}

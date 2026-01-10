@@ -9,6 +9,6 @@ train_model_poor_ols(X, Y)
 \description{
 Uses all 10 features, linear form only
 Can't capture nonlinearity + fits to noise features
-NOTE: OLS still guarantees E\link{Yhat} = E\link{Y} on training distribution!
+NOTE: OLS still guarantees \eqn{E[\hat{Y}] = E[Y]} on training distribution.
 }
 \keyword{internal}

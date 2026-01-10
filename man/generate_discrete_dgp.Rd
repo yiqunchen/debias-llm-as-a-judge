@@ -19,5 +19,5 @@ generate_discrete_dgp(N, mu = c(1, 5, 9), sigma = 1, seed = NULL)
 List with Z, Y, Yhat
 }
 \description{
-Z ~ Unif({1, ..., K}), Y | Z ~ N(mu\link{Z}, sigma^2), Yhat = Z
+\eqn{Z \sim \mathrm{Unif}(\{1,\ldots,K\}), Y \mid Z \sim N(\mu_Z, \sigma^2), \hat{Y} = Z}
 }

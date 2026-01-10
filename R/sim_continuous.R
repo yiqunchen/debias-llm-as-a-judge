@@ -120,7 +120,7 @@ train_model_medium <- function(X, Y) {
 #'
 #' Uses all 10 features, linear form only
 #' Can't capture nonlinearity + fits to noise features
-#' NOTE: OLS still guarantees E[Yhat] = E[Y] on training distribution!
+#' NOTE: OLS still guarantees \eqn{E[\hat{Y}] = E[Y]} on training distribution.
 #' @keywords internal
 train_model_poor_ols <- function(X, Y) {
   df <- data.frame(Y = Y, X)
@@ -139,7 +139,7 @@ train_model_poor_ols <- function(X, Y) {
 #' Train "poor-tree" model: Regression tree on X1 and X6 ONLY
 #'
 #' Uses only X1 (relevant) and X6 (noise) - severely misspecified
-#' KEY: NOT OLS, so no guarantee that E[Yhat] = E[Y] even on training data!
+#' KEY: NOT OLS, so no guarantee that \eqn{E[\hat{Y}] = E[Y]} even on training data!
 #' This should show bias even without distribution shift.
 #' @keywords internal
 train_model_poor_tree <- function(X, Y) {
@@ -165,6 +165,11 @@ train_model_poor_tree <- function(X, Y) {
 # ============================================================================
 
 #' Fit calibration model using linear regression
+#'
+#' @param Y_cal Vector of true labels on the calibration set.
+#' @param Yhat_cal Vector of surrogate predictions on the calibration set.
+#'
+#' @return A function that maps new surrogate values to calibrated predictions.
 #' @export
 fit_calibration_linear <- function(Y_cal, Yhat_cal) {
   df <- data.frame(Y = Y_cal, Yhat = Yhat_cal)
@@ -176,6 +181,12 @@ fit_calibration_linear <- function(Y_cal, Yhat_cal) {
 }
 
 #' Fit calibration model using GAM
+#'
+#' @param Y_cal Vector of true labels on the calibration set.
+#' @param Yhat_cal Vector of surrogate predictions on the calibration set.
+#' @param k Maximum basis dimension for the smooth term.
+#'
+#' @return A function that maps new surrogate values to calibrated predictions.
 #' @export
 fit_calibration_gam <- function(Y_cal, Yhat_cal, k = 10) {
   if (!requireNamespace("mgcv", quietly = TRUE)) {
@@ -197,6 +208,12 @@ fit_calibration_gam <- function(Y_cal, Yhat_cal, k = 10) {
 }
 
 #' Fit calibration model using cubic spline
+#'
+#' @param Y_cal Vector of true labels on the calibration set.
+#' @param Yhat_cal Vector of surrogate predictions on the calibration set.
+#' @param df Degrees of freedom for the spline basis.
+#'
+#' @return A function that maps new surrogate values to calibrated predictions.
 #' @export
 fit_calibration_spline <- function(Y_cal, Yhat_cal, df = 4) {
   data_df <- data.frame(Y = Y_cal, Yhat = Yhat_cal)
@@ -220,6 +237,11 @@ fit_calibration_spline <- function(Y_cal, Yhat_cal, df = 4) {
 }
 
 #' Fit calibration model using isotonic regression
+#'
+#' @param Y_cal Vector of true labels on the calibration set.
+#' @param Yhat_cal Vector of surrogate predictions on the calibration set.
+#'
+#' @return A function that maps new surrogate values to calibrated predictions.
 #' @export
 fit_calibration_isotonic <- function(Y_cal, Yhat_cal) {
   ord <- order(Yhat_cal)
@@ -239,6 +261,13 @@ fit_calibration_isotonic <- function(Y_cal, Yhat_cal) {
 # ============================================================================
 
 #' EIF estimator for continuous surrogates with calibration
+#'
+#' @param Y_cal Vector of true labels on the calibration set.
+#' @param Yhat_cal Vector of surrogate predictions on the calibration set.
+#' @param Yhat_test Vector of surrogate predictions on the test set.
+#' @param calibration_method Calibration method; one of "linear", "gam",
+#'   "spline", or "isotonic".
+#' @param alpha Miscoverage level for the confidence interval.
 #' @export
 eif_continuous_point_and_ci <- function(Y_cal, Yhat_cal, Yhat_test,
                                          calibration_method = "linear",
@@ -279,6 +308,11 @@ eif_continuous_point_and_ci <- function(Y_cal, Yhat_cal, Yhat_test,
 }
 
 #' PPI estimator for continuous scores
+#'
+#' @param Y_cal Vector of true labels on the calibration set.
+#' @param Yhat_cal Vector of surrogate predictions on the calibration set.
+#' @param Yhat_test Vector of surrogate predictions on the test set.
+#' @param alpha Miscoverage level for the confidence interval.
 #' @export
 ppi_continuous_point_and_ci <- function(Y_cal, Yhat_cal, Yhat_test, alpha = 0.10) {
   m <- length(Y_cal)
@@ -304,6 +338,12 @@ ppi_continuous_point_and_ci <- function(Y_cal, Yhat_cal, Yhat_test, alpha = 0.10
 }
 
 #' PPI++ estimator for continuous scores
+#'
+#' @param Y_cal Vector of true labels on the calibration set.
+#' @param Yhat_cal Vector of surrogate predictions on the calibration set.
+#' @param Yhat_test Vector of surrogate predictions on the test set.
+#' @param alpha Miscoverage level for the confidence interval.
+#' @param lambda_range Numeric length-2 vector giving the optimization interval.
 #' @export
 ppi_pp_continuous_point_and_ci <- function(Y_cal, Yhat_cal, Yhat_test,
                                             alpha = 0.10,
@@ -337,6 +377,9 @@ ppi_pp_continuous_point_and_ci <- function(Y_cal, Yhat_cal, Yhat_test,
 }
 
 #' Naive estimator (just use model predictions)
+#'
+#' @param Yhat_test Vector of surrogate predictions on the test set.
+#' @param alpha Miscoverage level for the confidence interval.
 #' @export
 naive_continuous_point_and_ci <- function(Yhat_test, alpha = 0.10) {
   n <- length(Yhat_test)

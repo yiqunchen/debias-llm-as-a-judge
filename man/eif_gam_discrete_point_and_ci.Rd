@@ -6,7 +6,16 @@
 \usage{
 eif_gam_discrete_point_and_ci(Y_cal, Yhat_cal, Yhat_test, alpha = 0.1)
 }
+\arguments{
+\item{Y_cal}{Vector of true labels on the calibration set.}
+
+\item{Yhat_cal}{Vector of surrogate predictions on the calibration set.}
+
+\item{Yhat_test}{Vector of surrogate predictions on the test set.}
+
+\item{alpha}{Miscoverage level for the confidence interval.}
+}
 \description{
-Fits g(Yhat) using a GAM with smooth term
-For discrete Yhat with few categories, this behaves similarly to per-category
+Fits g(Yhat) using a GAM with smooth term.
+For discrete Yhat with few categories, this behaves similarly to per-category.
 }

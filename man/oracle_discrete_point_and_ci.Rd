@@ -6,6 +6,13 @@
 \usage{
 oracle_discrete_point_and_ci(Yhat_test, mu, alpha = 0.1)
 }
+\arguments{
+\item{Yhat_test}{Vector of surrogate predictions on the test set.}
+
+\item{mu}{Vector of true per-class means.}
+
+\item{alpha}{Miscoverage level for the confidence interval.}
+}
 \description{
 Oracle estimator (knows true mu values)
 }

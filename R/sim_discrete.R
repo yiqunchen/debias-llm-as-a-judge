@@ -17,7 +17,7 @@
 
 #' Generate discrete prediction data
 #'
-#' Z ~ Unif({1, ..., K}), Y | Z ~ N(mu[Z], sigma^2), Yhat = Z
+#' \eqn{Z \sim \mathrm{Unif}(\{1,\ldots,K\}), Y \mid Z \sim N(\mu_Z, \sigma^2), \hat{Y} = Z}
 #'
 #' @param N Sample size
 #' @param mu Vector of means for each mixture component
@@ -55,6 +55,9 @@ generate_discrete_dgp <- function(N, mu = c(1, 5, 9), sigma = 1, seed = NULL) {
 # ============================================================================
 
 #' Naive estimator: just use mean of discrete predictions
+#'
+#' @param Yhat_test Vector of discrete surrogate predictions on the test set.
+#' @param alpha Miscoverage level for the confidence interval.
 #' @export
 naive_discrete_point_and_ci <- function(Yhat_test, alpha = 0.10) {
   n <- length(Yhat_test)
@@ -73,7 +76,13 @@ naive_discrete_point_and_ci <- function(Yhat_test, alpha = 0.10) {
 }
 
 #' PPI estimator for discrete predictions
-#' theta_hat = mean(Yhat_test) + (mean(Y_cal) - mean(Yhat_cal))
+#'
+#' \eqn{\hat{\theta} = \mathrm{mean}(\hat{Y}_{test}) + (\mathrm{mean}(Y_{cal}) - \mathrm{mean}(\hat{Y}_{cal}))}
+#'
+#' @param Y_cal Vector of true labels on the calibration set.
+#' @param Yhat_cal Vector of surrogate predictions on the calibration set.
+#' @param Yhat_test Vector of surrogate predictions on the test set.
+#' @param alpha Miscoverage level for the confidence interval.
 #' @export
 ppi_discrete_point_and_ci <- function(Y_cal, Yhat_cal, Yhat_test, alpha = 0.10) {
   m <- length(Y_cal)
@@ -103,7 +112,12 @@ ppi_discrete_point_and_ci <- function(Y_cal, Yhat_cal, Yhat_test, alpha = 0.10) 
 #' PPI++ estimator for discrete predictions
 #'
 #' Uses closed-form optimal lambda (no constraints):
-#' lambda* = Cov(Y,Yhat) / [Var(Yhat_cal) + (m/n) * Var(Yhat_test)]
+#' \eqn{\lambda^* = \frac{\mathrm{Cov}(Y,\hat{Y})}{\mathrm{Var}(\hat{Y}_{cal}) + (m/n)\mathrm{Var}(\hat{Y}_{test})}}
+#'
+#' @param Y_cal Vector of true labels on the calibration set.
+#' @param Yhat_cal Vector of surrogate predictions on the calibration set.
+#' @param Yhat_test Vector of surrogate predictions on the test set.
+#' @param alpha Miscoverage level for the confidence interval.
 #' @export
 ppi_pp_discrete_point_and_ci <- function(Y_cal, Yhat_cal, Yhat_test, alpha = 0.10) {
   m <- length(Y_cal)
@@ -139,8 +153,14 @@ ppi_pp_discrete_point_and_ci <- function(Y_cal, Yhat_cal, Yhat_test, alpha = 0.1
 
 #' EIF estimator with per-category calibration (optimal for discrete)
 #'
-#' Learns g: {1,...,K} -> R such that g(z) = E[Y | Yhat = z]
-#' For discrete Yhat, this is just the conditional mean per category
+#' Learns \eqn{g: \{1,\ldots,K\} \to \mathbb{R}} such that
+#' \eqn{g(z) = E[Y \mid \hat{Y} = z]}.
+#' For discrete Yhat, this is just the conditional mean per category.
+#'
+#' @param Y_cal Vector of true labels on the calibration set.
+#' @param Yhat_cal Vector of surrogate predictions on the calibration set.
+#' @param Yhat_test Vector of surrogate predictions on the test set.
+#' @param alpha Miscoverage level for the confidence interval.
 #' @export
 eif_discrete_point_and_ci <- function(Y_cal, Yhat_cal, Yhat_test, alpha = 0.10) {
   m <- length(Y_cal)
@@ -188,8 +208,13 @@ eif_discrete_point_and_ci <- function(Y_cal, Yhat_cal, Yhat_test, alpha = 0.10) 
 
 #' EIF estimator with linear calibration (suboptimal for discrete)
 #'
-#' Fits g(Yhat) = a + b*Yhat using linear regression
-#' This is suboptimal when Yhat is discrete but shows importance of proper calibration
+#' Fits g(Yhat) = a + b*Yhat using linear regression.
+#' This is suboptimal when Yhat is discrete but shows importance of proper calibration.
+#'
+#' @param Y_cal Vector of true labels on the calibration set.
+#' @param Yhat_cal Vector of surrogate predictions on the calibration set.
+#' @param Yhat_test Vector of surrogate predictions on the test set.
+#' @param alpha Miscoverage level for the confidence interval.
 #' @export
 eif_linear_discrete_point_and_ci <- function(Y_cal, Yhat_cal, Yhat_test, alpha = 0.10) {
   m <- length(Y_cal)
@@ -227,8 +252,13 @@ eif_linear_discrete_point_and_ci <- function(Y_cal, Yhat_cal, Yhat_test, alpha =
 
 #' EIF estimator with GAM calibration
 #'
-#' Fits g(Yhat) using a GAM with smooth term
-#' For discrete Yhat with few categories, this behaves similarly to per-category
+#' Fits g(Yhat) using a GAM with smooth term.
+#' For discrete Yhat with few categories, this behaves similarly to per-category.
+#'
+#' @param Y_cal Vector of true labels on the calibration set.
+#' @param Yhat_cal Vector of surrogate predictions on the calibration set.
+#' @param Yhat_test Vector of surrogate predictions on the test set.
+#' @param alpha Miscoverage level for the confidence interval.
 #' @export
 eif_gam_discrete_point_and_ci <- function(Y_cal, Yhat_cal, Yhat_test, alpha = 0.10) {
   m <- length(Y_cal)
@@ -273,8 +303,13 @@ eif_gam_discrete_point_and_ci <- function(Y_cal, Yhat_cal, Yhat_test, alpha = 0.
 
 #' EIF estimator with spline calibration
 #'
-#' Fits g(Yhat) using natural splines
-#' For discrete Yhat with few categories, this behaves similarly to per-category
+#' Fits g(Yhat) using natural splines.
+#' For discrete Yhat with few categories, this behaves similarly to per-category.
+#'
+#' @param Y_cal Vector of true labels on the calibration set.
+#' @param Yhat_cal Vector of surrogate predictions on the calibration set.
+#' @param Yhat_test Vector of surrogate predictions on the test set.
+#' @param alpha Miscoverage level for the confidence interval.
 #' @export
 eif_spline_discrete_point_and_ci <- function(Y_cal, Yhat_cal, Yhat_test, alpha = 0.10) {
   m <- length(Y_cal)
@@ -316,6 +351,10 @@ eif_spline_discrete_point_and_ci <- function(Y_cal, Yhat_cal, Yhat_test, alpha =
 }
 
 #' Oracle estimator (knows true mu values)
+#'
+#' @param Yhat_test Vector of surrogate predictions on the test set.
+#' @param mu Vector of true per-class means.
+#' @param alpha Miscoverage level for the confidence interval.
 #' @export
 oracle_discrete_point_and_ci <- function(Yhat_test, mu, alpha = 0.10) {
   n <- length(Yhat_test)

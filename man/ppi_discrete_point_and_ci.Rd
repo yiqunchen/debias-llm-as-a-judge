@@ -2,12 +2,19 @@
 % Please edit documentation in R/sim_discrete.R
 \name{ppi_discrete_point_and_ci}
 \alias{ppi_discrete_point_and_ci}
-\title{PPI estimator for discrete predictions
-theta_hat = mean(Yhat_test) + (mean(Y_cal) - mean(Yhat_cal))}
+\title{PPI estimator for discrete predictions}
 \usage{
 ppi_discrete_point_and_ci(Y_cal, Yhat_cal, Yhat_test, alpha = 0.1)
 }
+\arguments{
+\item{Y_cal}{Vector of true labels on the calibration set.}
+
+\item{Yhat_cal}{Vector of surrogate predictions on the calibration set.}
+
+\item{Yhat_test}{Vector of surrogate predictions on the test set.}
+
+\item{alpha}{Miscoverage level for the confidence interval.}
+}
 \description{
-PPI estimator for discrete predictions
-theta_hat = mean(Yhat_test) + (mean(Y_cal) - mean(Yhat_cal))
+\eqn{\hat{\theta} = \mathrm{mean}(\hat{Y}_{test}) + (\mathrm{mean}(Y_{cal}) - \mathrm{mean}(\hat{Y}_{cal}))}
 }
